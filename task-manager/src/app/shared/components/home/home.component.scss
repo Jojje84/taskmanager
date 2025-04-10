@@ -1,0 +1,77 @@
+.hero {
+  text-align: center;
+  padding: 50px 20px;
+  background: linear-gradient(
+    to right,
+    #007bff,
+    #0056b3
+  ); /* Gradient bakgrund */
+  color: white;
+  border-radius: 10px;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.hero button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.hero button:hover {
+  background-color: #0056b3;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+}
+
+.features li {
+  margin: 10px 0;
+  font-size: 1.2rem;
+}
+
+.features i {
+  color: #007bff;
+  margin-right: 10px;
+}
+
+.cta {
+  text-align: center;
+  margin: 50px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.cta h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.cta button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.cta button:hover {
+  background-color: #218838;
+}
