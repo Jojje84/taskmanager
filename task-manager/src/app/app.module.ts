@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';  // Importera HttpClientModule
+import { HttpClientModule } from '@angular/common/http';  // Importera HttpClientModule här
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';  // Importera AppRoutingModule här
+import { AppRoutingModule } from './app-routing.module';
 import { TasksComponent } from './features/tasks/tasks.component';
 import { TaskService } from './core/services/task.service';
 
@@ -14,9 +14,9 @@ import { TaskService } from './core/services/task.service';
   imports: [
     BrowserModule,
     AppRoutingModule,  // Lägg till AppRoutingModule här
-    HttpClientModule,  // Lägg till HttpClientModule
+    HttpClientModule,  // Lägg till HttpClientModule här för att använda HttpClient
   ],
-  providers: [TaskService],
+  providers: [TaskService],  // Lägg till TaskService här
   bootstrap: [AppComponent]
 })
 export class AppModule { }

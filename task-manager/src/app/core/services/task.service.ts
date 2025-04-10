@@ -1,33 +1,50 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';  // Importera HttpClient
+import { HttpClient } from '@angular/common/http'; // Importera HttpClient
 import { Observable } from 'rxjs';
-import { Task } from '../../models/task.model';  // Importera Task-modellen
+import { Task } from '../../models/task.model'; // Importera Task-modellen
+import { map } from 'rxjs/operators'; // Importera map-operatorn
 
 @Injectable({
-  providedIn: 'root'  // Gör TaskService tillgänglig överallt i appen
+  providedIn: 'root', // Gör TaskService tillgänglig globalt
 })
 export class TaskService {
-  private apiUrl = 'https://dummyjson.com/todos';  // Din API URL här
+  private apiUrl = 'https://dummyjson.com/todos'; // API-url för todos
 
-  constructor(private http: HttpClient) {}  // Injicera HttpClient
+  constructor(private http: HttpClient) {}
 
-  // Hämta alla uppgifter
-  getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.apiUrl);  // Hämta alla todos
+  // Hämta alla todos
+  getTasks(): Observable<any> {
+    return this.http.get<any>(this.apiUrl).pipe(
+      map((response) => {
+        console.log('API Response:', response); // Logga API:s svar
+        if (response.todos) {
+          response.todos = response.todos.filter((task: any) => !task.isDeleted);
+        }
+        return response;
+      })
+    );
   }
 
-  // Lägg till en uppgift
-  addTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(this.apiUrl, task);  // Lägg till en ny task
+  // Lägg till en todo
+  addTask(task: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/add`, task); // Lägg till en ny todo via POST
   }
 
-  // Uppdatera en uppgifts status
-  toggleTaskCompletion(taskId: number, completed: boolean): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${taskId}`, { completed });
+  // Uppdatera en tasks status (completed)
+  updateTask(taskId: number, updatedData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${taskId}`, updatedData); // Uppdatera todo via PUT
   }
 
-  // Ta bort en uppgift
+  // Ta bort en todo
   deleteTask(taskId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${taskId}`);
+    console.log('Marking task as deleted with ID:', taskId);
+    return this.http.delete<any>(`${this.apiUrl}/${taskId}`).pipe(
+      map((deletedTask) => {
+        // Simulera borttagning genom att sätta isDeleted på uppgiften
+        deletedTask.isDeleted = true;
+
+        return deletedTask;
+      })
+    );
   }
 }

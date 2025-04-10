@@ -1,10 +1,11 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from './core/core.module';
+import { ApplicationConfig } from '@angular/core';
+import { provideHttpClient, withFetch } from '@angular/common/http'; // Importera `provideHttpClient` och `withFetch`
+import { provideRouter } from '@angular/router';  // För att konfigurera routing
+import { routes } from './app.routes';  // Importera dina rutter
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes), 
-    provideZoneChangeDetection(),
-  ],
+    provideRouter(routes),  // Konfigurera routing
+    provideHttpClient(withFetch())  // Konfigurera HttpClient med fetch istället för XMLHttpRequest
+  ]
 };
