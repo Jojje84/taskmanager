@@ -1,0 +1,11 @@
+<a routerLink="/projects/new">
+  <button>Lägg till nytt projekt</button>
+</a>
+
+<!-- Lista projekt -->
+<app-list-card
+  *ngFor="let project of projects"
+  [title]="project.name"
+  [description]="project.description"
+  [link]="'/projects/' + project.id">
+</app-list-card>

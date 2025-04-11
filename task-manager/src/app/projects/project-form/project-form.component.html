@@ -1,0 +1,14 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>
+      Namn:
+      <input type="text" formControlName="name" />
+    </label>
+  
+    <label>
+      Beskrivning:
+      <textarea formControlName="description"></textarea>
+    </label>
+  
+    <button type="submit" [disabled]="form.invalid">Spara</button>
+  </form>
+  

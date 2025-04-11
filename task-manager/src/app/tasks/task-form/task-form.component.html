@@ -1,0 +1,14 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>
+      Titel:
+      <input formControlName="title" />
+    </label>
+  
+    <label>
+      Deadline:
+      <input type="date" formControlName="dueDate" />
+    </label>
+  
+    <button type="submit" [disabled]="form.invalid">Spara</button>
+  </form>
+  

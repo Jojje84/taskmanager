@@ -1,22 +1,25 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';  // Importera HttpClientModule här
-import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
-import { TasksComponent } from './features/tasks/tasks.component';
-import { TaskService } from './core/services/task.service';
+import { AppComponent } from './app.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormExampleComponent } from './form-example/form-example.component';
+import { HighlightDirective } from './shared/directives/highlight.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TasksComponent,  // Lägg till TasksComponent här
+    FormExampleComponent,
+    HighlightDirective
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,  // Lägg till AppRoutingModule här
-    HttpClientModule,  // Lägg till HttpClientModule här för att använda HttpClient
+    AppRoutingModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
-  providers: [TaskService],  // Lägg till TaskService här
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

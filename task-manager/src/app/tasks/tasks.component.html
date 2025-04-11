@@ -1,0 +1,13 @@
+<a routerLink="/tasks/new">
+  <button>Lägg till ny uppgift</button>
+</a>
+
+<app-list-card
+  *ngFor="let task of tasks"
+  [title]="task.todo"
+  [description]="
+    'Status: ' + (task.completed | status)
+  "
+  [link]="'/tasks/' + task.id"
+  [important]="task.important">
+</app-list-card>

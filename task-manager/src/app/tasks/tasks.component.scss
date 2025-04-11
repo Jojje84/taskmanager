@@ -1,0 +1,12 @@
+.status {
+    font-weight: bold;
+  }
+  
+  .status.completed {
+    color: green;
+  }
+  
+  .status.incomplete {
+    color: orange;
+  }
+  

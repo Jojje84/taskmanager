@@ -6,19 +6,19 @@ import { catchError, tap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class TaskService {
-  private apiUrl = 'https://dummyjson.api/tasks'; // DummyJSON endpoint för uppgifter
+export class ProjectService {
+  private apiUrl = 'https://dummyjson.api/projects'; // DummyJSON endpoint för projekt
 
-  private tasksSubject = new BehaviorSubject<any[]>([]);
-  tasks$ = this.tasksSubject.asObservable();
+  private projectsSubject = new BehaviorSubject<any[]>([]);
+  projects$ = this.projectsSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
-  getTasks(): Observable<any[]> {
+  getProjects(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl)
       .pipe(
         catchError(this.handleError),
-        tap(tasks => this.tasksSubject.next(tasks))
+        tap(projects => this.projectsSubject.next(projects))
       );
   }
 
