@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ProjectService } from '../../core/services/project.service'; // Projektservice används
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ProjectService } from '../../core/services/project.service';
-import { Project } from '../../models/project.model';
 
 @Component({
   selector: 'app-project-list',
@@ -12,11 +11,17 @@ import { Project } from '../../models/project.model';
   styleUrls: ['./project-list.component.scss']
 })
 export class ProjectListComponent implements OnInit {
-  projects: Project[] = [];
+  projects: any[] = [];  // Behåll projektnamn, även om API är produkter
 
   constructor(private projectService: ProjectService) {}
 
-  ngOnInit(): void {
-    this.projectService.getProjects().subscribe(projects => this.projects = projects);
+  ngOnInit() {
+    this.projectService.getProjects().subscribe((res: any) => {
+      this.projects = res.products.map((product: any) => ({
+        id: product.id,
+        title: product.title,
+        description: product.description, // Om description finns
+      }));
+    });
   }
 }

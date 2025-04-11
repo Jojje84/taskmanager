@@ -1,35 +1,24 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { catchError, map, throwError } from 'rxjs';
+import { Project } from '../../models/project.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
-  private apiUrl = 'https://dummyjson.api/projects'; // DummyJSON endpoint för projekt
+  private apiUrl = 'https://dummyjson.com/products'; // API URL för produkter
 
-  private projectsSubject = new BehaviorSubject<any[]>([]);
-  projects$ = this.projectsSubject.asObservable();
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
-
-  getProjects(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl)
-      .pipe(
-        catchError(this.handleError),
-        tap(projects => this.projectsSubject.next(projects))
-      );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      console.error('An error occurred:', error.error.message);
-    } else {
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        `body was: ${error.error}`);
-    }
-    return throwError('Something bad happened; please try again later.');
+  getProjects(): Observable<Project[]> {
+    return this.http.get<{ products: Project[] }>(this.apiUrl).pipe(
+      map(response => response.products), // Extrahera arrayen av projects från response
+      catchError(err => {
+        console.error('Error fetching projects', err);
+        return throwError(() => err);
+      })
+    );
   }
 }

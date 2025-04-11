@@ -1,0 +1,15 @@
+<!-- in-progress-column.component.html -->
+
+<div class="column">
+    <h2>In Progress</h2>
+    <div
+      cdkDropList
+      #inProgressList="cdkDropList"
+      [cdkDropListData]="inProgressTasks"
+      [cdkDropListConnectedTo]="[todoList, doneList]"
+      class="task-list"
+      (cdkDropListDropped)="onTaskDropped($event)">
+      <div *ngFor="let task of inProgressTasks" class="task" cdkDrag>{{ task.name }}</div>
+    </div>
+  </div>
+  

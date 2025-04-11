@@ -1,6 +1,46 @@
-<h3>Uppgifter</h3>
-<ul>
-  <li *ngFor="let task of tasks">
-    <a [routerLink]="['/tasks', task.id]">{{ task.todo }}</a>
-  </li>
-</ul>
+<div class="board">
+  <div class="column">
+    <h2>To Do</h2>
+    <div
+      cdkDropList
+      [cdkDropListData]="todoTasks"
+      [cdkDropListConnectedTo]="['inProgressList', 'doneList']"
+      class="task-list"
+      (cdkDropListDropped)="drop($event)"
+      id="todoList">
+      <div class="task" *ngFor="let task of todoTasks" cdkDrag>
+        {{ task.todo }}
+      </div>
+    </div>
+  </div>
+
+  <div class="column">
+    <h2>In Progress</h2>
+    <div
+      cdkDropList
+      [cdkDropListData]="inProgressTasks"
+      [cdkDropListConnectedTo]="['todoList', 'doneList']"
+      class="task-list"
+      (cdkDropListDropped)="drop($event)"
+      id="inProgressList">
+      <div class="task" *ngFor="let task of inProgressTasks" cdkDrag>
+        {{ task.todo }}
+      </div>
+    </div>
+  </div>
+
+  <div class="column">
+    <h2>Done</h2>
+    <div
+      cdkDropList
+      [cdkDropListData]="doneTasks"
+      [cdkDropListConnectedTo]="['todoList', 'inProgressList']"
+      class="task-list"
+      (cdkDropListDropped)="drop($event)"
+      id="doneList">
+      <div class="task" *ngFor="let task of doneTasks" cdkDrag>
+        {{ task.todo }}
+      </div>
+    </div>
+  </div>
+</div>
