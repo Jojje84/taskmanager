@@ -1,0 +1,47 @@
+.board {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;  /* Avstånd mellan kolumner */
+    width: 100%;
+    max-width: 1200px; /* Begränsar bredden för större skärmar */
+    margin: 0 auto; /* Centrerar innehållet */
+  }
+  
+  .column {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex: 1; /* Gör varje kolumn lika stor */
+    height: auto; /* Se till att kolumnerna växer i höjd beroende på innehåll */
+  }
+  
+  .column h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .task-list {
+    margin-top: 10px;
+    min-height: 200px; /* Justera höjden på task-listan */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-y: auto; /* Om det finns mycket innehåll, gör det scrollbart */
+  }
+  
+  .task {
+    background-color: #e4e4e4;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    cursor: move;
+    user-select: none; /* Förhindrar textmarkering */
+  }
+  
+  .task:hover {
+    background-color: #d0d0d0;
+  }
+  
