@@ -9,8 +9,7 @@ import { TaskFormComponent } from './tasks/task-form/task-form.component';
 import { TasksComponent } from './tasks/tasks.component'; // 🆕 Lägg till denna import
 
 const routes: Routes = [
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'projects', component: ProjectsComponent },
+  { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent) },  { path: 'projects', component: ProjectsComponent },
   { path: 'projects/new', component: ProjectFormComponent },
   { path: 'projects/:id', component: ProjectDetailComponent },
   { path: 'tasks', component: TasksComponent }, // 🆕 Lägg till denna route

@@ -1,6 +1,11 @@
-<div class="card">
+<a *ngIf="link; else noLink" [routerLink]="link" class="card">
+  <h3>{{ title }}</h3>
+  <p *ngIf="subtitle">{{ subtitle }}</p>
+</a>
+
+<ng-template #noLink>
+  <div class="card">
     <h3>{{ title }}</h3>
-    <p>{{ description }}</p>
-    <a [routerLink]="link">Visa mer</a>
+    <p *ngIf="subtitle">{{ subtitle }}</p>
   </div>
-  
+</ng-template>

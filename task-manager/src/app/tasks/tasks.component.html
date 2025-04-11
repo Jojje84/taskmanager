@@ -5,9 +5,7 @@
 <app-list-card
   *ngFor="let task of tasks"
   [title]="task.todo"
-  [description]="
-    'Status: ' + (task.completed | status)
-  "
+  [description]="'Completed: ' + task.completed"
   [link]="'/tasks/' + task.id"
-  [important]="task.important">
+  [important]="task.completed">
 </app-list-card>

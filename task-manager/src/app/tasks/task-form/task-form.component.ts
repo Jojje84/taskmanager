@@ -1,25 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-task-form',
-  templateUrl: './task-form.component.html'
+  standalone: true, // Gör den standalone
+  imports: [CommonModule, ReactiveFormsModule], // Lägg till ReactiveFormsModule här
+  templateUrl: './task-form.component.html',
+  styleUrls: ['./task-form.component.scss']
 })
-export class TaskFormComponent implements OnInit {
-  form: FormGroup;
-
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit(): void {
-    this.form = this.fb.group({
-      title: ['', Validators.required],
-      dueDate: ['', Validators.required]
-    });
-  }
+export class TaskFormComponent {
+  form = new FormGroup({
+    name: new FormControl(''),
+    description: new FormControl('')
+  });
 
   onSubmit() {
-    if (this.form.valid) {
-      console.log('Uppgift:', this.form.value);
-    }
+    console.log(this.form.value);
   }
 }
