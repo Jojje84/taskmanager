@@ -1,0 +1,14 @@
+<p>project-form works!</p>
+<h2>Skapa projekt</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <label for="name">Namn:</label>
+  <input id="name" formControlName="name" />
+
+  <label for="description">Beskrivning:</label>
+  <input id="description" formControlName="description" />
+
+  <label for="userId">Användare ID:</label>
+  <input id="userId" type="number" formControlName="userId" />
+
+  <button type="submit" [disabled]="form.invalid">Skapa</button>
+</form>

@@ -1,0 +1,9 @@
+<h2>Projektlista</h2>
+<ul>
+  <li *ngFor="let project of projects">
+    <a [routerLink]="[project.id]">{{ project.name }}</a><br />
+    <small>{{ project.description }}</small><br />
+    <small>Användare ID: {{ project.userId }}</small>
+    <hr />
+  </li>
+</ul>

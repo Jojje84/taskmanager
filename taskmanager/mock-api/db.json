@@ -1,0 +1,19 @@
+{
+    "users": [
+      { "id": 1, "name": "Antony" },
+      { "id": 2, "name": "Anna" },
+      { "id": 3, "name": "Leo" }
+    ],
+    "projects": [
+      { "id": 1, "name": "Task Manager", "description": "Angular-baserad app", "userId": 1 },
+      { "id": 2, "name": "Träningsplan", "description": "Privat hälsoprojekt", "userId": 2 },
+      { "id": 3, "name": "Reseblogg", "description": "Bygg en blogg", "userId": 3 }
+    ],
+    "tasks": [
+      { "id": 1, "title": "Skapa komponenter", "status": "active", "priority": "high", "projectId": 1 },
+      { "id": 2, "title": "Sätt upp routing", "status": "completed", "priority": "medium", "projectId": 1 },
+      { "id": 3, "title": "Lägg till övningar", "status": "active", "priority": "low", "projectId": 2 },
+      { "id": 4, "title": "Skriv första inlägget", "status": "active", "priority": "high", "projectId": 3 }
+    ]
+  }
+  
