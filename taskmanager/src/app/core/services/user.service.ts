@@ -1,15 +1,21 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { User } from '../../models/user.model'; // Adjust the import path as necessary
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { User } from '../../models/user.model';
 
-@Injectable({ providedIn: 'root' })
-export class ProjectService {
-  private baseUrl = 'http://localhost:3000/projects';
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+  private baseUrl = 'http://localhost:3000/users';
 
   constructor(private http: HttpClient) {}
 
-  getProjects(): Observable<User[]> {
+  getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.baseUrl);
+  }
+
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/${id}`);
   }
 }

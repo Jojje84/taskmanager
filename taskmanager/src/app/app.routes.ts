@@ -4,9 +4,11 @@ import { ProjectFormComponent } from './features/projects/project-form/project-f
 import { ProjectDetailComponent } from './features/projects/project-detail/project-detail.component';
 import { TaskListComponent } from './features/tasks/task-list/task-list.component';
 import { TaskFormComponent } from './features/tasks/task-form/task-form.component';
+import { UserListComponent } from './features/dashboard/user-list/user-list.component';
+import { UserDetailComponent } from './features/dashboard/user-detail/user-detail.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'projects', pathMatch: 'full' },
+  { path: '', redirectTo: 'users', pathMatch: 'full' },
 
   // Projekt
   { path: 'projects', component: ProjectListComponent },
@@ -15,5 +17,9 @@ export const routes: Routes = [
 
   // Uppgifter
   { path: 'tasks', component: TaskListComponent },
-  { path: 'tasks/create/:projectId', component: TaskFormComponent }
+  { path: 'tasks/create/:projectId', component: TaskFormComponent },
+
+  // Användare / Dashboard
+  { path: 'users', component: UserListComponent },
+  { path: 'users/:id', component: UserDetailComponent }
 ];

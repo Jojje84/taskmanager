@@ -1,0 +1,22 @@
+ul {
+    list-style: none;
+    padding: 0;
+  
+    li {
+      background: #fef3c7;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 5px solid #facc15;
+      border-radius: 3px;
+  
+      span {
+        display: block;
+        font-weight: bold;
+      }
+  
+      small {
+        color: #666;
+      }
+    }
+  }
+  

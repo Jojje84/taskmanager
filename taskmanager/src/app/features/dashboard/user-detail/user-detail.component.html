@@ -1,0 +1,13 @@
+<h2>{{ user?.name }}</h2>
+
+<h3>Projekt</h3>
+<ul>
+  <li *ngFor="let project of projects">
+    <strong>{{ project.name }}</strong> - {{ project.description }}
+    <ul>
+      <li *ngFor="let task of getTasksForProject(project.id)">
+        🗂️ {{ task.title }} ({{ task.status }}, {{ task.priority }})
+      </li>
+    </ul>
+  </li>
+</ul>
