@@ -1,6 +1,17 @@
-<h2>Användare</h2>
-<ul>
-  <li *ngFor="let user of users">
-    <a [routerLink]="['/users', user.id]">{{ user.name }}</a>
-  </li>
-</ul>
+<div class="user-container">
+  <div class="user-card" *ngFor="let user of users">
+    <div class="user-header">
+      <img [src]="user.avatar" alt="user image" class="user-avatar">
+      <div class="user-info">
+        <span class="user-name">{{ user.name }}</span>
+        <span class="user-role">{{ user.role }}</span>
+      </div>
+    </div>
+    <div class="user-progress">
+      <div class="progress-bar">
+        <div class="progress" [style.width]="user.progress + '%'"></div>
+      </div>
+      <span class="progress-text">{{ user.progress }}% Completed</span>
+    </div>
+  </div>
+</div>

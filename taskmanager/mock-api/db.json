@@ -1,16 +1,25 @@
 {
   "users": [
     {
-      "id": "1",
-      "name": "Antony"
+      "id": 1,
+      "name": "Antony",
+      "role": "Admin",
+      "avatar": "path-to-avatar1.jpg",
+      "progress": 80
     },
     {
-      "id": "2",
-      "name": "Anna"
+      "id": 2,
+      "name": "Anna",
+      "role": "User",
+      "avatar": "path-to-avatar2.jpg",
+      "progress": 60
     },
     {
-      "id": "3",
-      "name": "Leo"
+      "id": 3,
+      "name": "Leo",
+      "role": "Leader",
+      "avatar": "path-to-avatar3.jpg",
+      "progress": 90
     }
   ],
   "projects": [

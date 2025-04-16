@@ -13,12 +13,21 @@ import { User } from '../../../models/user.model';
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];
+  loading: boolean = true;  // För att visa laddningsindikator
+  errorMessage: string = ''; // För att hantera eventuella fel
 
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    this.userService.getUsers().subscribe(data => {
-      this.users = data;
-    });
+    this.userService.getUsers().subscribe(
+      data => {
+        this.users = data;
+        this.loading = false;  // Sätt loading till false när datan har hämtats
+      },
+      error => {
+        this.errorMessage = 'Failed to load users';
+        this.loading = false;  // Sätt loading till false om det blir ett fel
+      }
+    );
   }
 }
