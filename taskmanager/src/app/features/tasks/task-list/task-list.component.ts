@@ -2,11 +2,14 @@ import { Component, OnInit, Signal, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Task } from '../../../models/task.model';
 import { TaskService } from '../../../core/services/task.service';
+import { ExportTasksComponent } from '../../../shared/components/export-tasks/export-tasks.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ExportTasksComponent, MatDialogModule],
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss']
 })
@@ -33,7 +36,7 @@ export class TaskListComponent implements OnInit {
     return list;
   });
 
-  constructor(private taskService: TaskService) {}
+  constructor(private taskService: TaskService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.taskService.getTasks().subscribe(data => {
@@ -43,5 +46,15 @@ export class TaskListComponent implements OnInit {
 
   setStatusFilter(status: 'all' | 'active' | 'completed') {
     this.selectedStatus.set(status);
+  }
+
+  deleteTask(id: number): void {
+    this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.taskService.deleteTask(id).subscribe(() => {
+          this.tasks.set(this.tasks().filter(t => t.id !== id));
+        });
+      }
+    });
   }
 }

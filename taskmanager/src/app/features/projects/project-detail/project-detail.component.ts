@@ -9,7 +9,7 @@ import { TaskService } from '../../../core/services/task.service';
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,],
   templateUrl: './project-detail.component.html',
   styleUrls: ['./project-detail.component.scss']
 })

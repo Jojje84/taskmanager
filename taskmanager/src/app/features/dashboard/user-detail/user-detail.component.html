@@ -1,22 +1,25 @@
 <h2>{{ user?.name }}</h2>
 
-<section *ngIf="projects.length > 0; else noProjects">
-  <h3>Projekt</h3>
-  <ul>
-    <li *ngFor="let project of projects">
-      <button (click)="toggleProject(project.id)">
-        📁 {{ project.name }}
-      </button>
-      <p>{{ project.description }}</p>
+<!-- 📤 Export av användarens tasks -->
+<app-export-tasks [tasks]="tasks"></app-export-tasks>
+<app-export-projects [projects]="projects"></app-export-projects>
 
-      <ul *ngIf="expandedProjectId === project.id">
-        <li *ngFor="let task of getTasksForProject()">
-          🗂️ {{ task.title }} ({{ task.status }}, {{ task.priority }})
-        </li>
-      </ul>
-    </li>
-  </ul>
-</section>
+<!-- 🔍 Sökfält -->
+<input type="text" [(ngModel)]="searchQuery" placeholder="Sök projekt...">
+
+<h3>Projekt</h3>
+<ul>
+  <li *ngFor="let project of filteredProjects()">
+    <strong (click)="toggleProject(project.id)" style="cursor: pointer;">
+      📁 {{ project.name }}
+    </strong>
+    <ul *ngIf="expandedProjectId === project.id">
+      <li *ngFor="let task of getTasksForProject(project.id)">
+        🗂️ {{ task.title }} ({{ task.status }}, {{ task.priority }})
+      </li>
+    </ul>
+  </li>
+</ul>
 
 <ng-template #noProjects>
   <p>Denna användare har inga projekt ännu.</p>

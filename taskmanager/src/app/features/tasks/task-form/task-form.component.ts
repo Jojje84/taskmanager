@@ -33,7 +33,8 @@ export class TaskFormComponent implements OnInit {
       title: ['', Validators.required],
       status: ['active', Validators.required],
       priority: ['medium', Validators.required],
-      projectId: [this.projectId, Validators.required]
+      projectId: [this.projectId, Validators.required],
+      deadline: ['']
     });
 
     if (this.taskId) {
@@ -47,12 +48,14 @@ export class TaskFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) return;
 
+    const task: Task = this.form.value as Task;
+
     if (this.isEdit && this.taskId) {
-      this.taskService.updateTask(this.taskId, this.form.value).subscribe(() => {
+      this.taskService.updateTask(this.taskId, task).subscribe(() => {
         this.router.navigate(['/tasks']);
       });
     } else {
-      this.taskService.createTask(this.form.value).subscribe(() => {
+      this.taskService.createTask(task).subscribe(() => {
         this.router.navigate(['/tasks']);
       });
     }
