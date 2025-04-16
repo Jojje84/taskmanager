@@ -1,13 +1,23 @@
 <h2>{{ user?.name }}</h2>
 
-<h3>Projekt</h3>
-<ul>
-  <li *ngFor="let project of projects">
-    <strong>{{ project.name }}</strong> - {{ project.description }}
-    <ul>
-      <li *ngFor="let task of getTasksForProject(project.id)">
-        🗂️ {{ task.title }} ({{ task.status }}, {{ task.priority }})
-      </li>
-    </ul>
-  </li>
-</ul>
+<section *ngIf="projects.length > 0; else noProjects">
+  <h3>Projekt</h3>
+  <ul>
+    <li *ngFor="let project of projects">
+      <button (click)="toggleProject(project.id)">
+        📁 {{ project.name }}
+      </button>
+      <p>{{ project.description }}</p>
+
+      <ul *ngIf="expandedProjectId === project.id">
+        <li *ngFor="let task of getTasksForProject()">
+          🗂️ {{ task.title }} ({{ task.status }}, {{ task.priority }})
+        </li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<ng-template #noProjects>
+  <p>Denna användare har inga projekt ännu.</p>
+</ng-template>

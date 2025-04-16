@@ -1,10 +1,24 @@
-<p>task-list works!</p>
-<h2>Uppgifter för projekt {{ projectId }}</h2>
+<h2>Uppgifter</h2>
 
+<!-- 🔎 Filtrering på status -->
+<nav class="filters">
+  <button (click)="setStatusFilter('all')">Alla</button>
+  <button (click)="setStatusFilter('active')">Aktiva</button>
+  <button (click)="setStatusFilter('completed')">Klara</button>
+</nav>
+
+<!-- 🔽 Sortering -->
+<h3>Sortering</h3>
+<nav class="sorters">
+  <button (click)="sortBy.set('title')">Titel</button>
+  <button (click)="sortBy.set('priority')">Prioritet</button>
+</nav>
+
+<!-- 🗂️ Lista på sorterade & filtrerade uppgifter -->
 <ul>
-  <li *ngFor="let task of tasks">
-    {{ task.title }} - {{ task.status }} - {{ task.priority }}
+  <li *ngFor="let task of sortedAndFilteredTasks()">
+    <span>{{ task.title }}</span>
+    <small>Status: {{ task.status }}</small>
+    <small>Prioritet: {{ task.priority }}</small>
   </li>
 </ul>
-
-<button [routerLink]="['/tasks/create', projectId]">Lägg till uppgift</button>

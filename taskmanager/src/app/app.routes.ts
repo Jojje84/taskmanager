@@ -18,6 +18,7 @@ export const routes: Routes = [
   // Uppgifter
   { path: 'tasks', component: TaskListComponent },
   { path: 'tasks/create/:projectId', component: TaskFormComponent },
+  { path: 'tasks/edit/:id', component: TaskFormComponent }, // 🛠 lägg till denna
 
   // Användare / Dashboard
   { path: 'users', component: UserListComponent },

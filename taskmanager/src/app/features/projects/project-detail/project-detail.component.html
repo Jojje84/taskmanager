@@ -1,7 +1,16 @@
-<p>project-detail works!</p>
-<h2>Projektdetaljer</h2>
-<div *ngIf="project">
-  <p><strong>Namn:</strong> {{ project.name }}</p>
-  <p><strong>Beskrivning:</strong> {{ project.description }}</p>
-  <p><strong>Användare ID:</strong> {{ project.userId }}</p>
-</div>
+<h2>{{ project?.name }}</h2>
+<p>{{ project?.description }}</p>
+
+<a [routerLink]="['/tasks/create', project?.id]">
+  <button>➕ Skapa uppgift</button>
+</a>
+
+<h3>Uppgifter</h3>
+<ul>
+  <li *ngFor="let task of tasks">
+    🗂️ {{ task.title }} ({{ task.status }}, {{ task.priority }})
+    <a [routerLink]="['/tasks/edit', task.id]">
+      <button>✏️ Redigera</button>
+    </a>
+  </li>
+</ul>

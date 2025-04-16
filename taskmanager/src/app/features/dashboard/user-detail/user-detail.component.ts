@@ -19,6 +19,7 @@ export class UserDetailComponent implements OnInit {
   user?: User;
   projects: Project[] = [];
   tasks: Task[] = [];
+  expandedProjectId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,18 +35,26 @@ export class UserDetailComponent implements OnInit {
       this.user = user;
 
       this.projectService.getProjects().subscribe(projects => {
-        this.projects = projects.filter(p => p.userId === user.id);
-
-        const projectIds = this.projects.map(p => p.id);
-
-        this.taskService.getTasks().subscribe(tasks => {
-          this.tasks = tasks.filter(t => projectIds.includes(t.projectId));
-        });
+        this.projects = projects.filter(p => Number(p.userId) === Number(user.id));
+        this.tasks = []; // ← Rensa tasks vid init
       });
     });
   }
 
-  getTasksForProject(projectId: number): Task[] {
-    return this.tasks.filter(t => t.projectId === projectId);
+  toggleProject(projectId: number) {
+    if (this.expandedProjectId === projectId) {
+      this.expandedProjectId = null;
+      return;
+    }
+
+    this.expandedProjectId = projectId;
+
+    this.taskService.getTasksByProjectId(projectId).subscribe(tasks => {
+      this.tasks = tasks;
+    });
+  }
+
+  getTasksForProject(): Task[] {
+    return this.tasks;
   }
 }

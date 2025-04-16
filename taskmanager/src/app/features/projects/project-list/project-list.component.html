@@ -1,9 +1,20 @@
 <h2>Projektlista</h2>
+
+<input
+  type="text"
+  placeholder="Sök projekt..."
+  [value]="searchTerm()"
+  (input)="onSearch($any($event.target).value)"
+/>
+
 <ul>
-  <li *ngFor="let project of projects">
-    <a [routerLink]="[project.id]">{{ project.name }}</a><br />
-    <small>{{ project.description }}</small><br />
-    <small>Användare ID: {{ project.userId }}</small>
-    <hr />
+  <li *ngFor="let project of filteredProjects()">
+    <a [routerLink]="[project.id]">{{ project.name }}</a>
+    <p>{{ project.description }}</p>
+    <p>Användare ID: {{ project.userId }}</p>
   </li>
 </ul>
+
+<a routerLink="/projects/create">
+  <button>Skapa nytt projekt</button>
+</a>
