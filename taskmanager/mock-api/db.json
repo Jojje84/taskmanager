@@ -2,24 +2,33 @@
   "users": [
     {
       "id": 1,
-      "name": "Antony",
-      "role": "Admin",
+      "name": "Jorge",
+      "role": "Project Manager",
       "avatar": "path-to-avatar1.jpg",
-      "progress": 80
+      "progress": 80,
+      "completed": 80, 
+      "opened": 10, 
+      "overdue": 5
     },
     {
       "id": 2,
-      "name": "Anna",
-      "role": "User",
+      "name": "Michaela",
+      "role": "Designer",
       "avatar": "path-to-avatar2.jpg",
-      "progress": 60
+      "progress": 60,
+      "completed": 60, 
+      "opened": 30, 
+      "overdue": 10
     },
     {
       "id": 3,
-      "name": "Leo",
-      "role": "Leader",
+      "name": "Antony",
+      "role": "Programmer",
       "avatar": "path-to-avatar3.jpg",
-      "progress": 90
+      "progress": 90,
+      "completed": 90, 
+      "opened": 5, 
+      "overdue": 5
     }
   ],
   "projects": [

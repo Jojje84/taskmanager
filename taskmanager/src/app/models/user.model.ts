@@ -4,5 +4,8 @@ export interface User {
   role: string;
   avatar: string;
   progress: number;
+  completed: number;
+  opened: number;    
+  overdue: number; 
 }
 
