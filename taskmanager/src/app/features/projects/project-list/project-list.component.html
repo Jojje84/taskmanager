@@ -1,26 +1,29 @@
-<h2>Projektlista</h2>
-
-<!-- Sökfält -->
-<input
-  type="text"
-  placeholder="Sök projekt..."
-  [value]="searchTerm()"
-  (input)="onSearch($any($event.target).value)"
-/>
-
-<a routerLink="/projects/create">
-  <button>Skapa nytt projekt</button>
-</a>
-
-<!-- Projektlista -->
 <div class="project-wrapper">
-  <div
-    class="project-card"
-    *ngFor="let project of projects"
-    (click)="onProjectClick(project.id)"
-  >
-    <h4>{{ project.name }}</h4>
-    <p>{{ project.description }}</p>
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Sök projekt..."
+      class="search-input"
+      (input)="onSearch($any($event.target).value)"
+    />
+  </div>
+
+  <div>
+    <a routerLink="/projects/create">
+      <button>Skapa nytt projekt</button>
+    </a>
+  </div>
+
+  <!-- Projektlista -->
+  <div class="project-conatiner">
+    <div
+      class="project-card"
+      *ngFor="let project of projects"
+      (click)="onProjectClick(project.id)"
+    >
+      <h4>{{ project.name }}</h4>
+      <p>{{ project.description }}</p>
+    </div>
   </div>
 </div>
 

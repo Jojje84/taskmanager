@@ -1,26 +1,26 @@
-<h2>Uppgifter</h2>
-
-<!-- 🔎 Filtrering på status -->
-<nav class="filters">
-  <button (click)="setStatusFilter('all')">Alla</button>
-  <button (click)="setStatusFilter('active')">Aktiva</button>
-  <button (click)="setStatusFilter('completed')">Klara</button>
-</nav>
-
-<!-- 🔽 Sortering -->
-<h3>Sortering</h3>
-<nav class="sorters">
-  <button (click)="sortBy.set('title')">Titel</button>
-  <button (click)="sortBy.set('priority')">Prioritet</button>
-</nav>
-
-<!-- 🗂️ Lista på uppgifter -->
 <div class="task-wrapper">
-  <div class="task-card" *ngFor="let task of sortedAndFilteredTasks()">
-    <h4>{{ task.title }}</h4>
-    <p>Status: {{ task.status }}</p>
-    <p>Prioritet: {{ task.priority }}</p>
-    <button class="delete-btn" (click)="deleteTask(task.id)">🗑️</button>
+  <!-- 🔎 Filtrering på status -->
+  <nav class="filters">
+    <button (click)="setStatusFilter('all')">Alla</button>
+    <button (click)="setStatusFilter('active')">Aktiva</button>
+    <button (click)="setStatusFilter('completed')">Klara</button>
+  </nav>
+
+  <!-- 🔽 Sortering -->
+  <h3>Sortering</h3>
+  <nav class="sorters">
+    <button (click)="sortBy.set('title')">Titel</button>
+    <button (click)="sortBy.set('priority')">Prioritet</button>
+  </nav>
+
+  <!-- 🗂️ Lista på uppgifter -->
+  <div class="task-container">
+    <div class="task-card" *ngFor="let task of sortedAndFilteredTasks()">
+      <h4>{{ task.title }}</h4>
+      <p>Status: {{ task.status }}</p>
+      <p>Prioritet: {{ task.priority }}</p>
+      <button class="delete-btn" (click)="deleteTask(task.id)">🗑️</button>
+    </div>
   </div>
 </div>
 
