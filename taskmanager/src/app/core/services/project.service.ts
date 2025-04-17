@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Project } from '../../models/project.model'; // Adjust the import path as necessary
 import { Observable } from 'rxjs';
+import { Task } from '../../models/task.model'; // Add the import for Task model
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   private baseUrl = 'http://localhost:3000/projects';
+  private tasksUrl = 'http://localhost:3000/tasks'; // Assuming tasks are in a separate endpoint
 
   constructor(private http: HttpClient) {}
 
@@ -27,5 +29,14 @@ export class ProjectService {
 
   deleteProject(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  getProjectsByUser(userId: number): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.baseUrl}?userId=${userId}`);
+  }
+
+  // New method to get tasks for a project
+  getTasksForProject(projectId: number): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.tasksUrl}?projectId=${projectId}`);
   }
 }

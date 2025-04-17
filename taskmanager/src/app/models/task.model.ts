@@ -1,9 +1,9 @@
 export interface Task {
-    id: number;
-    title: string;
-    status: 'active' | 'completed';
-    priority: 'low' | 'medium' | 'high';
-    projectId: number;
-    deadline?: string;
-  }
-  
+  id: number;
+  title: string;
+  description?: string;
+  status: string; 
+  priority: string;  
+  projectId: number;
+  deadline?: string;
+}

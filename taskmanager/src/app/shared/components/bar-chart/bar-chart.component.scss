@@ -1,0 +1,15 @@
+:host {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    border-radius: 16px;
+    padding-top: 25%;
+  }
+  
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+  

@@ -1,0 +1,67 @@
+<h2>Dashboard</h2>
+
+<section class="dashboard-section">
+  <h3>User</h3>
+  <app-user-list (userSelected)="onUserSelected($event)"></app-user-list>
+</section>
+
+<section class="dashboard-section" *ngIf="selectedUser">
+  <h3>Statistics for {{ selectedUser.name }}</h3>
+
+  <div class="chart-wrapper">
+    <div class="stats-card">
+      <app-pie-chart
+        [totalTasks]="
+          selectedUser.completed + selectedUser.opened + selectedUser.overdue
+        "
+        [completedTasks]="selectedUser.completed"
+        [overdueTasks]="selectedUser.overdue"
+      >
+      </app-pie-chart>
+    </div>
+
+    <div class="stats-card">
+      <app-bar-chart [projectStats]="getProjectStatsFor()"> </app-bar-chart>
+    </div>
+
+    <div class="stats-card">
+      <app-summary
+        [totalTasks]="
+          selectedUser.completed + selectedUser.opened + selectedUser.overdue
+        "
+        [completedTasks]="selectedUser.completed"
+        [overdueTasks]="selectedUser.overdue"
+      >
+      </app-summary>
+    </div>
+  </div>
+</section>
+
+<!-- Section for Projects -->
+<section class="dashboard-section" *ngIf="selectedUser">
+  <h3>Projects</h3>
+
+  <div class="project-wrapper">
+      <div
+        class="project-card"
+        *ngFor="let project of userProjects"
+        (click)="onProjectClick(project.id)"
+      >
+        <h4>{{ project.name }}</h4>
+        <p>{{ project.description }}</p>
+      </div>
+  </div>
+</section>
+
+<!-- Section for Tasks under the selected Project -->
+<section class="dashboard-section" *ngIf="selectedProjectTasks.length > 0">
+  <h3>Tasks for selected Project</h3>
+  
+  <div class="task-wrapper">
+    <div class="task-card" *ngFor="let task of selectedProjectTasks">
+      <p>{{ task.title }}</p>
+      <p>Status: {{ task.status }}</p>
+      <p>Priority: {{ task.priority }}</p>
+    </div>
+  </div>
+</section>

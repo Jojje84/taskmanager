@@ -1,0 +1,135 @@
+.user-dashboard-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f4f4fc;
+}
+
+.user-chart-card {
+  width: 360px;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.user-chart-card:hover {
+  transform: scale(1.02);
+}
+
+.user-chart-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.user-chart-card p {
+  margin: 0 0 1rem 0;
+  background: #fff;
+}
+.chart-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  text-align: center;
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+}
+.stats-card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  flex: 1 1 300px;
+  max-width: 300px;
+  margin: 0;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.chart-row app-pie-chart,
+.chart-row app-bar-chart {
+  width: 100%;
+  max-width: 450px;
+}
+
+
+.project-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: left;
+  text-align: center;
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+}
+.project-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .project-card {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    width: 280px;
+  }
+  
+  .task-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: left;
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+  }
+  
+  .task-cards {
+    display: flex;
+     flex-direction: column; 
+    gap: 1rem;
+    justify-content: space-between;
+  }
+  
+  .task-card {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 25%;
+    min-width: 250px;
+  }
+  
+  .task-card h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .task-card p {
+    margin: 0.25rem 0;
+    color: #555;
+  }
+  

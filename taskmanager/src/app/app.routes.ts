@@ -6,9 +6,13 @@ import { TaskListComponent } from './features/tasks/task-list/task-list.componen
 import { TaskFormComponent } from './features/tasks/task-form/task-form.component';
 import { UserListComponent } from './features/dashboard/user-list/user-list.component';
 import { UserDetailComponent } from './features/dashboard/user-detail/user-detail.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component'; // 👈 NY
 
 export const routes: Routes = [
   { path: '', redirectTo: 'users', pathMatch: 'full' },
+
+  // Dashboard
+  { path: 'dashboard', component: DashboardComponent }, // 👈 NY
 
   // Projekt
   { path: 'projects', component: ProjectListComponent },
@@ -18,9 +22,9 @@ export const routes: Routes = [
   // Uppgifter
   { path: 'tasks', component: TaskListComponent },
   { path: 'tasks/create/:projectId', component: TaskFormComponent },
-  { path: 'tasks/edit/:id', component: TaskFormComponent }, // 🛠 lägg till denna
+  { path: 'tasks/edit/:id', component: TaskFormComponent },
 
-  // Användare / Dashboard
+  // Användare
   { path: 'users', component: UserListComponent },
   { path: 'users/:id', component: UserDetailComponent }
 ];
