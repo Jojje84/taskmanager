@@ -1,37 +1,96 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  OnChanges,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgChartsModule } from 'ng2-charts';
-import { ChartData, ChartType } from 'chart.js';
+import { NgChartsModule, BaseChartDirective } from 'ng2-charts'; // För diagram och BaseChartDirective
+import { ChartType } from 'chart.js'; // För korrekt typ på Chart
+import { Task } from '../../../models/task.model';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { TaskService } from '../../../core/services/task.service'; // Importera TaskService
 
 @Component({
   selector: 'app-pie-chart',
   standalone: true,
   imports: [CommonModule, NgChartsModule],
-  template: `
-    <canvas baseChart
-      [data]="pieChartData"
-      [type]="pieChartType">
-    </canvas>
-  `,
-  styleUrls: ['./pie-chart.component.scss']
+  templateUrl: './pie-chart.component.html',
+  styleUrls: ['./pie-chart.component.scss'],
 })
-export class PieChartComponent implements OnChanges {
-  @Input() totalTasks: number = 0;
-  @Input() completedTasks: number = 0;
-  @Input() overdueTasks: number = 0;
+export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() selectedUserId!: number | undefined; // Ta emot användarens ID som input
+  private subscription!: Subscription;
 
-  pieChartData: ChartData<'pie'> = {
-    labels: ['Completed', 'Pending', 'Overdue'],
-    datasets: [{ data: [0, 0, 0] }]
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined; // Lägg till en referens till diagrammet
+
+  pieChartData: any = {
+    labels: ['High Priority', 'Medium Priority', 'Low Priority'],
+    datasets: [
+      {
+        data: [0, 0, 0],
+      },
+    ],
   };
 
-  pieChartType: ChartType = 'pie';
+  pieChartType: ChartType = 'pie'; // Definiera korrekt ChartType för pie chart
+
+  constructor(private taskService: TaskService) {}
 
   ngOnChanges(): void {
-    const completed = this.completedTasks;
-    const overdue = this.overdueTasks;
-    const pending = Math.max(0, this.totalTasks - completed - overdue);
+    if (this.selectedUserId) {
+      this.fetchTasksForUser();
+    }
+  }
 
-    this.pieChartData.datasets[0].data = [completed, pending, overdue];
+  ngOnInit(): void {
+    if (this.selectedUserId) {
+      this.fetchTasksForUser();
+    }
+  }
+
+  fetchTasksForUser(): void {
+    if (this.selectedUserId === undefined) {
+      console.warn('No user selected for pie chart');
+      return;
+    }
+
+    this.subscription?.unsubscribe(); // Avsluta tidigare prenumeration om det finns en
+    this.subscription = this.taskService
+      .getTasksByUserId(this.selectedUserId)
+      .subscribe((tasks) => {
+        console.log('Tasks for pie chart:', tasks);
+        this.updateChart(tasks);
+      });
+  }
+
+  updateChart(tasks: Task[]): void {
+    const priorityCounts = { high: 0, medium: 0, low: 0 };
+
+    tasks.forEach((task) => {
+      if (task.priority === 'high') {
+        priorityCounts.high++;
+      } else if (task.priority === 'medium') {
+        priorityCounts.medium++;
+      } else if (task.priority === 'low') {
+        priorityCounts.low++;
+      }
+    });
+
+    this.pieChartData.datasets[0].data = [
+      priorityCounts.high,
+      priorityCounts.medium,
+      priorityCounts.low,
+    ];
+
+    if (this.chart) {
+      this.chart.update();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe(); // Rensa prenumerationen
   }
 }

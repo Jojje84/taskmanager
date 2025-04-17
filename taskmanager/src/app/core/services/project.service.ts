@@ -31,12 +31,7 @@ export class ProjectService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  getProjectsByUser(userId: number): Observable<Project[]> {
+  getProjectsByUserId(userId: number): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.baseUrl}?userId=${userId}`);
-  }
-
-  // New method to get tasks for a project
-  getTasksForProject(projectId: number): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.tasksUrl}?projectId=${projectId}`);
   }
 }

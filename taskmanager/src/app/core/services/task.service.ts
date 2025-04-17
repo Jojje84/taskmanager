@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
-  private baseUrl = 'http://localhost:3000/tasks';
+  private baseUrl = 'http://localhost:3000/tasks'; // Bas-URL för tasks
 
   constructor(private http: HttpClient) {}
 
@@ -13,8 +13,12 @@ export class TaskService {
     return this.http.get<Task[]>(this.baseUrl);
   }
 
-  getTasksByProjectId(projectId: number): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.baseUrl}?projectId=${projectId}`);
+  getTasksByProjectId(projectId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/tasks?projectId=${projectId}`);
+  }
+
+  getTasksByUserId(userId: number): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.baseUrl}?userId=${userId}`);
   }
 
   getTaskById(id: number): Observable<Task> {
@@ -31,5 +35,13 @@ export class TaskService {
 
   deleteTask(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  getAllTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(this.baseUrl); // Hämtar alla uppgifter
+  }
+
+  getTasksForProject(projectId: number): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.baseUrl}?projectId=${projectId}`);
   }
 }

@@ -4,25 +4,26 @@ import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../models/project.model';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Signal, signal, computed } from '@angular/core';  // För att hantera signal och computed
+import { Signal, signal, computed } from '@angular/core'; // För att hantera signal och computed
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './project-list.component.html',
-  styleUrls: ['./project-list.component.scss']
+  styleUrls: ['./project-list.component.scss'],
 })
 export class ProjectListComponent implements OnInit {
-  @Input() userId!: number;  // Lägg till Input för userId
+  @Input() userId!: number; // Lägg till Input för userId
 
-  searchTerm = signal('');  // Använd signal för att hålla sökterm
-  projects = signal<Project[]>([]);  // Signal för projekt
+  searchTerm = signal(''); // Använd signal för att hålla sökterm
+  projects = signal<Project[]>([]); // Signal för projekt
 
   filteredProjects: Signal<Project[]> = computed(() =>
-    this.projects().filter(p =>
-      p.name.toLowerCase().includes(this.searchTerm().toLowerCase()) ||
-      p.description?.toLowerCase().includes(this.searchTerm().toLowerCase())
+    this.projects().filter(
+      (p) =>
+        p.name.toLowerCase().includes(this.searchTerm().toLowerCase()) ||
+        p.description?.toLowerCase().includes(this.searchTerm().toLowerCase())
     )
   );
 
@@ -31,8 +32,9 @@ export class ProjectListComponent implements OnInit {
   ngOnInit(): void {
     // Hämta projekten baserat på userId istället för att hämta alla
     if (this.userId) {
-      this.projectService.getProjectsByUser(this.userId).subscribe(data => {
-        this.projects.set(data);  // Sätt projekten för den valda användaren
+      this.projectService.getProjectsByUserId(this.userId).subscribe((data) => {
+        console.log('Projects:', data);
+        this.projects.set(data); // Sätt projekten för den valda användaren
       });
     }
   }
