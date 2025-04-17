@@ -35,7 +35,7 @@
   <h3>Projects</h3>
   <app-project-list
     [projects]="userProjects"
-    [userId]="selectedUser?.id"
+    [userId]="selectedUser.id"
     (projectSelected)="onProjectClick($event)"
   ></app-project-list>
 </section>
