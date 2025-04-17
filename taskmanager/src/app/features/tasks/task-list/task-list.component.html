@@ -15,26 +15,14 @@
 </nav>
 
 <!-- 🗂️ Lista på uppgifter -->
-<ul>
-  <li *ngFor="let task of sortedAndFilteredTasks()">
-    <div>
-      <strong>{{ task.title }}</strong>
-      <small>📅 {{ task.deadline || 'Ingen deadline' }}</small>
-    </div>
-
-    <small>Status: {{ task.status }}</small>
-
-    <small>Prioritet:
-      <span [ngSwitch]="task.priority">
-        <span *ngSwitchCase="'high'">🔴</span>
-        <span *ngSwitchCase="'medium'">🟡</span>
-        <span *ngSwitchCase="'low'">🟢</span>
-      </span>
-    </small>
-
-    <button (click)="deleteTask(task.id)">🗑️</button>
-  </li>
-</ul>
+<div class="task-wrapper">
+  <div class="task-card" *ngFor="let task of sortedAndFilteredTasks()">
+    <h4>{{ task.title }}</h4>
+    <p>Status: {{ task.status }}</p>
+    <p>Prioritet: {{ task.priority }}</p>
+    <button class="delete-btn" (click)="deleteTask(task.id)">🗑️</button>
+  </div>
+</div>
 
 <!-- 📤 Exportera -->
-<app-export-tasks [tasks]="tasks()"></app-export-tasks>
+<app-export-tasks [tasks]="tasks"></app-export-tasks>

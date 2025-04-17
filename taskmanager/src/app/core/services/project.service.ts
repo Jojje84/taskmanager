@@ -4,10 +4,11 @@ import { Project } from '../../models/project.model'; // Adjust the import path 
 import { Observable } from 'rxjs';
 import { Task } from '../../models/task.model'; // Add the import for Task model
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root', // Gör denna service tillgänglig globalt
+})
 export class ProjectService {
-  private baseUrl = 'http://localhost:3000/projects';
-  private tasksUrl = 'http://localhost:3000/tasks'; // Assuming tasks are in a separate endpoint
+  private baseUrl = 'http://localhost:3000/projects'; // Uppdatera med din API-URL
 
   constructor(private http: HttpClient) {}
 

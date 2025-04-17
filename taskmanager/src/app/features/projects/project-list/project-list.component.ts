@@ -1,10 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  WritableSignal,
+  signal,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../models/project.model';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Signal, signal, computed } from '@angular/core'; // För att hantera signal och computed
 
 @Component({
   selector: 'app-project-list',
@@ -13,33 +20,41 @@ import { Signal, signal, computed } from '@angular/core'; // För att hantera si
   templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.scss'],
 })
-export class ProjectListComponent implements OnInit {
-  @Input() userId!: number; // Lägg till Input för userId
+export class ProjectListComponent {
+  @Input() userId!: number; // Tar emot userId från DashboardComponent
+  @Input() projects: Project[] = []; // Lägg till detta
+  @Output() projectSelected = new EventEmitter<number>(); // Skickar valt projekt tillbaka till DashboardComponent
 
-  searchTerm = signal(''); // Använd signal för att hålla sökterm
-  projects = signal<Project[]>([]); // Signal för projekt
+  searchTerm: WritableSignal<string> = signal(''); // Använd signal för att skapa en skrivbar signal
 
-  filteredProjects: Signal<Project[]> = computed(() =>
-    this.projects().filter(
-      (p) =>
-        p.name.toLowerCase().includes(this.searchTerm().toLowerCase()) ||
-        p.description?.toLowerCase().includes(this.searchTerm().toLowerCase())
-    )
-  );
+  filteredProjects = computed(() => {
+    const filtered = this.projects.filter((project) =>
+      project.name.toLowerCase().includes(this.searchTerm().toLowerCase())
+    );
+    console.log('Filtered projects:', filtered); // Debugging
+    return filtered;
+  });
 
   constructor(private projectService: ProjectService) {}
 
-  ngOnInit(): void {
-    // Hämta projekten baserat på userId istället för att hämta alla
+  ngOnChanges(): void {
     if (this.userId) {
-      this.projectService.getProjectsByUserId(this.userId).subscribe((data) => {
-        console.log('Projects:', data);
-        this.projects.set(data); // Sätt projekten för den valda användaren
-      });
+      this.loadProjects(this.userId);
     }
   }
 
+  loadProjects(userId: number): void {
+    this.projectService.getProjectsByUserId(userId).subscribe((projects) => {
+      console.log('Loaded projects:', projects); // Debugging
+      this.projects = projects;
+    });
+  }
+
   onSearch(term: string): void {
-    this.searchTerm.set(term);
+    this.searchTerm.set(term); // Uppdatera söktermen
+  }
+
+  onProjectClick(projectId: number): void {
+    this.projectSelected.emit(projectId); // Skicka projektets ID till DashboardComponent
   }
 }

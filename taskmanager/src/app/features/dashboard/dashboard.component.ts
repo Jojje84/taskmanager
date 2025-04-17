@@ -8,6 +8,8 @@ import { PieChartComponent } from '../../shared/components/pie-chart/pie-chart.c
 import { BarChartComponent } from '../../shared/components/bar-chart/bar-chart.component';
 import { SummaryComponent } from '../../shared/components/summary/summary.component';
 import { UserListComponent } from './user-list/user-list.component';
+import { ProjectListComponent } from '../projects/project-list/project-list.component';
+import { TaskListComponent } from '../tasks/task-list/task-list.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,6 +20,8 @@ import { UserListComponent } from './user-list/user-list.component';
     PieChartComponent,
     BarChartComponent,
     SummaryComponent,
+    ProjectListComponent, // Lägg till detta
+    TaskListComponent, // Lägg till detta
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -34,21 +38,21 @@ export class DashboardComponent {
 
   onUserSelected(user: any): void {
     this.selectedUser = user;
-    console.log('Selected user:', this.selectedUser); // Kontrollera att användaren är vald
+    console.log('Selected user:', this.selectedUser);
 
-    // Hämta projekt för användaren
     this.projectService.getProjectsByUserId(user.id).subscribe((projects) => {
-      console.log('Projects for selected user:', projects); // Kontrollera data
+      console.log('Projects for selected user:', projects);
       this.userProjects = projects;
     });
+
+    this.selectedProjectTasks = [];
   }
 
   onProjectClick(projectId: number): void {
     console.log('Project clicked:', projectId);
 
-    // Hämta uppgifter för det valda projektet
     this.taskService.getTasksForProject(projectId).subscribe((tasks) => {
-      console.log('Tasks for selected project:', tasks); // Kontrollera data
+      console.log('Tasks for selected project:', tasks);
       this.selectedProjectTasks = tasks;
     });
   }

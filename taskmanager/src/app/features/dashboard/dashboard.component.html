@@ -10,11 +10,11 @@
 
   <div class="chart-wrapper">
     <div class="stats-card">
-      <app-pie-chart [selectedUserId]="selectedUser?.id"></app-pie-chart>
+      <app-pie-chart [selectedUserId]="selectedUser.id"></app-pie-chart>
     </div>
 
     <div class="stats-card">
-      <app-bar-chart [selectedUserId]="selectedUser?.id"></app-bar-chart>
+      <app-bar-chart [selectedUserId]="selectedUser.id"></app-bar-chart>
     </div>
 
     <div class="stats-card">
@@ -33,28 +33,15 @@
 <!-- Section for Projects -->
 <section class="dashboard-section" *ngIf="selectedUser">
   <h3>Projects</h3>
-
-  <div class="project-wrapper">
-    <div
-      class="project-card"
-      *ngFor="let project of userProjects"
-      (click)="onProjectClick(project.id)"
-    >
-      <h4>{{ project.name }}</h4>
-      <p>{{ project.description }}</p>
-    </div>
-  </div>
+  <app-project-list
+    [projects]="userProjects"
+    [userId]="selectedUser?.id"
+    (projectSelected)="onProjectClick($event)"
+  ></app-project-list>
 </section>
 
-<!-- Section for Tasks under the selected Project -->
+<!-- Sektion för Tasks under det valda projektet -->
 <section class="dashboard-section" *ngIf="selectedProjectTasks.length > 0">
   <h3>Tasks for selected Project</h3>
-
-  <div class="task-wrapper">
-    <div class="task-card" *ngFor="let task of selectedProjectTasks">
-      <p>{{ task.title }}</p>
-      <p>Status: {{ task.status }}</p>
-      <p>Priority: {{ task.priority }}</p>
-    </div>
-  </div>
+  <app-task-list [tasks]="selectedProjectTasks"></app-task-list>
 </section>
