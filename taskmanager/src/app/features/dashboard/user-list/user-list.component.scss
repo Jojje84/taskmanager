@@ -134,3 +134,13 @@
   color: #777;
   margin-top: 5px;
 }
+
+.view-icon i {
+  font-size: 24px;  /* Justera storleken på ikonen */
+  cursor: pointer;
+  color: #007bff;  /* Ändra färgen på ikonen */
+}
+
+.view-icon i:hover {
+  color: #0056b3;  /* Färg vid hover */
+}
