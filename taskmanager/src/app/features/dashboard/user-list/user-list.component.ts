@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router'; // Importera Router här
 import { UserService } from '../../../core/services/user.service';
 import { User } from '../../../models/user.model';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],  // Lägg till RouterModule här om du inte redan har det
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss']
 })
@@ -21,7 +21,7 @@ export class UserListComponent implements OnInit {
   loading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {} // Lägg till Router i konstruktorn
 
   ngOnInit(): void {
     this.userService.getUsers().subscribe(
@@ -45,6 +45,14 @@ export class UserListComponent implements OnInit {
   }
 
   selectUser(user: User): void {
-    this.userSelected.emit(user);
+    this.userSelected.emit(user); // Sända vidare till förälder om du vill
+
+  }
+
+
+
+  // Programmatisk navigering till UserDetailComponent
+  goToUserDetail(userId: number): void {
+    this.router.navigate(['/user', userId]);  // Navigera till /user/:id
   }
 }

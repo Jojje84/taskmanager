@@ -4,12 +4,23 @@ import { ProjectFormComponent } from './features/projects/project-form/project-f
 import { ProjectDetailComponent } from './features/projects/project-detail/project-detail.component';
 import { TaskListComponent } from './features/tasks/task-list/task-list.component';
 import { TaskFormComponent } from './features/tasks/task-form/task-form.component';
-import { UserListComponent } from './features/dashboard/user-list/user-list.component';
-import { UserDetailComponent } from './features/dashboard/user-detail/user-detail.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component'; // 👈 NY
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'users', pathMatch: 'full' },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/dashboard/user-list/user-list.component').then(
+        (m) => m.UserListComponent
+      ),
+  },
+  {
+    path: 'user/:id',
+    loadComponent: () =>
+      import('./features/dashboard/user-detail/user-detail.component').then(
+        (m) => m.UserDetailComponent
+      ),
+  },
 
   // Dashboard
   { path: 'dashboard', component: DashboardComponent }, // 👈 NY
@@ -23,8 +34,4 @@ export const routes: Routes = [
   { path: 'tasks', component: TaskListComponent },
   { path: 'tasks/create/:projectId', component: TaskFormComponent },
   { path: 'tasks/edit/:id', component: TaskFormComponent },
-
-  // Användare
-  { path: 'users', component: UserListComponent },
-  { path: 'users/:id', component: UserDetailComponent }
 ];

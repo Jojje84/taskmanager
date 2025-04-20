@@ -1,16 +1,26 @@
-<h2>{{ user?.name }}</h2>
+<div *ngIf="user">
+  <h2>{{ user.name }}</h2>
+  <p>Role: {{ user.role }}</p>
+  <p>Progress: {{ user.progress }}%</p>
+  <p>Completed: {{ user.completed }}</p>
+  <p>Opened: {{ user.opened }}</p>
+  <p>Overdue: {{ user.overdue }}</p>
+</div>
+<ng-template #loading>
+  <p>Loading user details...</p>
+</ng-template>
 
 <!-- 📤 Export av användarens tasks -->
 <app-export-tasks [tasks]="tasks"></app-export-tasks>
 <app-export-projects [projects]="projects"></app-export-projects>
 
 <!-- 🔍 Sökfält -->
-<input type="text" [(ngModel)]="searchQuery" placeholder="Sök projekt...">
+<input type="text" [(ngModel)]="searchQuery" placeholder="Sök projekt..." />
 
 <h3>Projekt</h3>
 <ul>
   <li *ngFor="let project of filteredProjects()">
-    <strong (click)="toggleProject(project.id)" style="cursor: pointer;">
+    <strong (click)="toggleProject(project.id)" style="cursor: pointer">
       📁 {{ project.name }}
     </strong>
     <ul *ngIf="expandedProjectId === project.id">
