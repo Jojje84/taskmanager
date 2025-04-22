@@ -12,11 +12,14 @@ import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../models/project.model';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ProjectFormComponent } from '../project-form/project-form.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component'; // Importera ConfirmDialogComponent här
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, MatDialogModule],
   templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.scss'],
 })
@@ -35,7 +38,10 @@ export class ProjectListComponent {
     return filtered;
   });
 
-  constructor(private projectService: ProjectService) {}
+  constructor(
+    private projectService: ProjectService,
+    private dialog: MatDialog
+  ) {} // Lägg till MatDialog
 
   ngOnChanges(): void {
     if (this.userId) {
@@ -56,5 +62,19 @@ export class ProjectListComponent {
 
   onProjectClick(projectId: number): void {
     this.projectSelected.emit(projectId); // Skicka projektets ID till DashboardComponent
+  }
+
+  openProjectFormDialog(): void {
+    const dialogRef = this.dialog.open(ProjectFormComponent, {
+      width: '80vw',
+      height: '80vh',
+      data: { userId: this.userId }, // Skicka valt användar-ID
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.loadProjects(this.userId);
+      }
+    });
   }
 }

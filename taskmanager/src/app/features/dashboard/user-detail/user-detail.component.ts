@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, EventEmitter, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
@@ -9,8 +9,9 @@ import { Project } from '../../../models/project.model';
 import { Task } from '../../../models/task.model';
 import { ExportTasksComponent } from '../../../shared/components/export-tasks/export-tasks.component';
 import { ExportProjectsComponent } from '../../../shared/components/export-projects/export-projects.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-user-detail',
@@ -18,6 +19,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     ExportTasksComponent,
     ExportProjectsComponent,
   ],
@@ -25,18 +27,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./user-detail.component.scss'],
 })
 export class UserDetailComponent implements OnInit {
-  user?: User;
+  @Output() userUpdated = new EventEmitter<User>();
+
+  userForm!: FormGroup;
+  user!: User;
   projects: Project[] = [];
   tasks: Task[] = [];
   expandedProjectId: number | null = null;
 
   searchQuery: string = ''; // Updated to a regular string
-
-  filteredProjects = (): Project[] => {
-    return this.projects.filter((project) =>
-      project.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-  };
 
   selectedUser: any;
   userProjects: any[] = [];
@@ -45,6 +44,7 @@ export class UserDetailComponent implements OnInit {
   private projectMap: Map<number, string> = new Map();
 
   constructor(
+    private fb: FormBuilder,
     private userService: UserService,
     private projectService: ProjectService,
     private taskService: TaskService,
@@ -56,6 +56,15 @@ export class UserDetailComponent implements OnInit {
     this.userService.getUserById(this.data.id).subscribe((user) => {
       this.user = user;
       console.log('User:', this.user);
+
+      this.userForm = this.fb.group({
+        name: [user.name],
+        role: [user.role],
+        progress: [user.progress],
+        completed: [user.completed],
+        opened: [user.opened],
+        overdue: [user.overdue],
+      });
 
       this.projectService.getProjectsByUserId(user.id).subscribe((projects) => {
         this.projects = projects;
@@ -87,19 +96,13 @@ export class UserDetailComponent implements OnInit {
     );
   }
 
-  getProgressPercent(projectId: number): number {
-    const total = this.getTasksForProject(projectId).length;
-    const done = this.getCompletedTasks(projectId).length;
-    return total > 0 ? Math.round((done / total) * 100) : 0;
-  }
-
   toggleProject(projectId: number) {
     this.expandedProjectId =
       this.expandedProjectId === projectId ? null : projectId;
   }
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(this.user); // Skicka tillbaka den uppdaterade användaren
   }
   onUserSelected(user: any): void {
     this.selectedUser = user;
@@ -112,10 +115,9 @@ export class UserDetailComponent implements OnInit {
 
     this.selectedProjectTasks = [];
   }
-
-  onProjectClick(projectId: number): void {
-    this.selectedProjectTasks = this.tasks.filter(
-      (task) => task.projectId === projectId
+  get filteredProjects(): Project[] {
+    return this.projects.filter((project) =>
+      project.name.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
@@ -124,5 +126,33 @@ export class UserDetailComponent implements OnInit {
       (project) => project.id === Number(projectId)
     );
     return project ? project.name : 'Unknown';
+  }
+
+  onSubmit(): void {
+    if (this.userForm.valid) {
+      const updatedUser = { ...this.user, ...this.userForm.value };
+      this.userService.updateUser(updatedUser).subscribe((updatedData) => {
+        // Uppdatera användarens data lokalt
+        this.user = updatedData;
+
+        // Emittera händelsen för att meddela föräldern
+        this.userUpdated.emit(updatedData);
+
+        console.log('User updated successfully!', updatedData);
+      });
+    }
+  }
+
+  getPriorityClass(priority: string): string {
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return 'priority-high';
+      case 'normal':
+        return 'priority-normal';
+      case 'low':
+        return 'priority-low';
+      default:
+        return '';
+    }
   }
 }

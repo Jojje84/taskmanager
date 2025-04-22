@@ -24,15 +24,25 @@ export class ProjectService {
     return this.http.post<Project>(this.baseUrl, project);
   }
 
-  updateProject(id: number, project: Project): Observable<Project> {
-    return this.http.put<Project>(`${this.baseUrl}/${id}`, project);
-  }
-
-  deleteProject(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
-  }
-
   getProjectsByUserId(userId: number): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.baseUrl}?userId=${userId}`);
   }
+  addProject(project: Project): Observable<Project> {
+    const newProject: Project = {
+      id: 0, // Json-server auto-genererar ett nytt id
+      name: project.name,
+      description: project.description,
+      userId: project.userId,
+    };
+    return this.http.post<Project>(this.baseUrl, newProject);
+  }
+
+  deleteProject(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  updateProject(project: Project): Observable<Project> {
+    return this.http.put<Project>(`${this.baseUrl}/${project.id}`, project);
+  }
+  
 }

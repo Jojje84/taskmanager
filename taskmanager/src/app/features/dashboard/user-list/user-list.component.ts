@@ -6,6 +6,8 @@ import { User } from '../../../models/user.model';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UserDetailComponent } from '../user-detail/user-detail.component'; // Importera UserDetailComponent här
+import { UserFormComponent } from '../user-form/user-form.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component'; // Importera ConfirmDialogComponent här
 
 @Component({
   selector: 'app-user-list',
@@ -44,10 +46,11 @@ export class UserListComponent implements OnInit {
   }
 
   filterUsers(): void {
+    const query = this.searchQuery.toLowerCase();
     this.filteredUsers = this.users.filter(
       (user) =>
-        user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        user.role.toLowerCase().includes(this.searchQuery.toLowerCase())
+        user.name.toLowerCase().includes(query) ||
+        user.role.toLowerCase().includes(query)
     );
   }
 
@@ -59,11 +62,72 @@ export class UserListComponent implements OnInit {
   goToUserDetail(userId: number): void {
     this.router.navigate(['/user', userId]); // Navigera till /user/:id
   }
-  openUserDetailDialog(user: any): void {
-    this.dialog.open(UserDetailComponent, {
-      width: '80vw', // 80% av viewportens bredd
+  openUserDetailDialog(user: User): void {
+    const dialogRef = this.dialog.open(UserDetailComponent, {
+      width: '80vw', 
       height: '80vh',
       data: { id: user.id }, // Skicka användardata till dialogen
     });
+
+    dialogRef.componentInstance.userUpdated.subscribe((updatedUser: User) => {
+      // Uppdatera användarlistan med den uppdaterade användaren
+      const index = this.users.findIndex((u) => u.id === updatedUser.id);
+      if (index !== -1) {
+        this.users[index] = updatedUser;
+        this.filteredUsers[index] = updatedUser;
+      }
+    });
+  }
+
+  openUserFormDialog(): void {
+    const dialogRef = this.dialog.open(UserFormComponent, {
+      width: '80vw',
+      height: '80vh',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // Kontrollera om en ny användare har lagts till och
+      // hämta listan med användare på nytt.
+      if (result === 'refresh') {
+        this.refreshUsers();
+      }
+    });
+  }
+
+  refreshUsers(): void {
+    this.userService.getUsers().subscribe((users) => {
+      this.users = users;
+      this.filteredUsers = users;
+    });
+  }
+
+  deleteUser(user: User): void {
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Radera användare',
+          content: 'Är du säker på att du vill radera den här användaren?',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        console.log('Bekräftelsevärde:', confirmed, 'för user', user);
+        if (confirmed) {
+          // Om id:t är en "bummer", tvinga det till ett nummer
+          const idToDelete = Number(user.id);
+          this.userService.deleteUser(idToDelete).subscribe(
+            () => {
+              this.users = this.users.filter(
+                (u) => Number(u.id) !== idToDelete
+              );
+              this.filteredUsers = this.filteredUsers.filter(
+                (u) => Number(u.id) !== idToDelete
+              );
+              console.log('Användare raderad');
+            },
+            (error) => console.error('Delete error:', error)
+          );
+        }
+      });
   }
 }

@@ -1,82 +1,98 @@
-<!-- Användarens information -->
-<div *ngIf="user">
-  <h2>Edit for user: {{ user.name }}</h2>
-  <p>Role: {{ user.role }}</p>
-  <p>Progress: {{ user.progress }}%</p>
-  <p>Completed: {{ user.completed }}</p>
-  <p>Opened: {{ user.opened }}</p>
-  <p>Overdue: {{ user.overdue }}</p>
+<div class="UserEdit">
+  <div *ngIf="user">
+    <h2>Edit User: {{ user.name }}</h2>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="form-container">
+      <div class="form-group">
+        <label>Name:</label>
+        <input formControlName="name" type="text" />
+      </div>
+      <div class="form-group">
+        <label>Role:</label>
+        <input formControlName="role" type="text" />
+      </div>
+      <div class="form-group">
+        <label>Progress:</label>
+        <input formControlName="progress" type="number" />
+      </div>
+      <div class="form-group">
+        <label>Completed:</label>
+        <input formControlName="completed" type="number" />
+      </div>
+      <div class="form-group">
+        <label>Opened:</label>
+        <input formControlName="opened" type="number" />
+      </div>
+      <div class="form-group">
+        <label>Overdue:</label>
+        <input formControlName="overdue" type="number" />
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-save">Save Changes</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Sektion för Alla Projekt -->
+  <section class="dashboard-section" *ngIf="projects.length > 0">
+    <h3>All Projects</h3>
+    <app-export-projects [projects]="projects"></app-export-projects>
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Sök projekt..." />
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Project Name</th>
+          <th>Description</th>
+          <th>User ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let project of projects">
+          <td>{{ project.name }}</td>
+          <td>{{ project.description }}</td>
+          <td>{{ project.userId }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <ng-template #noProjects>
+    <p>Denna användare har inga projekt ännu.</p>
+  </ng-template>
+
+  <section *ngIf="projects.length === 0">
+    <p>Denna användare har inga projekt ännu.</p>
+  </section>
+
+  <!-- Sektion för Tasks -->
+  <section class="dashboard-section" *ngIf="tasks.length > 0">
+    <h3>All Tasks</h3>
+    <app-export-tasks [tasks]="tasks"></app-export-tasks>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Project Name</th>
+          <th>Priority</th>
+          <th>User ID</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks">
+          <td>{{ task.title }}</td>
+          <td>{{ task.projectName }}</td>
+          <td [ngClass]="getPriorityClass(task.priority)">
+            {{ task.priority }}
+          </td>
+          <td>{{ task.userId }}</td>
+          <td>{{ task.status }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section *ngIf="tasks.length === 0">
+    <p>Denna användare har inga tasks ännu.</p>
+  </section>
 </div>
-
-<!-- Sektion för Alla Projekt -->
-<section class="dashboard-section" *ngIf="projects.length > 0">
-  <h3>All Projects</h3>
-  <table class="project-table">
-    <thead>
-      <tr>
-        <th>Project Name</th>
-        <th>Description</th>
-        <th>User ID</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let project of projects">
-        <td>{{ project.name }}</td>
-        <td>{{ project.description }}</td>
-        <td>{{ project.userId }}</td>
-      </tr>
-    </tbody>
-  </table>
-</section>
-
-<ng-template #noProjects>
-  <p>Denna användare har inga projekt ännu.</p>
-</ng-template>
-
-<section *ngIf="projects.length === 0">
-  <p>Denna användare har inga projekt ännu.</p>
-</section>
-
-<!-- Sektion för Tasks -->
-<section class="dashboard-section" *ngIf="tasks.length > 0">
-  <h3>All Tasks</h3>
-  <table class="task-table">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Project Name</th>
-        <th>Priority</th>
-        <th>User ID</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let task of tasks">
-        <td>{{ task.title }}</td>
-        <td>{{ task.projectName }}</td>
-        <td>{{ task.priority }}</td>
-        <td>{{ task.userId }}</td>
-        <td>{{ task.status }}</td>
-      </tr>
-    </tbody>
-  </table>
-</section>
-
-<ng-template #noTasks>
-  <p>Denna användare har inga tasks ännu.</p>
-</ng-template>
-
-<section *ngIf="tasks.length === 0">
-  <p>Denna användare har inga tasks ännu.</p>
-</section>
-
-<ng-template #loading>
-  <p>Loading user details...</p>
-</ng-template>
-
-<!-- Exportera användarens tasks och projekt -->
-<app-export-tasks [tasks]="tasks"></app-export-tasks>
-<app-export-projects [projects]="projects"></app-export-projects>
-
-<!-- 🔍 Sökfält -->
-<input type="text" [(ngModel)]="searchQuery" placeholder="Sök projekt..." />

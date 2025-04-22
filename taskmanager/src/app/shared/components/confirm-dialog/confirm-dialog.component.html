@@ -1,1 +1,9 @@
-<p>confirm-dialog works!</p>
+<h2 mat-dialog-title>{{ data.title || "Bekräfta" }}</h2>
+<mat-dialog-content>
+  <p>{{ data.content || "Är du säker på att du vill radera detta?" }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Avbryt</button>
+  <button mat-button color="warn" (click)="confirm()">Radera</button>
+</mat-dialog-actions>
+

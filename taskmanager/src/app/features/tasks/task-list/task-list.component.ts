@@ -68,7 +68,12 @@ export class TaskListComponent implements OnInit, OnChanges {
 
   deleteTask(id: number): void {
     this.dialog
-      .open(ConfirmDialogComponent)
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Radera task',
+          content: 'Är du säker på att du vill radera denna task?',
+        },
+      })
       .afterClosed()
       .subscribe((confirmed) => {
         if (confirmed) {

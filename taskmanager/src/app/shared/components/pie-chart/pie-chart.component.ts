@@ -27,7 +27,7 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined; // Lägg till en referens till diagrammet
 
   pieChartData: any = {
-    labels: ['High Priority', 'Medium Priority', 'Low Priority'],
+    labels: ['High Priority', 'Normal Priority', 'Low Priority'],
     datasets: [
       {
         data: [0, 0, 0],
@@ -70,11 +70,11 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
     const priorityCounts = { high: 0, medium: 0, low: 0 };
 
     tasks.forEach((task) => {
-      if (task.priority === 'high') {
+      if (task.priority === 'High') {
         priorityCounts.high++;
-      } else if (task.priority === 'medium') {
+      } else if (task.priority === 'Normal') {
         priorityCounts.medium++;
-      } else if (task.priority === 'low') {
+      } else if (task.priority === 'Low') {
         priorityCounts.low++;
       }
     });

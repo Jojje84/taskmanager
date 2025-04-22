@@ -1,14 +1,14 @@
 <div class="team-wrapper">
-  <div class="search-container">
+
+  <div class="top-container">
     <input
       [(ngModel)]="searchQuery"
       placeholder="Search a member"
       class="search-input"
       (input)="filterUsers()"
     />
+    <button class="btn-newuser" (click)="openUserFormDialog()">New User</button>
   </div>
-
-  <button class="btn-newuser">New User</button>
 
   <div class="user-container">
     <div class="user-card" *ngFor="let user of filteredUsers">
@@ -49,7 +49,7 @@
         <button class="btn-edit" (click)="openUserDetailDialog(user)">
           Edit
         </button>
-        <button class="btn-delete">Delete</button>
+        <button class="btn-delete" (click)="deleteUser(user)">Delete</button>
       </div>
     </div>
   </div>

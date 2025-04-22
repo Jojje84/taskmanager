@@ -1,14 +1,27 @@
 <p>project-form works!</p>
-<h2>Skapa projekt</h2>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <label for="name">Namn:</label>
-  <input id="name" formControlName="name" />
-
-  <label for="description">Beskrivning:</label>
-  <input id="description" formControlName="description" />
-
-  <label for="userId">Användare ID:</label>
-  <input id="userId" type="number" formControlName="userId" />
-
-  <button type="submit" [disabled]="form.invalid">Skapa</button>
+<h2>Skapa nytt projekt</h2>
+<form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Namn:</label>
+    <input
+      formControlName="name"
+      type="text"
+      placeholder="Ange projektets namn"
+    />
+  </div>
+  <div>
+    <label>Beskrivning:</label>
+    <textarea
+      formControlName="description"
+      placeholder="Ange en kort beskrivning"
+    ></textarea>
+  </div>
+  <div>
+    <label>Användare ID:</label>
+    <input formControlName="userId" type="number" [disabled]="true" />
+  </div>
+  <div>
+    <button type="submit" [disabled]="projectForm.invalid">Skapa</button>
+    <button type="button" (click)="onCancel()">Avbryt</button>
+  </div>
 </form>

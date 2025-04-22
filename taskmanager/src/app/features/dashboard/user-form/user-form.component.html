@@ -1,0 +1,35 @@
+<h2>Add New User</h2>
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Name:</label>
+    <input formControlName="name" type="text" />
+  </div>
+  <div>
+    <label>Role:</label>
+    <input formControlName="role" type="text" />
+  </div>
+  <div>
+    <label>Avatar:</label>
+    <input formControlName="avatar" type="text" placeholder="Avatar URL" />
+  </div>
+  <div>
+    <label>Progress:</label>
+    <input formControlName="progress" type="number" />
+  </div>
+  <div>
+    <label>Completed:</label>
+    <input formControlName="completed" type="number" />
+  </div>
+  <div>
+    <label>Opened:</label>
+    <input formControlName="opened" type="number" />
+  </div>
+  <div>
+    <label>Overdue:</label>
+    <input formControlName="overdue" type="number" />
+  </div>
+  <div>
+    <button type="submit">Add User</button>
+    <button type="button" (click)="onCancel()">Cancel</button>
+  </div>
+</form>
