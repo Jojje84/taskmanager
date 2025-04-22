@@ -7,4 +7,5 @@ export interface Task {
   projectId: number;
   userId: number;
   deadline?: string;
+  projectName?: string; 
 }

@@ -46,10 +46,11 @@
       </div>
       <div class="user-actions">
         <button class="btn-view" (click)="selectUser(user)">View</button>
-        <button class="btn-edit"  [routerLink]="['/user', user.id]">Edit</button>
+        <button class="btn-edit" (click)="openUserDetailDialog(user)">
+          Edit
+        </button>
         <button class="btn-delete">Delete</button>
       </div>
-      <button class="btn-edit" (click)="openEditUserDialog(user)">Edit</button>
     </div>
   </div>
 </div>
