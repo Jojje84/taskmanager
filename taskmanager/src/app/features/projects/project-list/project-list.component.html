@@ -1,15 +1,12 @@
 <div class="project-wrapper">
-  <div class="search-container">
+  <div class="top-container">
     <input
       type="text"
       placeholder="Sök projekt..."
       class="search-input"
       (input)="onSearch($any($event.target).value)"
     />
-  </div>
-
-  <div>
-    <button class="btn-newtask" (click)="openProjectFormDialog()">New Project</button>
+    <button class="btn-newproject" (click)="openProjectFormDialog()">New Project</button>
   </div>
 
   <!-- Projektlista -->
@@ -17,7 +14,6 @@
     <div
       class="project-card"
       *ngFor="let project of projects">
-    >
       <h4>{{ project.name }}</h4>
       <p>{{ project.description }}</p>
 
