@@ -15,6 +15,8 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component'; // Importera ConfirmDialogComponent här
+import { ProjectDetailComponent } from '../project-detail/project-detail.component'; // Importera ProjectDetailComponent här  
+
 
 @Component({
   selector: 'app-project-list',
@@ -29,19 +31,25 @@ export class ProjectListComponent {
   @Output() projectSelected = new EventEmitter<number>(); // Skickar valt projekt tillbaka till DashboardComponent
 
   searchTerm: WritableSignal<string> = signal(''); // Använd signal för att skapa en skrivbar signal
+  loading: boolean = false; // Lägg till denna rad
+  filteredProjectsList: Project[] = []; // Lista för filtrerade projekt
 
   filteredProjects = computed(() => {
-    const filtered = this.projects.filter((project) =>
-      project.name.toLowerCase().includes(this.searchTerm().toLowerCase())
+    const term = this.searchTerm().toLowerCase();
+    if (!term) {
+      return this.projects; // Returnera alla projekt om söktermen är tom
+    }
+    return this.projects.filter(
+      (project) =>
+        project.name.toLowerCase().includes(term) ||
+        project.description.toLowerCase().includes(term)
     );
-    console.log('Filtered projects:', filtered); // Debugging
-    return filtered;
   });
 
   constructor(
     private projectService: ProjectService,
     private dialog: MatDialog
-  ) {} // Lägg till MatDialog
+  ) {}
 
   ngOnChanges(): void {
     if (this.userId) {
@@ -50,14 +58,22 @@ export class ProjectListComponent {
   }
 
   loadProjects(userId: number): void {
-    this.projectService.getProjectsByUserId(userId).subscribe((projects) => {
-      console.log('Loaded projects:', projects); // Debugging
-      this.projects = projects;
-    });
+    this.loading = true; // Starta loader
+    this.projectService.getProjectsByUserId(userId).subscribe(
+      (projects) => {
+        this.projects = projects;
+        this.loading = false; // Stoppa loader
+      },
+      (error) => {
+        console.error('Failed to load projects:', error);
+        this.loading = false; // Stoppa loader även vid fel
+      }
+    );
   }
 
   onSearch(term: string): void {
     this.searchTerm.set(term); // Uppdatera söktermen
+    this.filterProjects(); // Filtrera projekten
   }
 
   onProjectClick(projectId: number): void {
@@ -76,5 +92,46 @@ export class ProjectListComponent {
         this.loadProjects(this.userId);
       }
     });
+  }
+
+  deleteProject(projectId: number): void {
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Delete Project',
+          content: 'Are you sure you want to delete this project?',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.projectService.deleteProject(projectId).subscribe(() => {
+            this.projects = this.projects.filter((p) => p.id !== projectId);
+            console.log('Project deleted:', projectId);
+          });
+        }
+      });
+  }
+
+  editProject(project: Project): void {
+    const dialogRef = this.dialog.open(ProjectDetailComponent, {
+      width: '80vw',
+      height: '35vh',
+      data: { project }, // Skicka projektdata till dialogen
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      // Om något behöver uppdateras efter att dialogen stängts, gör det här
+      console.log('Project detail dialog closed');
+    });
+  }
+
+  filterProjects(): void {
+    const query = this.searchTerm().toLowerCase(); // Hämta söktermen från signalen
+    this.filteredProjectsList = this.projects.filter(
+      (project) =>
+        project.name.toLowerCase().includes(query) ||
+        project.description.toLowerCase().includes(query)
+    );
   }
 }

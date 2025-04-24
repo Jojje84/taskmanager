@@ -1,37 +1,60 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Project } from '../../../models/project.model';
 import { Task } from '../../../models/task.model';
-import { ProjectService } from '../../../core/services/project.service';
 import { TaskService } from '../../../core/services/task.service';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ProjectService } from '../../../core/services/project.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule,],
+  imports: [CommonModule, ReactiveFormsModule], // Lägg till ReactiveFormsModule här
   templateUrl: './project-detail.component.html',
   styleUrls: ['./project-detail.component.scss']
 })
 export class ProjectDetailComponent implements OnInit {
   project?: Project;
   tasks: Task[] = [];
+  projectForm!: FormGroup;
 
   constructor(
-    private route: ActivatedRoute,
+    @Inject(MAT_DIALOG_DATA) public data: { project: Project },
+    private taskService: TaskService,
     private projectService: ProjectService,
-    private taskService: TaskService
+    private fb: FormBuilder // Lägg till FormBuilder här
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-
-    this.projectService.getProjectById(id).subscribe(project => {
+    this.projectService.getProjectById(this.data.project.id).subscribe((project: Project) => {
       this.project = project;
+      console.log('Project:', this.project);
 
-      this.taskService.getTasksByProjectId(project.id).subscribe(tasks => {
+      // Initiera formuläret med projektdata
+      this.projectForm = this.fb.group({
+        name: [project.name],
+        description: [project.description],
+        userId: [project.userId],
+      });
+
+      // Hämta uppgifter kopplade till projektet
+      this.taskService.getTasksByProjectId(this.project.id).subscribe(tasks => {
         this.tasks = tasks;
       });
     });
+  }
+  onSubmit(): void {
+    if (this.projectForm.valid) {
+      const updatedProject = { ...this.project, ...this.projectForm.value };
+      this.projectService.updateProject(updatedProject).subscribe((updatedData: Project) => {
+        // Uppdatera projektets data lokalt
+        this.project = updatedData;
+  
+        // Logga uppdateringen
+        console.log('Project updated successfully!', updatedData);
+      });
+    }
   }
 }

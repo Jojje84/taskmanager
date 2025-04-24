@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject, EventEmitter, Output } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
 import { ProjectService } from '../../../core/services/project.service';

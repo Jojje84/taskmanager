@@ -44,5 +44,4 @@ export class ProjectService {
   updateProject(project: Project): Observable<Project> {
     return this.http.put<Project>(`${this.baseUrl}/${project.id}`, project);
   }
-  
 }
