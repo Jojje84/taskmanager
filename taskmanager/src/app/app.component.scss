@@ -1,30 +1,16 @@
-.main-header {
-    background-color: #282c34;
-    padding: 1rem;
-    color: white;
-    display: flex;
-    justify-content: center;
-  
-    nav {
-      display: flex;
-      gap: 1.5rem;
-  
-      a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-  
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
+.main-content {
+  transition: margin-left 0.3s ease; /* Smidig övergång vid öppning/stängning */
+  padding: 20px;
+  color: rgb(8, 8, 8);
+  background-color: #f4f4f4; /* Bakgrundsfärg för huvudområdet */
+
+  justify-content: center;
+
+  &.sidebar-open {
+    margin-left: 250px; /* Marginal när sidomenyn är öppen */
   }
-  
-  .main-content {
-    padding: 2rem;
-    max-width: 100%;
-    margin: 0 auto;
-    background-color: #f0f0fc; /* Din bakgrundsfärg */
+
+  &.sidebar-closed {
+    margin-left: 60px; /* Marginal när sidomenyn är stängd */
   }
-  
+}

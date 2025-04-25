@@ -1,12 +1,4 @@
-<header class="main-header">
-    <nav>
-      <a routerLink="/dashboard">📊 Dashboard</a>
-      <a routerLink="/projects">📁 Projekt</a>
-      <a routerLink="/tasks">📋 Uppgifter</a>
-      <a routerLink="/users">🧑‍💼 Användare</a>
-    </nav>
-  </header>
-  
-  <main class="main-content">
-    <router-outlet></router-outlet>
-  </main>
+<app-sidebar (sidebarToggle)="isSidebarOpen = $event"></app-sidebar>
+<main class="main-content" [class.sidebar-open]="isSidebarOpen" [class.sidebar-closed]="!isSidebarOpen">
+  <router-outlet></router-outlet>
+</main>

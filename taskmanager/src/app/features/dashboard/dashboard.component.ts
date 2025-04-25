@@ -7,7 +7,7 @@ import { ProjectService } from '../../core/services/project.service';
 import { PieChartComponent } from '../../shared/components/pie-chart/pie-chart.component'; // Importera PieChartComponent
 import { BarChartComponent } from '../../shared/components/bar-chart/bar-chart.component';
 import { SummaryComponent } from '../../shared/components/summary/summary.component';
-import { UserListComponent } from './user-list/user-list.component';
+import { UserListComponent } from '../user/user-list/user-list.component';
 import { ProjectListComponent } from '../projects/project-list/project-list.component';
 import { TaskListComponent } from '../tasks/task-list/task-list.component';
 
