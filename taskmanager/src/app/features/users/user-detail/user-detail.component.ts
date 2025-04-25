@@ -59,10 +59,7 @@ export class UserDetailComponent implements OnInit {
       this.userForm = this.fb.group({
         name: [user.name],
         role: [user.role],
-        progress: [user.progress],
-        completed: [user.completed],
-        opened: [user.opened],
-        overdue: [user.overdue],
+     
       });
 
       this.projectService.getProjectsByUserId(user.id).subscribe((projects) => {

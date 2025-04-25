@@ -16,10 +16,10 @@
       <p>{{ task.priority }}</p>
 
       <div class="task-actions">
-        <button class="btn-edit" (click)="openTaskFormDialog(task)">
-          Edit
-        </button>
-        <button class="btn-delete" (click)="deleteTask(task.id)">Delete</button>
+        <button class="btn btn-edit" (click)="openTaskFormDialog(task)">
+          <img src="edit-icon.png" alt="Edit" class="btn-icon" /></button>
+        <button class="btn btn-delete" (click)="deleteTask(task.id)">
+          <img src="delete-icon.png" alt="Delete" class="btn-icon" /></button>
       </div>
     </div>
   </div>

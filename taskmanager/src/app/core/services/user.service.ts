@@ -26,10 +26,6 @@ export class UserService {
       name: user.name,
       role: user.role,
       avatar: user.avatar,
-      progress: user.progress || 0,
-      completed: user.completed || 0,
-      opened: user.opened || 0,
-      overdue: user.overdue || 0,
     };
     return this.http.post<User>(this.baseUrl, newUser);
   }

@@ -5,6 +5,39 @@
   border-radius: 15px;
 }
 
+.top-container {
+  margin-bottom: 10px;
+  padding: 0 0 0 25px;
+  gap: 10px;
+  display: flex;
+}
+
+.search-input {
+  padding: 10px;
+  width: 200px;
+  font-size: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+.btn-newtask {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-newtask:hover {
+  background-color: #0056b3;
+}
+
 
 h2 {
   margin-bottom: 1rem;
@@ -82,3 +115,33 @@ ul {
   }
 
 }
+
+.task-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Mellanrum mellan knapparna */
+  margin-top: 10px;
+}
+
+.btn {
+  display: flex;
+  align-items: center; /* Centrera text och bild vertikalt */
+  justify-content: center;
+  gap: 8px; /* Mellanrum mellan bild och text */
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #007bff; /* Blå bakgrund vid hover */
+  color: white; /* Vit text vid hover */
+  transform: translateY(-2px); /* Lyft knappen något vid hover */
+}
+
+
+

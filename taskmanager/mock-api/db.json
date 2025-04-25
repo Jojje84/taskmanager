@@ -4,31 +4,22 @@
       "id": 1,
       "name": "Jorge",
       "role": "Project Manager",
-      "avatar": "path-to-avatar1.jpg",
-      "progress": 80,
-      "completed": 80,
-      "opened": 10,
-      "overdue": 5
+      "avatar": "path-to-avatar1.jpg"
+   
     },
     {
       "id": 2,
       "name": "Michaela",
       "role": "Design",
-      "avatar": "path-to-avatar1.jpg",
-      "progress": 80,
-      "completed": 80,
-      "opened": 10,
-      "overdue": 5
+      "avatar": "path-to-avatar1.jpg"
+
     },
     {
       "id": 3,
       "name": "Antony",
       "role": "Programmer",
-      "avatar": "path-to-avatar3.jpg",
-      "progress": 90,
-      "completed": 90,
-      "opened": 5,
-      "overdue": 5
+      "avatar": "path-to-avatar3.jpg"
+
     }
   ],
   "projects": [

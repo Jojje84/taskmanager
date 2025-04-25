@@ -8,6 +8,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UserDetailComponent } from '../user-detail/user-detail.component'; // Importera UserDetailComponent här
 import { UserFormComponent } from '../user-form/user-form.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component'; // Importera ConfirmDialogComponent här
+import { TaskService } from '../../../core/services/task.service';
+import { Task } from '../../../models/task.model'; // Importera Task
+import { Project } from '../../../models/project.model'; // Importera Project-modellen
+import { ProjectService } from '../../../core/services/project.service'; // Importera ProjectService här
 
 @Component({
   selector: 'app-user-list',
@@ -24,9 +28,13 @@ export class UserListComponent implements OnInit {
   searchQuery: string = '';
   loading: boolean = true;
   errorMessage: string = '';
+  tasks: Task[] = []; // Lägg till denna egenskap
+  projects: Project[] = [];
 
   constructor(
     private userService: UserService,
+    private taskService: TaskService,
+    private projectService: ProjectService, // Lägg till ProjectService här
     private router: Router,
     private dialog: MatDialog
   ) {} // Lägg till Router i konstruktorn
@@ -41,6 +49,22 @@ export class UserListComponent implements OnInit {
       (error) => {
         this.errorMessage = 'Failed to load users';
         this.loading = false;
+      }
+    );
+
+    this.projectService.getProjects().subscribe((data) => {
+      this.projects = data;
+      console.log('Projects loaded:', this.projects); // Logga för att verifiera
+    });
+
+    // Hämta uppgifter från TaskService
+    this.taskService.getTasks().subscribe(
+      (data) => {
+        this.tasks = data;
+        console.log('Tasks loaded:', this.tasks); // Logga för att verifiera
+      },
+      (error) => {
+        console.error('Failed to load tasks:', error);
       }
     );
   }
@@ -129,5 +153,30 @@ export class UserListComponent implements OnInit {
           );
         }
       });
+  }
+
+  getTaskPercentage(user: User, priority: string): number {
+    const userTasks = this.tasks.filter(
+      (task: Task) => task.userId === user.id
+    );
+    const totalTasks = userTasks.length;
+
+    if (totalTasks === 0) {
+      return 0; // Om användaren inte har några uppgifter
+    }
+
+    const filteredTasks = userTasks.filter(
+      (task: Task) => task.priority === priority
+    );
+    return (filteredTasks.length / totalTasks) * 100; // Beräkna procentandel
+  }
+  getProjectCount(user: User): number {
+    // Kontrollera att du har en lista över projekt (projects) laddad
+    return this.projects.filter((project) => project.userId === user.id).length;
+  }
+
+  getTaskCount(user: User): number {
+    // Kontrollera att du har en lista över uppgifter (tasks) laddad
+    return this.tasks.filter((task) => task.userId === user.id).length;
   }
 }
