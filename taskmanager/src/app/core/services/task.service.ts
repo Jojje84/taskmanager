@@ -44,4 +44,8 @@ export class TaskService {
   getTasksForProject(projectId: number): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.baseUrl}?projectId=${projectId}`);
   }
+
+  addTask(task: any): Observable<any> {
+    return this.http.post('/api/tasks', task); // Mock-API URL
+  }
 }

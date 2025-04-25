@@ -43,5 +43,9 @@
 <!-- Sektion för Tasks under det valda projektet -->
 <section class="dashboard-section" *ngIf="selectedProjectTasks.length > 0">
   <h3>Tasks for selected Project</h3>
-  <app-task-list [tasks]="selectedProjectTasks"></app-task-list>
+  <app-task-list
+    [tasks]="selectedProjectTasks"
+    [userId]="selectedUser?.id || 0"
+    [projectId]="selectedProjectId || 0"
+  ></app-task-list>
 </section>

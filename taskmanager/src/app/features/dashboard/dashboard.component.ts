@@ -2,14 +2,15 @@ import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BehaviorSubject } from 'rxjs'; // Importera BehaviorSubject
 import { User } from '../../models/user.model';
-import { TaskService } from '../../core/services/task.service';
-import { ProjectService } from '../../core/services/project.service';
+import { Task } from '../../models/task.model'; // Importera Task-modellen
+import { Project } from '../../models/project.model'; // Importera Project-modellen
 import { PieChartComponent } from '../../shared/components/pie-chart/pie-chart.component'; // Importera PieChartComponent
 import { BarChartComponent } from '../../shared/components/bar-chart/bar-chart.component';
 import { SummaryComponent } from '../../shared/components/summary/summary.component';
 import { UserListComponent } from '../users/user-list/user-list.component';
 import { ProjectListComponent } from '../projects/project-list/project-list.component';
 import { TaskListComponent } from '../tasks/task-list/task-list.component';
+import { TaskService } from '../../core/services/task.service'; // Importera TaskService
 
 @Component({
   selector: 'app-dashboard',
@@ -20,40 +21,47 @@ import { TaskListComponent } from '../tasks/task-list/task-list.component';
     PieChartComponent,
     BarChartComponent,
     SummaryComponent,
-    ProjectListComponent, // Lägg till detta
-    TaskListComponent, // Lägg till detta
+    ProjectListComponent,
+    TaskListComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent {
   selectedUser: User | null = null;
-  userProjects: any[] = []; // Kontrollera att detta är korrekt initialiserat
-  selectedProjectTasks: any[] = []; // Lägg till rätt typ baserat på din data
+  selectedProjectId: number | null = null;
+  selectedProjectTasks: Task[] = [];
+  userProjects: Project[] = [];
 
-  constructor(
-    private projectService: ProjectService,
-    private taskService: TaskService
-  ) {}
+  constructor(private taskService: TaskService) {} // Injicera TaskService
 
-  onUserSelected(user: any): void {
+  onUserSelected(user: User): void {
     this.selectedUser = user;
     console.log('Selected user:', this.selectedUser);
-
-    this.projectService.getProjectsByUserId(user.id).subscribe((projects) => {
-      console.log('Projects for selected user:', projects);
-      this.userProjects = projects;
-    });
-
-    this.selectedProjectTasks = [];
+    this.loadUserProjects(user.id);
   }
 
   onProjectClick(projectId: number): void {
-    console.log('Project clicked:', projectId);
+    this.selectedProjectId = projectId;
+    console.log('Selected project ID:', this.selectedProjectId);
+    this.loadTasksForProject(projectId);
+  }
 
-    this.taskService.getTasksForProject(projectId).subscribe((tasks) => {
-      console.log('Tasks for selected project:', tasks);
-      this.selectedProjectTasks = tasks;
-    });
+  loadTasksForProject(projectId: number): void {
+    console.log('Loading tasks for project ID:', projectId);
+    this.taskService.getTasksForProject(projectId).subscribe(
+      (tasks: Task[]) => {
+        this.selectedProjectTasks = tasks;
+        console.log('Tasks loaded for project:', tasks);
+      },
+      (error: any) => {
+        console.error('Failed to load tasks for project:', error);
+      }
+    );
+  }
+
+  loadUserProjects(userId: number): void {
+    console.log('Loading projects for user ID:', userId);
+    // Här kan du anropa en tjänst för att hämta projekten
   }
 }

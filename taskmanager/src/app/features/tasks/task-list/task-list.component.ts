@@ -22,9 +22,10 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
   styleUrls: ['./task-list.component.scss'],
 })
 export class TaskListComponent {
-  @Input() userId!: number; // Tar emot userId från DashboardComponent
+  @Input() userId!: number; // Tar emot användar-ID från DashboardComponent
   @Input() tasks: Task[] = []; // Lista över uppgifter
   @Output() taskSelected = new EventEmitter<number>(); // Skickar valt task-ID tillbaka till DashboardComponent
+  @Input() projectId!: number; // Tar emot projekt-ID från DashboardComponent
 
   searchTerm: WritableSignal<string> = signal(''); // Signal för söktermen
   loading: boolean = false; // Indikator för laddning
@@ -39,7 +40,7 @@ export class TaskListComponent {
       (task) =>
         task.title.toLowerCase().includes(term) ||
         task.status.toLowerCase().includes(term) ||
-        task.priority.toLowerCase().includes(term) 
+        task.priority.toLowerCase().includes(term)
     );
   });
 
@@ -71,10 +72,19 @@ export class TaskListComponent {
   }
 
   openTaskFormDialog(task?: Task): void {
+    if (!this.userId || !this.projectId) {
+      console.error('User ID or Project ID is missing');
+      return;
+    }
+
     const dialogRef = this.dialog.open(TaskFormComponent, {
       width: '80vw',
       height: '80vh',
-      data: { userId: this.userId, task: task || null }, // Skicka userId och eventuell uppgift
+      data: {
+        userId: this.userId, // Skicka användar-ID
+        projectId: this.projectId, // Skicka projekt-ID
+        task: task || null, // Skicka uppgiften om den finns (för redigering)
+      },
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -109,7 +119,7 @@ export class TaskListComponent {
       (task) =>
         task.title.toLowerCase().includes(query) ||
         task.status.toLowerCase().includes(query) ||
-        task.priority.toLowerCase().includes(query) 
+        task.priority.toLowerCase().includes(query)
     );
   }
 }

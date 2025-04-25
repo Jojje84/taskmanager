@@ -1,24 +1,37 @@
-<h2>Lägg till uppgift</h2>
+<h2>Skapa ny uppgift</h2>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <label for="title">Titel:</label>
-  <input id="title" type="text" formControlName="title" required>
+<form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="title">Titel:</label>
+    <input
+      id="title"
+      type="text"
+      formControlName="title"
+      placeholder="Ange uppgiftens titel"
+      required
+    />
+  </div>
 
-  <label for="status">Status:</label>
-  <select id="status" formControlName="status">
-    <option value="active">Aktiv</option>
-    <option value="completed">Klar</option>
-  </select>
+  <div>
+    <label for="description">Beskrivning:</label>
+    <textarea
+      id="description"
+      formControlName="description"
+      placeholder="Ange en kort beskrivning"
+    ></textarea>
+  </div>
 
-  <label for="priority">Prioritet:</label>
-  <select id="priority" formControlName="priority">
-    <option value="low">Låg</option>
-    <option value="medium">Mellan</option>
-    <option value="high">Hög</option>
-  </select>
+  <div>
+    <label for="priority">Prioritet:</label>
+    <select id="priority" formControlName="priority">
+      <option value="low">Låg</option>
+      <option value="medium">Mellan</option>
+      <option value="high">Hög</option>
+    </select>
+  </div>
 
-  <label for="deadline">Deadline:</label>
-  <input id="deadline" type="date" formControlName="deadline">
-
-  <button type="submit">Skapa</button>
+  <div>
+    <button type="submit" [disabled]="taskForm.invalid">Skapa</button>
+    <button type="button" (click)="onCancel()">Avbryt</button>
+  </div>
 </form>
