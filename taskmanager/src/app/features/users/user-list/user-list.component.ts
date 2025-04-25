@@ -64,7 +64,7 @@ export class UserListComponent implements OnInit {
   }
   openUserDetailDialog(user: User): void {
     const dialogRef = this.dialog.open(UserDetailComponent, {
-      width: '80vw', 
+      width: '80vw',
       height: '80vh',
       data: { id: user.id }, // Skicka användardata till dialogen
     });
