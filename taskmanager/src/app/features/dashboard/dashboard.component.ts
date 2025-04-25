@@ -37,14 +37,16 @@ export class DashboardComponent {
 
   onUserSelected(user: User): void {
     this.selectedUser = user;
+    this.selectedProjectId = null; // Återställ valt projekt
+    this.selectedProjectTasks = []; // Återställ uppgifter
     console.log('Selected user:', this.selectedUser);
-    this.loadUserProjects(user.id);
+    this.loadUserProjects(user.id); // Ladda projekt för den nya användaren
   }
 
   onProjectClick(projectId: number): void {
     this.selectedProjectId = projectId;
     console.log('Selected project ID:', this.selectedProjectId);
-    this.loadTasksForProject(projectId);
+    this.loadTasksForProject(projectId); // Ladda uppgifter för det valda projektet
   }
 
   loadTasksForProject(projectId: number): void {

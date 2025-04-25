@@ -13,7 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule], // Lägg till ReactiveFormsModule här
   templateUrl: './project-detail.component.html',
-  styleUrls: ['./project-detail.component.scss']
+  styleUrls: ['./project-detail.component.scss'],
 })
 export class ProjectDetailComponent implements OnInit {
   project?: Project;
@@ -28,33 +28,39 @@ export class ProjectDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectService.getProjectById(this.data.project.id).subscribe((project: Project) => {
-      this.project = project;
-      console.log('Project:', this.project);
+    this.projectService
+      .getProjectById(this.data.project.id)
+      .subscribe((project: Project) => {
+        this.project = project;
+        console.log('Project:', this.project);
 
-      // Initiera formuläret med projektdata
-      this.projectForm = this.fb.group({
-        name: [project.name],
-        description: [project.description],
-        userId: [project.userId],
-      });
+        // Initiera formuläret med projektdata
+        this.projectForm = this.fb.group({
+          name: [project.name],
+          description: [project.description],
+          userId: [project.userId],
+        });
 
-      // Hämta uppgifter kopplade till projektet
-      this.taskService.getTasksByProjectId(this.project.id).subscribe(tasks => {
-        this.tasks = tasks;
+        // Hämta uppgifter kopplade till projektet
+        this.taskService
+          .getTasksForProject(this.project.id)
+          .subscribe((tasks: Task[]) => {
+    
+          });
       });
-    });
   }
   onSubmit(): void {
     if (this.projectForm.valid) {
       const updatedProject = { ...this.project, ...this.projectForm.value };
-      this.projectService.updateProject(updatedProject).subscribe((updatedData: Project) => {
-        // Uppdatera projektets data lokalt
-        this.project = updatedData;
-  
-        // Logga uppdateringen
-        console.log('Project updated successfully!', updatedData);
-      });
+      this.projectService
+        .updateProject(updatedProject)
+        .subscribe((updatedData: Project) => {
+          // Uppdatera projektets data lokalt
+          this.project = updatedData;
+
+          // Logga uppdateringen
+          console.log('Project updated successfully!', updatedData);
+        });
     }
   }
 }

@@ -13,11 +13,12 @@ export class TaskService {
     return this.http.get<Task[]>(this.baseUrl);
   }
 
-  getTasksByProjectId(projectId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/tasks?projectId=${projectId}`);
+  getTasksForProject(projectId: number): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.baseUrl}?projectId=${projectId}`);
   }
 
   getTasksByUserId(userId: number): Observable<Task[]> {
+    console.log('Fetching tasks for user ID:', userId); // Logga för felsökning
     return this.http.get<Task[]>(`${this.baseUrl}?userId=${userId}`);
   }
 
@@ -29,23 +30,22 @@ export class TaskService {
     return this.http.post<Task>(this.baseUrl, task);
   }
 
-  updateTask(id: number, task: Task): Observable<Task> {
-    return this.http.put<Task>(`${this.baseUrl}/${id}`, task);
+  addTask(task: Task): Observable<Task> {
+    const newTask: Task = {
+      id: 0, // Json-server auto-genererar ett nytt id
+      title: task.title,
+      status: task.status || 'active', // Standardstatus
+      priority: task.priority || 'medium', // Standardprioritet
+      projectId: task.projectId,
+      userId: task.userId,
+    };
+    return this.http.post<Task>(this.baseUrl, newTask);
   }
 
   deleteTask(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
-
-  getAllTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.baseUrl); // Hämtar alla uppgifter
-  }
-
-  getTasksForProject(projectId: number): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.baseUrl}?projectId=${projectId}`);
-  }
-
-  addTask(task: any): Observable<any> {
-    return this.http.post('/api/tasks', task); // Mock-API URL
+  updateTask(id: number, task: Task): Observable<Task> {
+    return this.http.put<Task>(`${this.baseUrl}/${id}`, task);
   }
 }

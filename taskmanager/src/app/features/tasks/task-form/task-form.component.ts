@@ -36,7 +36,6 @@ export class TaskFormComponent implements OnInit {
   ) {
     this.taskForm = this.fb.group({
       title: ['', Validators.required], // Titel är obligatorisk
-      description: ['', [Validators.required, Validators.minLength(5)]], // Beskrivning är obligatorisk och minst 5 tecken
       priority: ['medium', Validators.required], // Prioritet är obligatorisk
       projectId: [
         this.data.projectId,

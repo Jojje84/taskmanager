@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Project } from '../../models/project.model'; // Adjust the import path as necessary
 import { Observable } from 'rxjs';
-import { Task } from '../../models/task.model'; // Add the import for Task model
 
-@Injectable({
-  providedIn: 'root', // Gör denna service tillgänglig globalt
-})
+@Injectable({ providedIn: 'root'})
+
 export class ProjectService {
   private baseUrl = 'http://localhost:3000/projects'; // Uppdatera med din API-URL
 
