@@ -13,6 +13,10 @@
     <button (click)="sortBy.set('priority')">Prioritet</button>
   </nav>
 
+  <!-- 📤 Exportera -->
+<app-export-tasks [tasks]="tasks"></app-export-tasks>
+
+
   <!-- 🗂️ Lista på uppgifter -->
   <div class="task-container">
     <div class="task-card" *ngFor="let task of sortedAndFilteredTasks()">
@@ -24,5 +28,3 @@
   </div>
 </div>
 
-<!-- 📤 Exportera -->
-<app-export-tasks [tasks]="tasks"></app-export-tasks>
