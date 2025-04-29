@@ -5,21 +5,30 @@
       "name": "Jorge",
       "role": "Project Manager",
       "avatar": "path-to-avatar1.jpg"
-   
     },
     {
       "id": 2,
       "name": "Michaela",
       "role": "Design",
-      "avatar": "path-to-avatar1.jpg"
-
+      "avatar": "path-to-avatar2.jpg"
     },
     {
       "id": 3,
       "name": "Antony",
       "role": "Programmer",
       "avatar": "path-to-avatar3.jpg"
-
+    },
+    {
+      "id": 4,
+      "name": "Sophia",
+      "role": "Tester",
+      "avatar": "path-to-avatar4.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Daniel",
+      "role": "DevOps",
+      "avatar": "path-to-avatar5.jpg"
     }
   ],
   "projects": [
@@ -40,6 +49,18 @@
       "name": "Reseblogg",
       "description": "Bygg en blogg",
       "userId": 3
+    },
+    {
+      "id": 4,
+      "name": "E-handelsplattform",
+      "description": "Utveckla en plattform för e-handel",
+      "userId": 4
+    },
+    {
+      "id": 5,
+      "name": "AI Chatbot",
+      "description": "Bygg en AI-driven chatbot",
+      "userId": 5
     }
   ],
   "tasks": [
@@ -73,6 +94,38 @@
       "status": "active",
       "priority": "High",
       "projectId": 3,
+      "userId": 3
+    },
+    {
+      "id": 5,
+      "title": "Testa betalningsflödet",
+      "status": "active",
+      "priority": "High",
+      "projectId": 4,
+      "userId": 4
+    },
+    {
+      "id": 6,
+      "title": "Implementera CI/CD",
+      "status": "completed",
+      "priority": "Normal",
+      "projectId": 5,
+      "userId": 5
+    },
+    {
+      "id": 7,
+      "title": "Designa UI för chatbot",
+      "status": "active",
+      "priority": "High",
+      "projectId": 5,
+      "userId": 2
+    },
+    {
+      "id": 8,
+      "title": "Skriv dokumentation",
+      "status": "active",
+      "priority": "Low",
+      "projectId": 1,
       "userId": 3
     }
   ]

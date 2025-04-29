@@ -1,0 +1,48 @@
+.home-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.info-section, 
+.features-section, 
+.news-section, 
+.stats-section, 
+.cta-section, 
+.testimonials-section, 
+.contact-section, 
+.faq-section {
+  margin-bottom: 20px; /* Konsistent mellanrum mellan sektionerna */
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.features-section ul, 
+.news-section ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.features-section ul li, 
+.news-section li {
+  margin-bottom: 10px; /* Konsistent mellanrum mellan listobjekten */
+}
+
+.news-section li {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.stats-section .stats {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.stats-section .stats div {
+  margin: 10px;
+}
