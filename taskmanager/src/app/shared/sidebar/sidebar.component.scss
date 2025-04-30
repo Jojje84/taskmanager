@@ -9,6 +9,10 @@
   transition: width 0.3s ease;
   overflow: hidden;
   padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  
 
   &.open {
     width: 250px;
@@ -74,3 +78,44 @@ nav {
   transition: opacity 0.3s ease, visibility 0s 0.3s;
 }
 
+.logo-container {
+  display: flex; /* Använd flexbox för att placera logotypen och texten */
+  flex-direction: column; /* Standard: Placera logotypen och texten vertikalt */
+  align-items: center; /* Centrera horisontellt */
+  justify-content: center; /* Centrera vertikalt */
+  padding: 30px 20px; /* Lägg till mer avstånd från kanterna */
+  margin-top: auto; /* Flytta logotypen längst ner */
+  transition: flex-direction 0.3s ease, padding 0.3s ease; /* Smidig övergång för layoutändring */
+}
+
+.sidebar.open .logo-container {
+  flex-direction: row; /* Ändra till horisontell layout när menyn är öppen */
+  justify-content: flex-start; /* Placera innehållet till vänster */
+  padding-left: 30px; /* Lägg till mer avstånd från vänsterkanten */
+}
+
+.logo {
+  max-width: 50px; /* Justera storleken på logotypen */
+  height: auto;
+  margin-bottom: 15px; /* Öka mellanrummet mellan logotypen och texten i vertikalt läge */
+  transition: margin 0.3s ease; /* Smidig övergång för marginaländring */
+}
+
+.sidebar.open .logo {
+  margin-bottom: 0; /* Ta bort marginalen i horisontellt läge */
+  margin-right: 15px; /* Lägg till mer mellanrum mellan logotypen och texten */
+}
+
+.logo-text {
+  font-size: 1rem;
+  color: #ecf0f1; /* Textfärg */
+  font-weight: bold;
+  text-align: center; /* Centrera texten */
+  display: none; /* Dölj texten som standard */
+  transition: display 0.3s ease, text-align 0.3s ease; /* Smidig övergång för visning */
+}
+
+.sidebar.open .logo-text {
+  display: inline; /* Visa texten endast när menyn är öppen */
+  text-align: left; /* Justera texten till vänster */
+}

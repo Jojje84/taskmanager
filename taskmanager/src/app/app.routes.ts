@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { HomeComponent } from './features/home/home.component';
+import { ListComponent } from './features/list/list.component';
+import { DownloadComponent } from './features/download/download.component';
+
 
 export const routes: Routes = [
   // Omdirigera roten till "dashboard"
@@ -13,5 +16,9 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
 
   // List
+  { path: 'list', component: ListComponent },
+
+  // Download
+  { path: 'download', component: DownloadComponent },
  
 ];

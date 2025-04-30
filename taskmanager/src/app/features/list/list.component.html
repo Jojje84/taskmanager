@@ -1,0 +1,67 @@
+<div class="list-wrapper">
+  <!-- Dropdown för att välja användare -->
+  <div class="user-select">
+    <label for="userDropdown">Select User:</label>
+    <select
+      id="userDropdown"
+      [(ngModel)]="selectedUser"
+      (change)="onUserChange()"
+    >
+      <option [ngValue]="null">All Users</option>
+      <!-- Alternativ för att visa allt -->
+      <option *ngFor="let user of users" [value]="user.id">
+        {{ user.name }}
+      </option>
+    </select>
+  </div>
+
+  <section  class="user-projects-tasks"><br>
+    <!-- Tabell för projekt -->
+    <div class="projects-table" *ngIf="selectedUserProjects.length > 0">
+      <h3>All Projects</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Project Name</th>
+            <th>Description</th>
+            <th>User Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let project of selectedUserProjects">
+            <td>{{ project.name }}</td>
+            <td>{{ project.description }}</td>
+            <td>{{ getUserName(project.userId) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tabell för uppgifter -->
+    <div class="tasks-table" *ngIf="selectedUserTasks.length > 0"><br>
+      <h3>All Tasks</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Project Name</th>
+            <th>Priority</th>
+            <th>User Name</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let task of selectedUserTasks">
+            <td>{{ task.title }}</td>
+            <td>{{ task.projectName }}</td>
+            <td [ngClass]="'priority ' + task.priority.toLowerCase()">
+              {{ task.priority }}
+            </td>
+            <td>{{ task.userName }}</td>
+            <td>{{ task.status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
