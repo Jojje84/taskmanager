@@ -1,22 +1,22 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router'; // Importera Router här
+import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { User } from '../../../models/user.model';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { UserDetailComponent } from '../user-detail/user-detail.component'; // Importera UserDetailComponent här
+import { UserDetailComponent } from '../user-detail/user-detail.component';
 import { UserFormComponent } from '../user-form/user-form.component';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component'; // Importera ConfirmDialogComponent här
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { TaskService } from '../../../core/services/task.service';
-import { Task } from '../../../models/task.model'; // Importera Task
-import { Project } from '../../../models/project.model'; // Importera Project-modellen
-import { ProjectService } from '../../../core/services/project.service'; // Importera ProjectService här
+import { Task } from '../../../models/task.model';
+import { Project } from '../../../models/project.model';
+import { ProjectService } from '../../../core/services/project.service';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, MatDialogModule], // Lägg till RouterModule här om du inte redan har det
+  imports: [CommonModule, RouterModule, FormsModule, MatDialogModule],
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
 })
@@ -28,45 +28,37 @@ export class UserListComponent implements OnInit {
   searchQuery: string = '';
   loading: boolean = true;
   errorMessage: string = '';
-  tasks: Task[] = []; // Lägg till denna egenskap
+  tasks: Task[] = [];
   projects: Project[] = [];
 
   constructor(
     private userService: UserService,
     private taskService: TaskService,
-    private projectService: ProjectService, // Lägg till ProjectService här
+    private projectService: ProjectService,
     private router: Router,
     private dialog: MatDialog
-  ) {} // Lägg till Router i konstruktorn
+  ) {}
 
   ngOnInit(): void {
-    this.userService.getUsers().subscribe(
-      (data) => {
+    this.userService.getUsers().subscribe({
+      next: (data) => {
         this.users = data;
         this.filteredUsers = data;
         this.loading = false;
       },
-      (error) => {
+      error: () => {
         this.errorMessage = 'Failed to load users';
         this.loading = false;
-      }
-    );
-
-    this.projectService.getProjects().subscribe((data) => {
-      this.projects = data;
-      console.log('Projects loaded:', this.projects); // Logga för att verifiera
+      },
     });
 
-    // Hämta uppgifter från TaskService
-    this.taskService.getTasks().subscribe(
-      (data) => {
-        this.tasks = data;
-        console.log('Tasks loaded:', this.tasks); // Logga för att verifiera
-      },
-      (error) => {
-        console.error('Failed to load tasks:', error);
-      }
-    );
+    this.projectService.fetchProjects().subscribe();
+
+    this.taskService.fetchTasks().subscribe(); // viktig för signal
+
+    effect(() => {
+      this.tasks = this.taskService.allTasks(); // reaktiv bindning
+    });
   }
 
   filterUsers(): void {
@@ -79,22 +71,21 @@ export class UserListComponent implements OnInit {
   }
 
   selectUser(user: User): void {
-    this.userSelected.emit(user); // Sända vidare till förälder om du vill
+    this.userSelected.emit(user);
   }
 
-  // Programmatisk navigering till UserDetailComponent
   goToUserDetail(userId: number): void {
-    this.router.navigate(['/user', userId]); // Navigera till /user/:id
+    this.router.navigate(['/user', userId]);
   }
+
   openUserDetailDialog(user: User): void {
     const dialogRef = this.dialog.open(UserDetailComponent, {
       width: '80vw',
       height: '80vh',
-      data: { id: user.id }, // Skicka användardata till dialogen
+      data: { id: user.id },
     });
 
     dialogRef.componentInstance.userUpdated.subscribe((updatedUser: User) => {
-      // Uppdatera användarlistan med den uppdaterade användaren
       const index = this.users.findIndex((u) => u.id === updatedUser.id);
       if (index !== -1) {
         this.users[index] = updatedUser;
@@ -110,8 +101,6 @@ export class UserListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // Kontrollera om en ny användare har lagts till och
-      // hämta listan med användare på nytt.
       if (result === 'refresh') {
         this.refreshUsers();
       }
@@ -135,48 +124,40 @@ export class UserListComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((confirmed) => {
-        console.log('Bekräftelsevärde:', confirmed, 'för user', user);
         if (confirmed) {
-          // Om id:t är en "bummer", tvinga det till ett nummer
           const idToDelete = Number(user.id);
-          this.userService.deleteUser(idToDelete).subscribe(
-            () => {
-              this.users = this.users.filter(
-                (u) => Number(u.id) !== idToDelete
-              );
-              this.filteredUsers = this.filteredUsers.filter(
-                (u) => Number(u.id) !== idToDelete
-              );
-              console.log('Användare raderad');
-            },
-            (error) => console.error('Delete error:', error)
-          );
+          this.userService.deleteUser(idToDelete).subscribe(() => {
+            this.users = this.users.filter((u) => Number(u.id) !== idToDelete);
+            this.filteredUsers = this.filteredUsers.filter(
+              (u) => Number(u.id) !== idToDelete
+            );
+          });
         }
       });
   }
 
-  getTaskPercentage(user: User, priority: string): number {
-    const userTasks = this.tasks.filter(
-      (task: Task) => task.userId === user.id
-    );
-    const totalTasks = userTasks.length;
-
-    if (totalTasks === 0) {
-      return 0; // Om användaren inte har några uppgifter
-    }
-
-    const filteredTasks = userTasks.filter(
-      (task: Task) => task.priority === priority
-    );
-    return (filteredTasks.length / totalTasks) * 100; // Beräkna procentandel
-  }
   getProjectCount(user: User): number {
-    // Kontrollera att du har en lista över projekt (projects) laddad
-    return this.projects.filter((project) => project.userId === user.id).length;
+    return this.projectService.allProjects().filter((p) => p.userId === user.id)
+      .length;
   }
 
   getTaskCount(user: User): number {
-    // Kontrollera att du har en lista över uppgifter (tasks) laddad
-    return this.tasks.filter((task) => task.userId === user.id).length;
+    return this.taskService.allTasks().filter((t) => t.userId === user.id)
+      .length;
+  }
+
+  getTaskPercentage(user: User, priority: string): number {
+    const userTasks = this.taskService
+      .allTasks()
+      .filter((t) => t.userId === user.id);
+    const total = userTasks.length;
+    if (total === 0) return 0;
+    return (
+      (userTasks.filter(
+        (t) => t.priority.toLowerCase() === priority.toLowerCase()
+      ).length /
+        total) *
+      100
+    );
   }
 }

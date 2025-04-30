@@ -19,34 +19,24 @@
           <span class="user-name">{{ user.name }}</span>
           <span class="user-role">{{ user.role }}</span>
           <span class="user-overview">
-            Projects: {{ getProjectCount(user) }} | Tasks:
-            {{ getTaskCount(user) }}
+            Projects: {{ getProjectCount(user) }} | Tasks: {{ getTaskCount(user) }}
           </span>
-        </div>
-      </div>
-
-      <div class="stats">
-        <h3>Task Priority</h3>
-        <div class="task-progress">
-          <div
-            class="progress-bar high"
-            [style.width.%]="getTaskPercentage(user, 'High')"
-          >
-            {{ getTaskPercentage(user, "High") | number : "1.0-0" }}%
+          
+          <div class="stats">
+            <h3>Task Priority</h3>
+            <div class="task-progress">
+              <div class="progress-bar high" [style.width.%]="getTaskPercentage(user, 'High')">
+                {{ getTaskPercentage(user, 'High') | number: '1.0-0' }}%
+              </div>
+              <div class="progress-bar normal" [style.width.%]="getTaskPercentage(user, 'Normal')">
+                {{ getTaskPercentage(user, 'Normal') | number: '1.0-0' }}%
+              </div>
+              <div class="progress-bar low" [style.width.%]="getTaskPercentage(user, 'Low')">
+                {{ getTaskPercentage(user, 'Low') | number: '1.0-0' }}%
+              </div>
+            </div>
           </div>
-          <div
-            class="progress-bar normal"
-            [style.width.%]="getTaskPercentage(user, 'Normal')"
-          >
-            {{ getTaskPercentage(user, "Normal") | number : "1.0-0" }}%
-          </div>
-          <div
-            class="progress-bar low"
-            [style.width.%]="getTaskPercentage(user, 'Low')"
-          >
-            {{ getTaskPercentage(user, "Low") | number : "1.0-0" }}%
-          </div>
-        </div>
+          
       </div>
 
       <div class="user-actions">
