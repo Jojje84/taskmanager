@@ -40,13 +40,11 @@ table th {
   text-align: left;
   color: #fff;
   border: 0px;
-
 }
 
 table td {
   padding: 10px;
   text-align: left;
- 
 }
 
 table tr:nth-child(even) {
@@ -57,35 +55,27 @@ table tr:hover {
   background-color: #f1f1f1; /* Hover-effekt */
 }
 
-.priority.high {
-  background-color: #ffc0cb; /* Rosa för hög prioritet */
-  display: inline-block;
-  padding: 4px 10px;
+.priority {
+  display: flex;
+  align-items: left;
+  justify-content: center;
   border-radius: 12px;
   font-size: 0.7rem;
   font-weight: 500;
-  min-width: 50px;
-  text-align: center;
+  width: 50px;
+}
+
+
+.priority.high {
+  background-color: #ffc0cb;
 }
 
 .priority.normal {
   background-color: #87ceeb; /* Blå för normal prioritet */
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  min-width: 50px;
-  text-align: center;
+
 }
 
 .priority.low {
   background-color: #f5ecb8; /* Gul för låg prioritet */
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  min-width: 50px;
-  text-align: center;
+
 }
