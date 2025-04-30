@@ -1,81 +1,124 @@
-.list-wrapper {
-  margin: 20px;
-  background-color: #ffffff; /* Vit bakgrund för hela innehållet */
+.task-wrapper {
+  background: #fff;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-.user-select {
-  margin-bottom: 20px;
-  background-color: #f4f4f4; /* Grå bakgrund endast för select-container */
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.user-select select {
-  background-color: #ffffff; /* Vit inuti select */
-  border: 1px solid #ccc;
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.user-projects-tasks {
-  background-color: #ffffff;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  background-color: #ffffff; /* Vit bakgrund för tabellen */
-}
-
-table th {
-  background-color: #66bb7b;
-  font-weight: bold;
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
-  color: #fff;
-  border: 0px;
-}
-
-table td {
-  padding: 10px;
-  text-align: left;
-}
-
-table tr:nth-child(even) {
-  background-color: #f9f9f9; /* Ljus bakgrund för jämna rader */
-}
-
-table tr:hover {
-  background-color: #f1f1f1; /* Hover-effekt */
-}
-
-.priority {
+.top-container {
   display: flex;
-  align-items: left;
-  justify-content: center;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  width: 50px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.search-input {
+  padding: 10px;
+  width: 220px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+
+  &:focus {
+    outline: none;
+    border-color: #4caf50;
+  }
+}
+
+.btn-newtask {
+  padding: 10px 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+.task-columns {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.task-column {
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 12px;
+
+  &.cdk-drop-list-dragging {
+    background-color: #e0e0e0;
+  }
 }
 
 
-.priority.high {
-  background-color: #ffc0cb;
+.task-card {
+  position: relative;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  cursor: grab;
+  text-align: center;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  h4 {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
 }
 
-.priority.normal {
-  background-color: #87ceeb; /* Blå för normal prioritet */
-
+.priority-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #333;
+  background-color: #eee;
 }
 
-.priority.low {
+.task-card.low {
   background-color: #f5ecb8; /* Gul för låg prioritet */
+}
 
+.task-card.normal {
+  background-color: #87ceeb; /* Blå för normal prioritet */
+}
+
+.task-card.high {
+  background-color: #ffc0cb; /* Rosa för hög prioritet */
+}
+
+.task-column.completed h3 {
+  color: #4caf50; /* Grön färg för rubriken */
+}
+
+.task-card.completed {
+  background-color: #e8f5e9; /* Ljusgrön bakgrund för completed tasks */
+  border: 1px solid #4caf50; /* Grön kant */
 }

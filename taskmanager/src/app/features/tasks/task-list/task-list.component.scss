@@ -1,6 +1,6 @@
 .task-wrapper {
   background: #fff;
-  padding: 20px 0; 
+  padding: 20px 0;
   margin-top: 10px;
   border-radius: 15px;
 }
@@ -38,109 +38,114 @@
   background-color: #0056b3;
 }
 
-
-h2 {
-  margin-bottom: 1rem;
-}
-
-nav.filters,
-nav.sorters {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-
-  button {
-    padding: 0.5rem 1rem;
-    background-color: #eee;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #ddd;
-    }
-  }
-}
-
 .task-container {
   display: flex;
   flex-wrap: wrap;
-  
 }
+
+.task-columns {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* Gör alla kolumner lika höga */
+  gap: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box; /* Inkludera padding och border i bredden */
+  margin: 25px 0 0 25px; /* Marginal för att separera från andra element */
+ 
+
+}
+
+.task-column {
+  flex: 1; /* Gör att kolumnerna delar lika mycket utrymme */
+  display: flex;
+  flex-direction: column; /* Placera innehållet i en kolumn */
+  justify-content: flex-start; /* Justera innehållet till toppen */
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-width: 100px; /* Minsta bredd för kolumner */
+  max-width: 300px; /* Maximala bredd för kolumner */
+  box-sizing: border-box; /* Inkludera padding och border i bredden */
+}
+
+.task-column.cdk-drop-list-dragging {
+  background-color: #e0e0e0;
+}
+
+.task-card.cdk-drag-preview {
+  border: 2px dashed #000;
+  background-color: #f0f0f0;
+}
+
+.task-card.cdk-drag-placeholder {
+  opacity: 0.5;
+}
+
+.priority.low {
+  color: #8b8000; /* Mörkgul text */
+}
+
+.priority.normal {
+  color: #004080; /* Mörkblå text */
+}
+
+.priority.high {
+  color: #800040; /* Mörkrosa text */
+}
+
+.task-card.low {
+  background-color: #f5ecb8; /* Gul för låg prioritet */
+}
+
+.task-card.normal {
+  background-color: #87ceeb; /* Blå för normal prioritet */
+}
+
+.task-card.high {
+  background-color: #ffc0cb; /* Rosa för hög prioritet */
+}
+
+.task-column h3 {
+  text-align: center; /* Centrera rubriken */
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.task-card p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  text-align: center;
+  text-transform: capitalize; /* Gör första bokstaven stor */
+}
+
 
 .task-card {
   background-color: #ffffff;
   border-radius: 12px;
-  padding: 20px;
-  width: 200px;
-  height: auto;
+  width: 100%; /* Gör korten lika breda som kolumnen */
+  max-width: 100%; /* Förhindra att korten blir bredare än kolumnen */
+  padding: 15px; /* Lägg till padding för innehållet */
+  box-sizing: border-box; /* Inkludera padding och border i bredden */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
   cursor: pointer;
-  text-align: center;
-  margin: 25px 0 0 25px;
-  flex-direction: column;
-  align-items: center;
- 
+  border: 1px solid #ddd;
+  cursor: grab;
+  display: flex;
+  flex-direction: column; /* Placera texten i en kolumn */
+  align-items: center; /* Centrera texten horisontellt */
+  justify-content: center; /* Centrera texten vertikalt */
 }
 
 .task-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Öka skuggan vid hover */
 }
-
-
-
-
-ul {
-  list-style: none;
-  padding: 0;
-
-  li {
-    background: #f9f9f9;
-    margin-bottom: 0.5rem;
-    padding: 1rem;
-    border-left: 5px solid #ccc;
-    border-radius: 4px;
-
-    span {
-      font-weight: bold;
-      display: block;
-    }
-
-    small {
-      color: #555;
-      display: block;
-    }
-  }
-
-}
-
-.task-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px; /* Mellanrum mellan knapparna */
-  margin-top: 10px;
-}
-
-.btn {
-  display: flex;
-  align-items: center; /* Centrera text och bild vertikalt */
-  justify-content: center;
-  gap: 8px; /* Mellanrum mellan bild och text */
-  padding: 10px 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.btn:hover {
-  background-color: #007bff; /* Blå bakgrund vid hover */
-  color: white; /* Vit text vid hover */
-  transform: translateY(-2px); /* Lyft knappen något vid hover */
-}
-
-
 

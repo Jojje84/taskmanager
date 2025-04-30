@@ -1,26 +1,26 @@
-<h2>Skapa nytt projekt</h2>
+<h2>Create New Project</h2>
 <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
   <div>
-    <label>Namn:</label>
+    <label>Name:</label>
     <input
       formControlName="name"
       type="text"
-      placeholder="Ange projektets namn"
+      placeholder="Enter project name"
     />
   </div>
   <div>
-    <label>Beskrivning:</label>
+    <label>Description:</label>
     <textarea
       formControlName="description"
-      placeholder="Ange en kort beskrivning"
+      placeholder="Enter a short description"
     ></textarea>
   </div>
   <div>
-    <label>Användare ID:</label>
+    <label>User ID:</label>
     <input formControlName="userId" type="number" [disabled]="true" />
   </div>
   <div>
-    <button type="submit" [disabled]="projectForm.invalid">Skapa</button>
-    <button type="button" (click)="onCancel()">Avbryt</button>
+    <button type="submit" [disabled]="projectForm.invalid">Create</button>
+    <button type="button" (click)="onCancel()">Cancel</button>
   </div>
 </form>

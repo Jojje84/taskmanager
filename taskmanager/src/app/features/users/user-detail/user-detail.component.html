@@ -35,7 +35,6 @@
   <!-- Sektion för Alla Projekt -->
   <section class="dashboard-section" *ngIf="projects.length > 0">
     <h3>All Projects</h3>
-    <app-export-projects [projects]="projects"></app-export-projects>
     <input type="text" [(ngModel)]="searchQuery" placeholder="Sök projekt..." />
     <table class="table">
       <thead>
@@ -66,7 +65,6 @@
   <!-- Sektion för Tasks -->
   <section class="dashboard-section" *ngIf="tasks.length > 0">
     <h3>All Tasks</h3>
-    <app-export-tasks [tasks]="tasks"></app-export-tasks>
 
     <table class="table">
       <thead>

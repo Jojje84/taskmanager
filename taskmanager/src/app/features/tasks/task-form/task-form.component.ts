@@ -56,8 +56,8 @@ export class TaskFormComponent implements OnInit {
         status: 'active', // Sätt status till "active"
       };
 
-      this.taskService.addTask(taskData).subscribe(() => {
-        this.dialogRef.close('refresh'); // Stäng dialogen och meddela att uppgiften skapades
+      this.taskService.addTask(taskData).subscribe((createdTask) => {
+        this.dialogRef.close(createdTask); // Skicka tillbaka den skapade uppgiften
       });
     } else {
       console.log('Form is invalid:', this.taskForm.errors); // Logga eventuella fel

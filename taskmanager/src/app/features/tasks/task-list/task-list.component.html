@@ -10,21 +10,85 @@
   </div>
 
   <div class="task-container">
-    <div class="task-card" *ngFor="let task of filteredTasks()">
-      <h4>{{ task.title }}</h4>
-      <p>{{ task.status }}</p>
-      <p>{{ task.priority }}</p>
+    <div class="task-columns">
+      <!-- Kolumn för Low Priority -->
+      <div
+        class="task-column low"
+        cdkDropList
+        [cdkDropListData]="lowPriorityTasks"
+        [cdkDropListConnectedTo]="['normal', 'high', 'completed']"
+        id="low"
+        (cdkDropListDropped)="onTaskDrop($event)"
+      >
+        <h3>Low</h3>
+        <div
+          class="task-card low"
+          *ngFor="let task of lowPriorityTasks"
+          cdkDrag
+        >
+          <h4>{{ task.title }}</h4>
+          <p>{{ task.status }}</p>
+        </div>
+      </div>
 
-      <div class="task-actions">
-        <button class="btn btn-edit" (click)="openTaskFormDialog(task)">
-          <img src="edit-icon.png" alt="Edit" class="btn-icon" /></button>
-        <button class="btn btn-delete" (click)="deleteTask(task.id)">
-          <img src="delete-icon.png" alt="Delete" class="btn-icon" /></button>
+      <!-- Kolumn för Normal Priority -->
+      <div
+        class="task-column"
+        cdkDropList
+        [cdkDropListData]="normalPriorityTasks"
+        [cdkDropListConnectedTo]="['low', 'high', 'completed']"
+        id="normal"
+        (cdkDropListDropped)="onTaskDrop($event)"
+      >
+        <h3>Normal</h3>
+        <div
+          class="task-card normal"
+          *ngFor="let task of normalPriorityTasks"
+          cdkDrag
+        >
+          <h4>{{ task.title }}</h4>
+          <p>{{ task.status }}</p>
+        </div>
+      </div>
+
+      <!-- Kolumn för High Priority -->
+      <div
+        class="task-column"
+        cdkDropList
+        [cdkDropListData]="highPriorityTasks"
+        [cdkDropListConnectedTo]="['low', 'normal', 'completed']"
+        id="high"
+        (cdkDropListDropped)="onTaskDrop($event)"
+      >
+        <h3>High</h3>
+        <div
+          class="task-card high"
+          *ngFor="let task of highPriorityTasks"
+          cdkDrag
+        >
+          <h4>{{ task.title }}</h4>
+          <p>{{ task.status }}</p>
+        </div>
+      </div>
+      <!-- Kolumn för Completed -->
+      <div
+        class="task-column completed"
+        cdkDropList
+        [cdkDropListData]="completedTasks"
+        [cdkDropListConnectedTo]="['low', 'normal', 'high']"
+        id="completed"
+        (cdkDropListDropped)="onTaskDrop($event)"
+      >
+        <h3>Completed</h3>
+        <div
+          class="task-card completed"
+          *ngFor="let task of completedTasks"
+          cdkDrag
+        >
+          <h4>{{ task.title }}</h4>
+          <p>{{ task.status }}</p>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div *ngIf="loading" class="loader">
-    <p>Loading tasks...</p>
   </div>
 </div>

@@ -6,8 +6,6 @@ import { TaskService } from '../../../core/services/task.service';
 import { User } from '../../../models/user.model';
 import { Project } from '../../../models/project.model';
 import { Task } from '../../../models/task.model';
-import { ExportTasksComponent } from '../../../shared/components/export-tasks/export-tasks.component';
-import { ExportProjectsComponent } from '../../../shared/components/export-projects/export-projects.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -19,8 +17,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ExportTasksComponent,
-    ExportProjectsComponent,
   ],
   templateUrl: './user-detail.component.html',
   styleUrls: ['./user-detail.component.scss'],

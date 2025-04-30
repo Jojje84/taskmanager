@@ -13,28 +13,29 @@ import { TaskService } from '../../../core/services/task.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TaskFormComponent } from '../task-form/task-form.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, MatDialogModule],
+  imports: [CommonModule, MatDialogModule, DragDropModule],
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss'],
 })
 export class TaskListComponent {
-  @Input() userId!: number; // Tar emot användar-ID från DashboardComponent
-  @Input() tasks: Task[] = []; // Lista över uppgifter
-  @Output() taskSelected = new EventEmitter<number>(); // Skickar valt task-ID tillbaka till DashboardComponent
-  @Input() projectId!: number; // Tar emot projekt-ID från DashboardComponent
+  @Input() userId!: number;
+  @Input() tasks: Task[] = [];
+  @Output() taskSelected = new EventEmitter<number>();
+  @Input() projectId!: number;
 
-  searchTerm: WritableSignal<string> = signal(''); // Signal för söktermen
-  loading: boolean = false; // Indikator för laddning
-  filteredTasksList: Task[] = []; // Lista för filtrerade uppgifter
+  searchTerm: WritableSignal<string> = signal('');
+  loading: boolean = false;
+  filteredTasksList: Task[] = [];
 
   filteredTasks = computed(() => {
     const term = this.searchTerm().toLowerCase();
     if (!term) {
-      return this.tasks; // Returnera alla uppgifter om söktermen är tom
+      return this.tasks;
     }
     return this.tasks.filter(
       (task) =>
@@ -53,22 +54,42 @@ export class TaskListComponent {
   }
 
   loadTasks(userId: number): void {
-    this.loading = true; // Starta loader
+    this.loading = true;
     this.taskService.getTasksByUserId(userId).subscribe(
       (tasks) => {
+        console.log('Tasks loaded:', tasks); // Kontrollera att nya uppgifter hämtas
         this.tasks = tasks;
-        this.loading = false; // Stoppa loader
+
+        // Töm befintliga listor utan att byta referens
+        this.lowPriorityTasks.length = 0;
+        this.normalPriorityTasks.length = 0;
+        this.highPriorityTasks.length = 0;
+        this.completedTasks.length = 0;
+
+        // Lägg till varje task i rätt kolumn
+        for (const task of tasks) {
+          if (task.status.toLowerCase() === 'completed') {
+            this.completedTasks.push(task);
+          } else {
+            if (task.priority === 'Low') this.lowPriorityTasks.push(task);
+            else if (task.priority === 'Normal') this.normalPriorityTasks.push(task);
+            else if (task.priority === 'High') this.highPriorityTasks.push(task);
+          }
+        }
+
+        this.loading = false;
       },
       (error) => {
         console.error('Failed to load tasks:', error);
-        this.loading = false; // Stoppa loader även vid fel
+        this.loading = false;
       }
     );
   }
+  
 
   onSearch(term: string): void {
-    this.searchTerm.set(term); // Uppdatera söktermen
-    this.filterTasks(); // Filtrera uppgifterna
+    this.searchTerm.set(term);
+    this.filterTasks();
   }
 
   openTaskFormDialog(task?: Task): void {
@@ -81,15 +102,15 @@ export class TaskListComponent {
       width: '80vw',
       height: '80vh',
       data: {
-        userId: this.userId, // Skicka användar-ID
-        projectId: this.projectId, // Skicka projekt-ID
-        task: task || null, // Skicka uppgiften om den finns (för redigering)
+        userId: this.userId,
+        projectId: this.projectId,
+        task: task || null,
       },
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.loadTasks(this.userId); // Ladda om uppgifterna efter dialogen stängs
+        this.loadTasks(this.userId);
       }
     });
   }
@@ -114,7 +135,7 @@ export class TaskListComponent {
   }
 
   filterTasks(): void {
-    const query = this.searchTerm().toLowerCase(); // Hämta söktermen från signalen
+    const query = this.searchTerm().toLowerCase();
     this.filteredTasksList = this.tasks.filter(
       (task) =>
         task.title.toLowerCase().includes(query) ||
@@ -122,4 +143,49 @@ export class TaskListComponent {
         task.priority.toLowerCase().includes(query)
     );
   }
+
+  filteredTasksByPriority(priority: string) {
+    return this.filteredTasks().filter((task) => task.priority === priority);
+  }
+
+  lowPriorityTasks: Task[] = [];
+  normalPriorityTasks: Task[] = [];
+  highPriorityTasks: Task[] = [];
+  completedTasks: Task[] = [];
+
+  onTaskDrop(event: any): void {
+    if (event.previousContainer === event.container) return;
+  
+    const task = event.previousContainer.data[event.previousIndex];
+    const previousList = event.previousContainer.data;
+    const targetList = event.container.data;
+    const targetId = event.container.id;
+  
+    if (targetId === 'completed') {
+      task.status = 'completed';
+    } else {
+      task.status = 'active';
+      task.priority = this.getPriorityFromContainer(targetId);
+    }
+  
+    previousList.splice(event.previousIndex, 1);
+    targetList.splice(event.currentIndex, 0, task);
+  
+    this.updateTask(task);
+  }
+
+  getPriorityFromContainer(containerId: string): string {
+    if (containerId === 'low') return 'Low';
+    if (containerId === 'normal') return 'Normal';
+    if (containerId === 'high') return 'High';
+    return '';
+  }
+
+  updateTask(task: Task): void {
+    this.taskService.updateTask(task.id, task).subscribe(() => {
+      console.log('Task updated:', task);
+    });
+  }
 }
+
+

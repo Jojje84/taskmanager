@@ -29,10 +29,6 @@ export class UserFormComponent {
       name: ['', Validators.required],
       role: ['', Validators.required],
       avatar: [''],
-      progress: [0, [Validators.required, Validators.min(0)]],
-      completed: [0, [Validators.required, Validators.min(0)]],
-      opened: [0, [Validators.required, Validators.min(0)]],
-      overdue: [0, [Validators.required, Validators.min(0)]],
     });
   }
 
