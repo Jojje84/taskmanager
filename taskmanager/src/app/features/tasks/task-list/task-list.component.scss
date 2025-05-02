@@ -86,7 +86,7 @@
   color: #8b8000; /* Mörkgul text */
 }
 
-.priority.normal {
+.priority.medium {
   color: #004080; /* Mörkblå text */
 }
 
@@ -106,8 +106,8 @@
   background-color: #f5ecb8; /* Gul för låg prioritet */
 }
 
-.task-card.normal {
-  background-color: #87ceeb; /* Blå för normal prioritet */
+.task-card.medium {
+  background-color: #87ceeb;
 }
 
 .task-card.high {

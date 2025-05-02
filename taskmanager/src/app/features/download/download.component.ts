@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, effect } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { TaskService } from '../../core/services/task.service';
 import { ProjectService } from '../../core/services/project.service';
@@ -33,8 +33,12 @@ export class DownloadComponent implements OnInit {
 
   ngOnInit() {
     this.userService.getUsers().subscribe((users) => (this.users = users));
-    this.taskService.getTasks().subscribe((tasks) => (this.tasks = tasks));
     this.projectService.getProjects().subscribe((projects) => (this.projects = projects));
+
+    // Använd effect för att lyssna på förändringar i tasks
+    effect(() => {
+      this.tasks = this.taskService.allTasks();
+    });
   }
 
   prepareData() {

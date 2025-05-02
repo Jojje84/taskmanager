@@ -1,6 +1,5 @@
 import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject } from 'rxjs'; // Importera BehaviorSubject
 import { User } from '../../models/user.model';
 import { Task } from '../../models/task.model'; // Importera Task-modellen
 import { Project } from '../../models/project.model'; // Importera Project-modellen

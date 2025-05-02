@@ -63,7 +63,7 @@ export class TaskListComponent {
 
         // Töm befintliga listor utan att byta referens
         this.lowPriorityTasks.length = 0;
-        this.normalPriorityTasks.length = 0;
+        this.mediumPriorityTasks.length = 0;
         this.highPriorityTasks.length = 0;
         this.completedTasks.length = 0;
 
@@ -73,7 +73,7 @@ export class TaskListComponent {
             this.completedTasks.push(task);
           } else {
             if (task.priority === 'Low') this.lowPriorityTasks.push(task);
-            else if (task.priority === 'Normal') this.normalPriorityTasks.push(task);
+            else if (task.priority === 'Medium') this.mediumPriorityTasks.push(task);
             else if (task.priority === 'High') this.highPriorityTasks.push(task);
           }
         }
@@ -136,7 +136,7 @@ export class TaskListComponent {
 
               // Lägg till eventuell extra logik här
               this.lowPriorityTasks = this.lowPriorityTasks.filter((t) => t.id !== taskId);
-              this.normalPriorityTasks = this.normalPriorityTasks.filter((t) => t.id !== taskId);
+              this.mediumPriorityTasks = this.mediumPriorityTasks.filter((t) => t.id !== taskId);
               this.highPriorityTasks = this.highPriorityTasks.filter((t) => t.id !== taskId);
               this.completedTasks = this.completedTasks.filter((t) => t.id !== taskId);
             },
@@ -164,7 +164,7 @@ export class TaskListComponent {
   }
 
   lowPriorityTasks: Task[] = [];
-  normalPriorityTasks: Task[] = [];
+  mediumPriorityTasks: Task[] = [];
   highPriorityTasks: Task[] = [];
   completedTasks: Task[] = [];
 
@@ -191,7 +191,7 @@ export class TaskListComponent {
 
   getPriorityFromContainer(containerId: string): string {
     if (containerId === 'low') return 'Low';
-    if (containerId === 'normal') return 'Normal';
+    if (containerId === 'medium') return 'Medium';
     if (containerId === 'high') return 'High';
     return '';
   }
@@ -219,8 +219,8 @@ export class TaskListComponent {
           this.lowPriorityTasks = this.tasks.filter(
             (t) => t.priority === 'Low' && t.status === 'active'
           );
-          this.normalPriorityTasks = this.tasks.filter(
-            (t) => t.priority === 'Normal' && t.status === 'active'
+          this.mediumPriorityTasks = this.tasks.filter(
+            (t) => t.priority === 'Medium' && t.status === 'active'
           );
           this.highPriorityTasks = this.tasks.filter(
             (t) => t.priority === 'High' && t.status === 'active'

@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { NgChartsModule, BaseChartDirective } from 'ng2-charts'; // För diagram och BaseChartDirective
 import { ChartType } from 'chart.js'; // För korrekt typ på Chart
 import { Task } from '../../../models/task.model';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { TaskService } from '../../../core/services/task.service'; // Importera TaskService
 
 @Component({
@@ -27,7 +27,7 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined; // Lägg till en referens till diagrammet
 
   pieChartData: any = {
-    labels: ['High Priority', 'Normal Priority', 'Low Priority'],
+    labels: ['High Priority', 'Medium Priority', 'Low Priority'],
     datasets: [
       {
         data: [0, 0, 0],
@@ -75,7 +75,7 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
     activeTasks.forEach((task) => {
       if (task.priority === 'High') {
         priorityCounts.high++;
-      } else if (task.priority === 'Normal') {
+      } else if (task.priority === 'Medium') {
         priorityCounts.medium++;
       } else if (task.priority === 'Low') {
         priorityCounts.low++;

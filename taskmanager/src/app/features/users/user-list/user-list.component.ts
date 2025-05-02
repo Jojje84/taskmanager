@@ -153,21 +153,14 @@ export class UserListComponent implements OnInit {
       .filter((t) => t.userId === user.id && t.status.toLowerCase() !== 'completed');
     const total = userTasks.length;
 
-    console.log(`User: ${user.name}, Priority: ${priority}, Total Tasks: ${total}`);
+    if (total === 0) return 0; // Returnera 0 om det inte finns några uppgifter
 
-    if (total === 0) {
-      console.log(`No tasks for user: ${user.name}, returning 0`);
-      return 0; // Returnera 0 om det inte finns några uppgifter
-    }
-
-    const percentage =
+    return (
       (userTasks.filter(
         (t) => t.priority.toLowerCase() === priority.toLowerCase()
       ).length /
         total) *
-      100;
-
-    console.log(`User: ${user.name}, Priority: ${priority}, Percentage: ${percentage}`);
-    return percentage;
+      100
+    );
   }
 }

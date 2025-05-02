@@ -139,8 +139,8 @@ export class UserDetailComponent implements OnInit {
     switch (priority.toLowerCase()) {
       case 'high':
         return 'priority-high';
-      case 'normal':
-        return 'priority-normal';
+      case 'medium':
+        return 'priority-medium';
       case 'low':
         return 'priority-low';
       default:

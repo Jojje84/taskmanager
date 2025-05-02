@@ -61,12 +61,6 @@
       "name": "AI Chatbot",
       "description": "Bygg en AI-driven chatbot",
       "userId": 5
-    },
-    {
-      "id": 6,
-      "name": "eeeede",
-      "description": "eafafaef",
-      "userId": 1
     }
   ],
   "tasks": [
@@ -114,7 +108,7 @@
       "id": 6,
       "title": "Implementera CI/CD",
       "status": "completed",
-      "priority": "Normal",
+      "priority": "Medium",
       "projectId": 5,
       "userId": 5
     },
@@ -135,29 +129,28 @@
       "userId": 3
     },
     {
-      "id": 13,
-      "title": "ddfr",
-      "status": "active",
-      "priority": "Normal",
-      "projectId": 1,
-      "userId": 1,
-      "description": null
-    },
-    {
-      "id": 14,
-      "title": "dawawd",
-      "status": "active",
-      "priority": "Normal",
-      "projectId": 1,
-      "userId": 1
-    },
-    {
       "id": 15,
       "title": "eeffa",
       "status": "active",
       "priority": "Low",
       "projectId": 2,
       "userId": 2
+    },
+    {
+      "id": 16,
+      "title": "fefes",
+      "status": "active",
+      "priority": "Medium",
+      "projectId": 4,
+      "userId": 4
+    },
+    {
+      "id": 17,
+      "title": "wdwaw",
+      "status": "active",
+      "priority": "Medium",
+      "projectId": 4,
+      "userId": 4
     }
   ]
 }

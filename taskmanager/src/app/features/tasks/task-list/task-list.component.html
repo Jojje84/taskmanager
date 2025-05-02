@@ -16,7 +16,7 @@
         class="task-column low"
         cdkDropList
         [cdkDropListData]="lowPriorityTasks"
-        [cdkDropListConnectedTo]="['normal', 'high', 'completed']"
+        [cdkDropListConnectedTo]="['medium', 'high', 'completed']"
         id="low"
         (cdkDropListDropped)="onTaskDrop($event)"
       >
@@ -40,19 +40,19 @@
         </div>
       </div>
 
-      <!-- Kolumn för Normal Priority -->
+      <!-- Kolumn för Medium Priority -->
       <div
-        class="task-column normal"
+        class="task-column medium"
         cdkDropList
-        [cdkDropListData]="normalPriorityTasks"
+        [cdkDropListData]="mediumPriorityTasks"
         [cdkDropListConnectedTo]="['low', 'high', 'completed']"
-        id="normal"
+        id="medium"
         (cdkDropListDropped)="onTaskDrop($event)"
       >
-        <h3>Normal</h3>
+        <h3>Medium</h3>
         <div
-          class="task-card normal"
-          *ngFor="let task of normalPriorityTasks"
+          class="task-card medium"
+          *ngFor="let task of mediumPriorityTasks"
           cdkDrag
         >
           <h4>{{ task.title }}</h4>
@@ -74,7 +74,7 @@
         class="task-column high"
         cdkDropList
         [cdkDropListData]="highPriorityTasks"
-        [cdkDropListConnectedTo]="['low', 'normal', 'completed']"
+        [cdkDropListConnectedTo]="['low', 'medium', 'completed']"
         id="high"
         (cdkDropListDropped)="onTaskDrop($event)"
       >
@@ -103,7 +103,7 @@
         class="task-column completed"
         cdkDropList
         [cdkDropListData]="completedTasks"
-        [cdkDropListConnectedTo]="['low', 'normal', 'high']"
+        [cdkDropListConnectedTo]="['low', 'medium', 'high']"
         id="completed"
         (cdkDropListDropped)="onTaskDrop($event)"
       >

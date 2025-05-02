@@ -1,14 +1,16 @@
 <div class="summary">
   <h3>Task Summary</h3>
   <ul>
-    <li>Total tasks: {{ totalTasks }}</li>
-    <li>Completed: {{ completedTasks }}</li>
-    <li>Overdue: {{ overdueTasks }}</li>
-    <li>Opened: {{ totalTasks - completedTasks - overdueTasks }}</li>
+    <li>Total tasks: {{ total() }}</li>
+    <li>Low: {{ low() }}</li>
+    <li>Medium: {{ medium() }}</li>
+    <li>High: {{ high() }}</li>
+    <br />
+    <li>Completed: {{ completed() }}</li>
   </ul>
 
   <div class="progress-bar">
-    <div class="progress" [style.width.%]="progress"></div>
+    <div class="progress" [style.width.%]="progress()"></div>
   </div>
-  <p>{{ progress | number : "1.0-0" }}% done</p>
+  <p>{{ progress() | number: '1.0-0' }}% done</p>
 </div>

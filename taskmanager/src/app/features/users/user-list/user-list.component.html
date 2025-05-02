@@ -34,13 +34,13 @@
               </div>
             </ng-container>
 
-            <!-- Normal -->
-            <ng-container *ngIf="getTaskPercentage(user, 'Normal') > 0">
+            <!-- Medium -->
+            <ng-container *ngIf="getTaskPercentage(user, 'Medium') > 0">
               <div
-                class="progress-bar normal"
-                [style.width.%]="getTaskPercentage(user, 'Normal')"
+                class="progress-bar medium"
+                [style.width.%]="getTaskPercentage(user, 'Medium')"
               >
-                {{ getTaskPercentage(user, "Normal") | number : "1.0-0" }}%
+                {{ getTaskPercentage(user, "Medium") | number : "1.0-0" }}%
               </div>
             </ng-container>
 
@@ -58,7 +58,7 @@
             <ng-container
               *ngIf="
                 getTaskPercentage(user, 'High') === 0 &&
-                getTaskPercentage(user, 'Normal') === 0 &&
+                getTaskPercentage(user, 'Medium') === 0 &&
                 getTaskPercentage(user, 'Low') === 0
               "
             >
