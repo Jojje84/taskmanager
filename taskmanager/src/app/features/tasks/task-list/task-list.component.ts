@@ -14,6 +14,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TaskFormComponent } from '../task-form/task-form.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TaskDetailComponent } from '../task-detail/task-detail.component';
 
 @Component({
   selector: 'app-task-list',
@@ -198,6 +199,38 @@ export class TaskListComponent {
   updateTask(task: Task): void {
     this.taskService.updateTask(task.id, task).subscribe(() => {
       console.log('Task updated:', task);
+    });
+  }
+
+  editTask(task: Task): void {
+    const dialogRef = this.dialog.open(TaskDetailComponent, {
+      panelClass: 'edittask-detail-dialog', // CSS-klass för styling
+      data: { task }, // Skicka uppgiftsdata till dialogen
+    });
+
+    dialogRef.afterClosed().subscribe((updatedTask: Task | undefined) => {
+      if (updatedTask) {
+        // Uppdatera den specifika uppgiften i listan
+        const index = this.tasks.findIndex((t) => t.id === updatedTask.id);
+        if (index !== -1) {
+          this.tasks[index] = updatedTask;
+
+          // Uppdatera rätt kolumn
+          this.lowPriorityTasks = this.tasks.filter(
+            (t) => t.priority === 'Low' && t.status === 'active'
+          );
+          this.normalPriorityTasks = this.tasks.filter(
+            (t) => t.priority === 'Normal' && t.status === 'active'
+          );
+          this.highPriorityTasks = this.tasks.filter(
+            (t) => t.priority === 'High' && t.status === 'active'
+          );
+          this.completedTasks = this.tasks.filter(
+            (t) => t.status === 'completed'
+          );
+        }
+      }
+      console.log('Task detail dialog closed');
     });
   }
 }

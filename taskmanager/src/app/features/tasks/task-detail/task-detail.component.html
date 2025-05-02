@@ -1,0 +1,36 @@
+<div class="TaskEdit">
+  <div *ngIf="task">
+    <h2>Edit Task: {{ task.title }}</h2>
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="form-container">
+      <div class="form-group">
+        <label>Title:</label>
+        <input formControlName="title" type="text" />
+        <div *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched">
+          <small class="error">Title is required</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description:</label>
+        <textarea formControlName="description"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Priority:</label>
+        <select formControlName="priority">
+          <option value="High">High</option>
+          <option value="Normal">Normal</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status:</label>
+        <select formControlName="status">
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-save" [disabled]="taskForm.invalid">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
