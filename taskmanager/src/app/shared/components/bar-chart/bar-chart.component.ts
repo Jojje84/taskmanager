@@ -90,7 +90,10 @@ export class BarChartComponent
   updateChartWithTasks(tasks: Task[]): void {
     const projectStatsMap: { [key: string]: number } = {};
 
-    tasks.forEach((task) => {
+    // Filtrera endast uppgifter med status "active"
+    const activeTasks = tasks.filter((task) => task.status === 'active');
+
+    activeTasks.forEach((task) => {
       if (projectStatsMap[task.projectId]) {
         projectStatsMap[task.projectId]++;
       } else {

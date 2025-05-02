@@ -129,38 +129,6 @@
       "userId": 3
     },
     {
-      "id": 9,
-      "title": "wwqadwa",
-      "status": "active",
-      "priority": "High",
-      "projectId": 1,
-      "userId": 1
-    },
-    {
-      "id": 10,
-      "title": "3f33f",
-      "status": "active",
-      "priority": "Normal",
-      "projectId": 1,
-      "userId": 1
-    },
-    {
-      "id": 11,
-      "title": "eaeae",
-      "status": "active",
-      "priority": "Normal",
-      "projectId": 1,
-      "userId": 1
-    },
-    {
-      "id": 12,
-      "title": "vevev",
-      "status": "active",
-      "priority": "Normal",
-      "projectId": 1,
-      "userId": 1
-    },
-    {
       "id": 13,
       "title": "dddd",
       "status": "active",

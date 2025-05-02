@@ -69,7 +69,10 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
   updateChart(tasks: Task[]): void {
     const priorityCounts = { high: 0, medium: 0, low: 0 };
 
-    tasks.forEach((task) => {
+    // Filtrera endast uppgifter med status "active"
+    const activeTasks = tasks.filter((task) => task.status === 'active');
+
+    activeTasks.forEach((task) => {
       if (task.priority === 'High') {
         priorityCounts.high++;
       } else if (task.priority === 'Normal') {

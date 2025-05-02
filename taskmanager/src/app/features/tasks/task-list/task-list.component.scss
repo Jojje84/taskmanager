@@ -45,31 +45,22 @@
 
 .task-columns {
   display: flex;
-  justify-content: space-between;
-  align-items: stretch; /* Gör alla kolumner lika höga */
-  gap: 20px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
+  justify-content: space-between; /* Fördela kolumnerna jämnt */
+  align-items: flex-start; /* Justera kolumnerna till toppen */
+  gap: 20px; /* Lägg till mellanrum mellan kolumnerna */
   width: 100%;
-  height: auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
   box-sizing: border-box; /* Inkludera padding och border i bredden */
-  margin: 25px 0 0 25px; /* Marginal för att separera från andra element */
- 
-
 }
 
 .task-column {
   flex: 1; /* Gör att kolumnerna delar lika mycket utrymme */
   display: flex;
   flex-direction: column; /* Placera innehållet i en kolumn */
-  justify-content: flex-start; /* Justera innehållet till toppen */
   background-color: #ffffff;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  min-width: 100px; /* Minsta bredd för kolumner */
+  min-width: 200px; /* Minsta bredd för kolumner */
   max-width: 300px; /* Maximala bredd för kolumner */
   box-sizing: border-box; /* Inkludera padding och border i bredden */
 }
@@ -112,7 +103,7 @@
 }
 
 .task-column h3 {
-  text-align: center; /* Centrera rubriken */
+  text-align: center;
   font-weight: bold;
   margin-bottom: 10px;
 }
@@ -125,27 +116,25 @@
   text-transform: capitalize; /* Gör första bokstaven stor */
 }
 
-
 .task-card {
   background-color: #ffffff;
   border-radius: 12px;
   width: 100%; /* Gör korten lika breda som kolumnen */
-  max-width: 100%; /* Förhindra att korten blir bredare än kolumnen */
-  padding: 15px; /* Lägg till padding för innehållet */
-  box-sizing: border-box; /* Inkludera padding och border i bredden */
+  padding: 15px;
+  box-sizing: border-box;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
   cursor: pointer;
   border: 1px solid #ddd;
-  cursor: grab;
-  display: flex;
-  flex-direction: column; /* Placera texten i en kolumn */
-  align-items: center; /* Centrera texten horisontellt */
-  justify-content: center; /* Centrera texten vertikalt */
 }
 
 .task-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Öka skuggan vid hover */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.newtask-dialog {
+  max-width: 100%; 
+  max-height: 100%
 }
 

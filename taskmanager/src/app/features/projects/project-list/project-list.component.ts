@@ -82,8 +82,7 @@ export class ProjectListComponent {
 
   openProjectFormDialog(): void {
     const dialogRef = this.dialog.open(ProjectFormComponent, {
-      width: '80vw',
-      height: '80vh',
+      panelClass: 'newroject-dialog', // Lägg till en CSS-klass
       data: { userId: this.userId }, // Skicka valt användar-ID
     });
 
@@ -115,14 +114,13 @@ export class ProjectListComponent {
 
   editProject(project: Project): void {
     const dialogRef = this.dialog.open(ProjectDetailComponent, {
-      width: '80vw',
-      height: '35vh',
+      panelClass: 'editproject-detail-dialog', // Lägg till en CSS-klass
       data: { project }, // Skicka projektdata till dialogen
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      // Om något behöver uppdateras efter att dialogen stängts, gör det här
       console.log('Project detail dialog closed');
+      this.loadProjects(this.userId); // Uppdatera projektlistan efter dialogen stängts
     });
   }
 

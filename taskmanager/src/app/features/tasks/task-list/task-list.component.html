@@ -28,12 +28,15 @@
         >
           <h4>{{ task.title }}</h4>
           <p>{{ task.status }}</p>
+          <button class="btn btn-delete" (click)="deleteTask(task.id)">
+            <img src="delete-icon.png" alt="Delete" class="btn-icon" />
+          </button>
         </div>
       </div>
 
       <!-- Kolumn för Normal Priority -->
       <div
-        class="task-column"
+        class="task-column normal"
         cdkDropList
         [cdkDropListData]="normalPriorityTasks"
         [cdkDropListConnectedTo]="['low', 'high', 'completed']"
@@ -48,12 +51,15 @@
         >
           <h4>{{ task.title }}</h4>
           <p>{{ task.status }}</p>
+          <button class="btn btn-delete" (click)="deleteTask(task.id)">
+            <img src="delete-icon.png" alt="Delete" class="btn-icon" />
+          </button>
         </div>
       </div>
 
       <!-- Kolumn för High Priority -->
       <div
-        class="task-column"
+        class="task-column high"
         cdkDropList
         [cdkDropListData]="highPriorityTasks"
         [cdkDropListConnectedTo]="['low', 'normal', 'completed']"
@@ -68,8 +74,12 @@
         >
           <h4>{{ task.title }}</h4>
           <p>{{ task.status }}</p>
+          <button class="btn btn-delete" (click)="deleteTask(task.id)">
+            <img src="delete-icon.png" alt="Delete" class="btn-icon" />
+          </button>
         </div>
       </div>
+
       <!-- Kolumn för Completed -->
       <div
         class="task-column completed"
@@ -87,6 +97,9 @@
         >
           <h4>{{ task.title }}</h4>
           <p>{{ task.status }}</p>
+          <button class="btn btn-delete" (click)="deleteTask(task.id)">
+            <img src="delete-icon.png" alt="Delete" class="btn-icon" />
+          </button>
         </div>
       </div>
     </div>

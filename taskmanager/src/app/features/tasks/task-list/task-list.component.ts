@@ -99,8 +99,7 @@ export class TaskListComponent {
     }
 
     const dialogRef = this.dialog.open(TaskFormComponent, {
-      width: '80vw',
-      height: '80vh',
+      panelClass: 'newtask-dialog', 
       data: {
         userId: this.userId,
         projectId: this.projectId,
@@ -126,10 +125,25 @@ export class TaskListComponent {
       .afterClosed()
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.taskService.deleteTask(taskId).subscribe(() => {
-            this.tasks = this.tasks.filter((t) => t.id !== taskId);
-            console.log('Task deleted:', taskId);
-          });
+          this.taskService.deleteTask(taskId).subscribe(
+            () => {
+              // Uppdatera listan med uppgifter
+              this.tasks = this.tasks.filter((t) => t.id !== taskId);
+
+              // Logga att uppgiften har tagits bort
+              console.log('Task deleted:', taskId);
+
+              // Lägg till eventuell extra logik här
+              this.lowPriorityTasks = this.lowPriorityTasks.filter((t) => t.id !== taskId);
+              this.normalPriorityTasks = this.normalPriorityTasks.filter((t) => t.id !== taskId);
+              this.highPriorityTasks = this.highPriorityTasks.filter((t) => t.id !== taskId);
+              this.completedTasks = this.completedTasks.filter((t) => t.id !== taskId);
+            },
+            (error) => {
+              // Hantera fel om borttagningen misslyckas
+              console.error('Failed to delete task:', error);
+            }
+          );
         }
       });
   }

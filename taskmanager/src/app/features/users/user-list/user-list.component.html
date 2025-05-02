@@ -19,33 +19,65 @@
           <span class="user-name">{{ user.name }}</span>
           <span class="user-role">{{ user.role }}</span>
           <span class="user-overview">
-            Projects: {{ getProjectCount(user) }} | Tasks: {{ getTaskCount(user) }}
+            Projects: {{ getProjectCount(user) }} | Tasks:
+            {{ getTaskCount(user) }}
           </span>
-          
-          <div class="stats">
-            <h3>Task Priority</h3>
-            <div class="task-progress">
-              <div class="progress-bar high" [style.width.%]="getTaskPercentage(user, 'High')">
-                {{ getTaskPercentage(user, 'High') | number: '1.0-0' }}%
-              </div>
-              <div class="progress-bar normal" [style.width.%]="getTaskPercentage(user, 'Normal')">
-                {{ getTaskPercentage(user, 'Normal') | number: '1.0-0' }}%
-              </div>
-              <div class="progress-bar low" [style.width.%]="getTaskPercentage(user, 'Low')">
-                {{ getTaskPercentage(user, 'Low') | number: '1.0-0' }}%
-              </div>
-            </div>
-          </div>
-          
-      </div>
 
-      <div class="user-actions">
-        <button class="btn btn-view" (click)="selectUser(user)">
-          <img src="view-icon.png" alt="View" class="btn-icon" /></button>
-        <button class="btn btn-edit" (click)="openUserDetailDialog(user)">
-          <img src="edit-icon.png" alt="Edit" class="btn-icon" /></button>
-        <button class="btn btn-delete" (click)="deleteUser(user)">
-          <img src="delete-icon.png" alt="Delete" class="btn-icon" /></button>
+          <div class="task-progress">
+            <!-- Low -->
+            <ng-container *ngIf="getTaskPercentage(user, 'Low') > 0">
+              <div
+                class="progress-bar low"
+                [style.width.%]="getTaskPercentage(user, 'Low')"
+              >
+                {{ getTaskPercentage(user, "Low") | number : "1.0-0" }}%
+              </div>
+            </ng-container>
+
+            <!-- Normal -->
+            <ng-container *ngIf="getTaskPercentage(user, 'Normal') > 0">
+              <div
+                class="progress-bar normal"
+                [style.width.%]="getTaskPercentage(user, 'Normal')"
+              >
+                {{ getTaskPercentage(user, "Normal") | number : "1.0-0" }}%
+              </div>
+            </ng-container>
+
+            <!-- High -->
+            <ng-container *ngIf="getTaskPercentage(user, 'High') > 0">
+              <div
+                class="progress-bar high"
+                [style.width.%]="getTaskPercentage(user, 'High')"
+              >
+                {{ getTaskPercentage(user, "High") | number : "1.0-0" }}%
+              </div>
+            </ng-container>
+
+            <!-- Om inga tasks alls -->
+            <ng-container
+              *ngIf="
+                getTaskPercentage(user, 'High') === 0 &&
+                getTaskPercentage(user, 'Normal') === 0 &&
+                getTaskPercentage(user, 'Low') === 0
+              "
+            >
+              <div class="progress-bar no-tasks">No tasks</div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="user-actions">
+          <button class="btn btn-view" (click)="selectUser(user)">
+            <img src="view-icon.png" alt="View" class="btn-icon" />
+          </button>
+          <button class="btn btn-edit" (click)="openUserDetailDialog(user)">
+            <img src="edit-icon.png" alt="Edit" class="btn-icon" />
+          </button>
+          <button class="btn btn-delete" (click)="deleteUser(user)">
+            <img src="delete-icon.png" alt="Delete" class="btn-icon" />
+          </button>
+        </div>
       </div>
     </div>
   </div>

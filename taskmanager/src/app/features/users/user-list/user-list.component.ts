@@ -80,8 +80,7 @@ export class UserListComponent implements OnInit {
 
   openUserDetailDialog(user: User): void {
     const dialogRef = this.dialog.open(UserDetailComponent, {
-      width: '80vw',
-      height: '80vh',
+      panelClass: 'useredit-dialog-container', // Lägg till en CSS-klass
       data: { id: user.id },
     });
 
@@ -96,8 +95,8 @@ export class UserListComponent implements OnInit {
 
   openUserFormDialog(): void {
     const dialogRef = this.dialog.open(UserFormComponent, {
-      width: '80vw',
-      height: '80vh',
+      panelClass: 'newuser-dialog-container', // Lägg till en CSS-klass
+      data: {}, // Skicka data om det behövs
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -142,22 +141,33 @@ export class UserListComponent implements OnInit {
   }
 
   getTaskCount(user: User): number {
-    return this.taskService.allTasks().filter((t) => t.userId === user.id)
+    return this.taskService
+      .allTasks()
+      .filter((t) => t.userId === user.id && t.status.toLowerCase() !== 'completed')
       .length;
   }
 
   getTaskPercentage(user: User, priority: string): number {
     const userTasks = this.taskService
       .allTasks()
-      .filter((t) => t.userId === user.id);
+      .filter((t) => t.userId === user.id && t.status.toLowerCase() !== 'completed');
     const total = userTasks.length;
-    if (total === 0) return 0;
-    return (
+
+    console.log(`User: ${user.name}, Priority: ${priority}, Total Tasks: ${total}`);
+
+    if (total === 0) {
+      console.log(`No tasks for user: ${user.name}, returning 0`);
+      return 0; // Returnera 0 om det inte finns några uppgifter
+    }
+
+    const percentage =
       (userTasks.filter(
         (t) => t.priority.toLowerCase() === priority.toLowerCase()
       ).length /
         total) *
-      100
-    );
+      100;
+
+    console.log(`User: ${user.name}, Priority: ${priority}, Percentage: ${percentage}`);
+    return percentage;
   }
 }
