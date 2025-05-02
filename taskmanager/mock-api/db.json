@@ -61,12 +61,6 @@
       "name": "AI Chatbot",
       "description": "Bygg en AI-driven chatbot",
       "userId": 5
-    },
-    {
-      "id": 6,
-      "name": "rfff",
-      "description": "qefdesfsf",
-      "userId": 1
     }
   ],
   "tasks": [
@@ -146,7 +140,7 @@
       "id": 10,
       "title": "3f33f",
       "status": "active",
-      "priority": "Low",
+      "priority": "Normal",
       "projectId": 1,
       "userId": 1
     },
