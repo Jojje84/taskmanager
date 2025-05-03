@@ -11,9 +11,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartType, ChartData, ChartOptions, Chart } from 'chart.js';
-import { Subscription } from 'rxjs';
-import { TaskService } from '../../../core/services/task.service'; // Importera TaskService
-import { Task } from '../../../models/task.model'; // Importera Task-modellen
+import { Subject, takeUntil } from 'rxjs';
+import { TaskService } from '../../../core/services/task.service';
+import { Task } from '../../../models/task.model';
 
 @Component({
   selector: 'app-bar-chart',
@@ -25,20 +25,24 @@ import { Task } from '../../../models/task.model'; // Importera Task-modellen
 export class BarChartComponent
   implements OnInit, OnDestroy, OnChanges, AfterViewInit
 {
-  @Input() selectedUserId!: number | undefined; // Ta emot användarens ID som input
+  @Input() selectedUserId!: number | undefined;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef;
 
-  private subscription!: Subscription;
-
-  constructor(private taskService: TaskService) {}
+  private destroy$ = new Subject<void>();
+ chart!: Chart<'bar'>;
 
   barChartData: ChartData<'bar'> = {
     labels: [],
     datasets: [
       {
-        label: 'Tasks per project',
+        label: 'Active Tasks',
         data: [],
-        backgroundColor: ['#4caf50', '#2196f3', '#f44336', '#ff9800'],
+        backgroundColor: '#42a5f5',
+      },
+      {
+        label: 'Completed Tasks',
+        data: [],
+        backgroundColor: '#66bb6a',
       },
     ],
   };
@@ -46,10 +50,24 @@ export class BarChartComponent
   barChartOptions: ChartOptions<'bar'> = {
     responsive: true,
     indexAxis: 'x',
+    scales: {
+      x: { stacked: false },
+      y: { beginAtZero: true, stacked: false },
+    },
   };
 
-  barChartType: 'bar' = 'bar';
-  chart!: Chart;
+  barChartType: ChartType = 'bar';
+
+  constructor(private taskService: TaskService) {}
+
+  ngOnInit(): void {
+    if (this.selectedUserId) {
+      this.fetchTasksForUser();
+      this.taskService.taskChanged$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => this.fetchTasksForUser());
+    }
+  }
 
   ngOnChanges(): void {
     if (this.selectedUserId) {
@@ -60,64 +78,47 @@ export class BarChartComponent
   ngAfterViewInit(): void {
     const canvas = this.chartCanvas.nativeElement;
     this.chart = new Chart(canvas, {
-      type: this.barChartType,
+      type: 'bar',
       data: this.barChartData,
       options: this.barChartOptions,
     });
   }
 
-  ngOnInit(): void {
-    if (this.selectedUserId) {
-      this.fetchTasksForUser();
-    }
-  }
-
   fetchTasksForUser(): void {
-    if (this.selectedUserId === undefined) {
-      console.warn('No user selected for bar chart');
-      return;
-    }
+    if (this.selectedUserId === undefined) return;
 
-    this.subscription?.unsubscribe(); // Avsluta tidigare prenumeration om det finns en
-    this.subscription = this.taskService
+    this.taskService
       .getTasksByUserId(this.selectedUserId)
-      .subscribe((tasks) => {
-        console.log('Tasks for bar chart:', tasks);
-        this.updateChartWithTasks(tasks);
-      });
+      .subscribe((tasks) => this.updateChartWithTasks(tasks));
   }
 
   updateChartWithTasks(tasks: Task[]): void {
-    const projectStatsMap: { [key: string]: number } = {};
+    const projectMap: {
+      [projectId: string]: { active: number; completed: number };
+    } = {};
 
     tasks.forEach((task) => {
-      if (projectStatsMap[task.projectId]) {
-        projectStatsMap[task.projectId]++;
-      } else {
-        projectStatsMap[task.projectId] = 1;
+      const key = task.projectId ?? 'unknown';
+      if (!projectMap[key]) {
+        projectMap[key] = { active: 0, completed: 0 };
       }
+      if (task.status === 'active') projectMap[key].active++;
+      else if (task.status === 'completed') projectMap[key].completed++;
     });
 
-    const projectStats = Object.keys(projectStatsMap).map((projectId) => ({
-      name: `Project ${projectId}`,
-      taskCount: projectStatsMap[projectId],
-    }));
+    const labels = Object.keys(projectMap).map((id) => `Project ${id}`);
+    const activeData = Object.values(projectMap).map((p) => p.active);
+    const completedData = Object.values(projectMap).map((p) => p.completed);
 
-    this.chart.data.labels = projectStats.map((p) => p.name);
-    this.chart.data.datasets[0].data = projectStats.map((p) => p.taskCount);
+    this.chart.data.labels = labels;
+    this.chart.data.datasets[0].data = activeData;
+    this.chart.data.datasets[1].data = completedData;
 
-    if (this.chart) {
-      this.chart.update();
-    }
+    this.chart.update();
   }
 
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
-  }
-
-  updateChart(): void {
-    if (this.chart) {
-      this.chart.update(); // Uppdaterar diagrammet
-    }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

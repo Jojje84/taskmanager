@@ -1,4 +1,10 @@
-import { Component, OnInit, Output, EventEmitter, effect } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
@@ -8,10 +14,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UserDetailComponent } from '../user-detail/user-detail.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { TaskService } from '../../../core/services/task.service';
-import { Task } from '../../../models/task.model';
-import { Project } from '../../../models/project.model';
 import { ProjectService } from '../../../core/services/project.service';
+import { Project } from '../../../models/project.model';
+import { Task } from '../../../models/task.model';
+import { HttpClient } from '@angular/common/http';
+import { TaskService } from '../../../core/services/task.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
@@ -20,7 +28,7 @@ import { ProjectService } from '../../../core/services/project.service';
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
   @Output() userSelected = new EventEmitter<User>();
 
   users: User[] = [];
@@ -28,13 +36,16 @@ export class UserListComponent implements OnInit {
   searchQuery: string = '';
   loading: boolean = true;
   errorMessage: string = '';
-  tasks: Task[] = [];
   projects: Project[] = [];
+  tasksPerUser: { [userId: number]: Task[] } = {};
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private userService: UserService,
-    private taskService: TaskService,
     private projectService: ProjectService,
+    private taskService: TaskService,
+    private http: HttpClient,
     private router: Router,
     private dialog: MatDialog
   ) {}
@@ -45,6 +56,8 @@ export class UserListComponent implements OnInit {
         this.users = data;
         this.filteredUsers = data;
         this.loading = false;
+
+        this.fetchAllUserTasks();
       },
       error: () => {
         this.errorMessage = 'Failed to load users';
@@ -54,11 +67,28 @@ export class UserListComponent implements OnInit {
 
     this.projectService.fetchProjects().subscribe();
 
-    this.taskService.fetchTasks().subscribe(); // viktig för signal
+    this.taskService.taskChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.fetchAllUserTasks();
+      });
+  }
 
-    effect(() => {
-      this.tasks = this.taskService.allTasks(); // reaktiv bindning
-    });
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  fetchAllUserTasks(): void {
+    for (const user of this.users) {
+      this.http
+        .get<Task[]>(`http://localhost:3000/tasks?userId=${user.id}`)
+        .subscribe((tasks) => {
+          this.tasksPerUser[user.id] = tasks.filter(
+            (t) => t.status.toLowerCase() !== 'completed'
+          );
+        });
+    }
   }
 
   filterUsers(): void {
@@ -80,7 +110,7 @@ export class UserListComponent implements OnInit {
 
   openUserDetailDialog(user: User): void {
     const dialogRef = this.dialog.open(UserDetailComponent, {
-      panelClass: 'useredit-dialog-container', // Lägg till en CSS-klass
+      panelClass: 'useredit-dialog-container',
       data: { id: user.id },
     });
 
@@ -95,13 +125,14 @@ export class UserListComponent implements OnInit {
 
   openUserFormDialog(): void {
     const dialogRef = this.dialog.open(UserFormComponent, {
-      panelClass: 'newuser-dialog-container', // Lägg till en CSS-klass
-      data: {}, // Skicka data om det behövs
+      panelClass: 'newuser-dialog-container',
+      data: {},
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'refresh') {
         this.refreshUsers();
+        this.fetchAllUserTasks();
       }
     });
   }
@@ -110,6 +141,7 @@ export class UserListComponent implements OnInit {
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
       this.filteredUsers = users;
+      this.fetchAllUserTasks();
     });
   }
 
@@ -130,37 +162,31 @@ export class UserListComponent implements OnInit {
             this.filteredUsers = this.filteredUsers.filter(
               (u) => Number(u.id) !== idToDelete
             );
+            delete this.tasksPerUser[idToDelete];
           });
         }
       });
   }
 
   getProjectCount(user: User): number {
-    return this.projectService.allProjects().filter((p) => p.userId === user.id)
-      .length;
+    return this.projectService
+      .allProjects()
+      .filter((p) => p.userId === user.id).length;
   }
 
   getTaskCount(user: User): number {
-    return this.taskService
-      .allTasks()
-      .filter((t) => t.userId === user.id && t.status.toLowerCase() !== 'completed')
-      .length;
+    return this.tasksPerUser[user.id]?.length || 0;
   }
 
   getTaskPercentage(user: User, priority: string): number {
-    const userTasks = this.taskService
-      .allTasks()
-      .filter((t) => t.userId === user.id && t.status.toLowerCase() !== 'completed');
+    const userTasks = this.tasksPerUser[user.id] || [];
     const total = userTasks.length;
-
-    if (total === 0) return 0; // Returnera 0 om det inte finns några uppgifter
+    if (total === 0) return 0;
 
     return (
       (userTasks.filter(
-        (t) => t.priority.toLowerCase() === priority.toLowerCase()
-      ).length /
-        total) *
-      100
+        (t) => t.priority?.toLowerCase() === priority.toLowerCase()
+      ).length / total) * 100
     );
   }
 }

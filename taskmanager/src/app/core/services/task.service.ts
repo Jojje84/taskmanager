@@ -1,7 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Task } from '../../models/task.model';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,19 +15,22 @@ export class TaskService {
   // Computed signal för att filtrera tasks
   readonly allTasks = computed(() => this.tasks());
 
+  // Notifiering vid task-ändring
+  taskChanged$ = new Subject<void>();
+
   constructor(private http: HttpClient) {}
 
   // Hämtar alla tasks från API och uppdaterar signalen
   fetchTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.baseUrl).pipe(
-      tap(data => this.tasks.set(data)) // Uppdatera tasks signal med nya data
+      tap(data => this.tasks.set(data))
     );
   }
 
   // Hämtar alla tasks per användare och uppdaterar signalen
   getTasksByUserId(userId: number): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.baseUrl}?userId=${userId}`).pipe(
-      tap(data => this.tasks.set(data)) // Uppdatera tasks signal med användarens data
+      tap(data => this.tasks.set(data))
     );
   }
 
@@ -40,8 +43,8 @@ export class TaskService {
   createTask(task: Task): Observable<Task> {
     return this.http.post<Task>(this.baseUrl, task).pipe(
       tap(created => {
-        // Uppdatera tasks signal med den nya tasken
         this.tasks.update(ts => [...ts, created]);
+        this.taskChanged$.next(); // 🔔 notifiera om ändring
       })
     );
   }
@@ -50,8 +53,8 @@ export class TaskService {
   addTask(task: Task): Observable<Task> {
     return this.http.post<Task>(this.baseUrl, task).pipe(
       tap(created => {
-        // Uppdatera tasks signal med den nya tasken
         this.tasks.update(ts => [...ts, created]);
+        this.taskChanged$.next(); // 🔔 notifiera om ändring
       })
     );
   }
@@ -60,8 +63,8 @@ export class TaskService {
   deleteTask(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
       tap(() => {
-        // Uppdatera tasks signal genom att ta bort tasken
         this.tasks.update(ts => ts.filter(t => t.id !== id));
+        this.taskChanged$.next(); // 🔔 notifiera om ändring
       })
     );
   }
@@ -70,11 +73,9 @@ export class TaskService {
   updateTask(id: number, task: Task): Observable<Task> {
     return this.http.put<Task>(`${this.baseUrl}/${id}`, task).pipe(
       tap(updated => {
-        // Uppdatera tasks signal genom att uppdatera den ändrade tasken
         this.tasks.update(ts => ts.map(t => (t.id === id ? updated : t)));
+        this.taskChanged$.next(); // 🔔 notifiera om ändring
       })
     );
   }
-
-  
 }

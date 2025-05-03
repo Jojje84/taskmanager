@@ -10,6 +10,8 @@ import { UserListComponent } from '../users/user-list/user-list.component';
 import { ProjectListComponent } from '../projects/project-list/project-list.component';
 import { TaskListComponent } from '../tasks/task-list/task-list.component';
 import { TaskService } from '../../core/services/task.service'; // Importera TaskService
+import { BarChartByProjectComponent } from '../../shared/components/bar-chart-project/project.component';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +24,7 @@ import { TaskService } from '../../core/services/task.service'; // Importera Tas
     SummaryComponent,
     ProjectListComponent,
     TaskListComponent,
+    BarChartByProjectComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],

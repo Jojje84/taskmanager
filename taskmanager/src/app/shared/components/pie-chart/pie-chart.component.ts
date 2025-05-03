@@ -7,11 +7,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgChartsModule, BaseChartDirective } from 'ng2-charts'; // För diagram och BaseChartDirective
-import { ChartType } from 'chart.js'; // För korrekt typ på Chart
+import { NgChartsModule, BaseChartDirective } from 'ng2-charts';
+import { ChartType } from 'chart.js';
 import { Task } from '../../../models/task.model';
-import { Subscription } from 'rxjs';
-import { TaskService } from '../../../core/services/task.service'; // Importera TaskService
+import { Subscription, Subject, takeUntil } from 'rxjs';
+import { TaskService } from '../../../core/services/task.service';
 
 @Component({
   selector: 'app-pie-chart',
@@ -21,10 +21,8 @@ import { TaskService } from '../../../core/services/task.service'; // Importera 
   styleUrls: ['./pie-chart.component.scss'],
 })
 export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() selectedUserId!: number | undefined; // Ta emot användarens ID som input
-  private subscription!: Subscription;
-
-  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined; // Lägg till en referens till diagrammet
+  @Input() selectedUserId!: number | undefined;
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   pieChartData: any = {
     labels: ['High Priority', 'Medium Priority', 'Low Priority'],
@@ -35,9 +33,17 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
     ],
   };
 
-  pieChartType: ChartType = 'pie'; // Definiera korrekt ChartType för pie chart
+  pieChartType: ChartType = 'pie';
+  private destroy$ = new Subject<void>();
 
   constructor(private taskService: TaskService) {}
+
+  ngOnInit(): void {
+    if (this.selectedUserId) {
+      this.fetchTasksForUser();
+      this.listenForTaskChanges();
+    }
+  }
 
   ngOnChanges(): void {
     if (this.selectedUserId) {
@@ -45,41 +51,32 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  ngOnInit(): void {
-    if (this.selectedUserId) {
-      this.fetchTasksForUser();
-    }
+  fetchTasksForUser(): void {
+    if (this.selectedUserId === undefined) return;
+
+    this.taskService
+      .getTasksByUserId(this.selectedUserId)
+      .subscribe((tasks) => this.updateChart(tasks));
   }
 
-  fetchTasksForUser(): void {
-    if (this.selectedUserId === undefined) {
-      console.warn('No user selected for pie chart');
-      return;
-    }
-
-    this.subscription?.unsubscribe(); // Avsluta tidigare prenumeration om det finns en
-    this.subscription = this.taskService
-      .getTasksByUserId(this.selectedUserId)
-      .subscribe((tasks) => {
-        console.log('Tasks for pie chart:', tasks);
-        this.updateChart(tasks);
+  listenForTaskChanges(): void {
+    this.taskService.taskChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.selectedUserId) {
+          this.fetchTasksForUser();
+        }
       });
   }
 
   updateChart(tasks: Task[]): void {
     const priorityCounts = { high: 0, medium: 0, low: 0 };
-
-    // Filtrera endast uppgifter med status "active"
-    const activeTasks = tasks.filter((task) => task.status === 'active');
+    const activeTasks = tasks.filter((t) => t.status === 'active');
 
     activeTasks.forEach((task) => {
-      if (task.priority === 'High') {
-        priorityCounts.high++;
-      } else if (task.priority === 'Medium') {
-        priorityCounts.medium++;
-      } else if (task.priority === 'Low') {
-        priorityCounts.low++;
-      }
+      if (task.priority === 'High') priorityCounts.high++;
+      else if (task.priority === 'Medium') priorityCounts.medium++;
+      else if (task.priority === 'Low') priorityCounts.low++;
     });
 
     this.pieChartData.datasets[0].data = [
@@ -88,12 +85,11 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
       priorityCounts.low,
     ];
 
-    if (this.chart) {
-      this.chart.update();
-    }
+    this.chart?.update();
   }
 
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe(); // Rensa prenumerationen
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

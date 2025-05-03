@@ -34,55 +34,50 @@
   "projects": [
     {
       "id": 1,
-      "name": "Task Manager",
-      "description": "Angular-baserad app",
+      "name": "Website Redesign",
       "userId": 1
     },
     {
       "id": 2,
-      "name": "Träningsplan",
-      "description": "Privat hälsoprojekt",
+      "name": "Mobile App Development",
       "userId": 2
     },
     {
       "id": 3,
-      "name": "Reseblogg",
-      "description": "Bygg en blogg",
+      "name": "Backend API",
       "userId": 3
     },
     {
       "id": 4,
-      "name": "E-handelsplattform",
-      "description": "Utveckla en plattform för e-handel",
+      "name": "Testing Automation",
       "userId": 4
     },
     {
       "id": 5,
-      "name": "AI Chatbot",
-      "description": "Bygg en AI-driven chatbot",
+      "name": "Cloud Infrastructure",
       "userId": 5
     }
   ],
   "tasks": [
     {
       "id": 1,
-      "title": "Skapa komponenter",
-      "status": "completed",
-      "priority": "High",
-      "projectId": 1,
-      "userId": 1
-    },
-    {
-      "id": 2,
-      "title": "Sätt upp routing",
+      "title": "Create wireframes",
       "status": "active",
       "priority": "High",
       "projectId": 1,
       "userId": 1
     },
     {
+      "id": 2,
+      "title": "Develop homepage",
+      "status": "completed",
+      "priority": "Medium",
+      "projectId": 1,
+      "userId": 1
+    },
+    {
       "id": 3,
-      "title": "Lägg till övningar",
+      "title": "Design app logo",
       "status": "active",
       "priority": "Low",
       "projectId": 2,
@@ -90,7 +85,7 @@
     },
     {
       "id": 4,
-      "title": "Skriv första inlägget",
+      "title": "Implement authentication",
       "status": "active",
       "priority": "High",
       "projectId": 3,
@@ -98,59 +93,43 @@
     },
     {
       "id": 5,
-      "title": "Testa betalningsflödet",
+      "title": "Set up database",
+      "status": "completed",
+      "priority": "Medium",
+      "projectId": 3,
+      "userId": 3
+    },
+    {
+      "id": 6,
+      "title": "Write test cases",
       "status": "active",
-      "priority": "Low",
+      "priority": "High",
       "projectId": 4,
       "userId": 4
     },
     {
-      "id": 6,
-      "title": "Implementera CI/CD",
+      "id": 7,
+      "title": "Execute regression tests",
       "status": "completed",
       "priority": "Medium",
+      "projectId": 4,
+      "userId": 4
+    },
+    {
+      "id": 8,
+      "title": "Set up CI/CD pipeline",
+      "status": "active",
+      "priority": "High",
       "projectId": 5,
       "userId": 5
     },
     {
-      "id": 7,
-      "title": "Designa UI för chatbot",
-      "status": "active",
-      "priority": "High",
-      "projectId": 2,
-      "userId": 2
-    },
-    {
-      "id": 8,
-      "title": "Skriv dokumentation",
-      "status": "active",
+      "id": 9,
+      "title": "Monitor cloud resources",
+      "status": "completed",
       "priority": "Low",
-      "projectId": 1,
-      "userId": 3
-    },
-    {
-      "id": 15,
-      "title": "eeffa",
-      "status": "active",
-      "priority": "Low",
-      "projectId": 2,
-      "userId": 2
-    },
-    {
-      "id": 16,
-      "title": "fefes",
-      "status": "active",
-      "priority": "Medium",
-      "projectId": 4,
-      "userId": 4
-    },
-    {
-      "id": 17,
-      "title": "wdwaw",
-      "status": "active",
-      "priority": "Medium",
-      "projectId": 4,
-      "userId": 4
+      "projectId": 5,
+      "userId": 5
     }
   ]
 }
