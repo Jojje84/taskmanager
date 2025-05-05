@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, WritableSignal, computed } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../core/services/user.service';
@@ -13,12 +13,12 @@ import { TaskService } from '../../core/services/task.service';
   imports: [CommonModule, FormsModule],
 })
 export class ListComponent implements OnInit {
-  users = signal<any[]>([]); // Signal för användare
-  projects = signal<any[]>([]); // Signal för projekt
-  tasks = signal<any[]>([]); // Signal för uppgifter
-  selectedUser = signal<number | null>(null); // Signal för vald användare
-  selectedUserProjects = signal<any[]>([]); // Signal för användarens projekt
-  selectedUserTasks = signal<any[]>([]); // Signal för användarens uppgifter
+  users = signal<any[]>([]);
+  projects = signal<any[]>([]);
+  tasks = signal<any[]>([]);
+  selectedUser = signal<number | null>(null);
+  selectedUserProjects = signal<any[]>([]);
+  selectedUserTasks = signal<any[]>([]);
 
   constructor(
     private userService: UserService,
@@ -27,66 +27,55 @@ export class ListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Hämta användare, projekt och uppgifter och sätt dem till signaler
-    this.userService.getUsers().subscribe((data) => {
-      this.users.set(data);
-    });
-
-    this.projectService.getProjects().subscribe((data) => {
-      this.projects.set(data);
-    });
+    this.userService.getUsers().subscribe((data) => this.users.set(data));
+    this.projectService.getProjects().subscribe((data) => this.projects.set(data));
 
     this.taskService.fetchTasks().subscribe((taskData) => {
-      this.tasks.set(
-        taskData.map((task) => {
-          const project = this.projects().find((p) => p.id === task.projectId);
-          const user = this.users().find((u) => u.id === task.userId);
-          return {
-            ...task,
-            projectName: project ? project.name : 'Unknown',
-            userName: user ? user.name : 'Unknown',
-          };
-        })
-      );
+      const enriched = taskData.map((task) => {
+        const project = this.projects().find((p) => p.id === task.projectId);
+        const user = this.users().find((u) => u.id === task.userId);
+        return {
+          ...task,
+          projectName: project ? project.name : 'Unknown',
+          userName: user ? user.name : 'Unknown',
+        };
+      });
+      this.tasks.set(enriched);
+      this.selectedUserTasks.set(enriched);
+      this.selectedUserProjects.set(this.projects());
     });
   }
 
-  // Computed signal för att hantera filtrering
-  selectedUserChange = computed(() => {
+  onUserChange(): void {
     const selectedUserId = this.selectedUser();
     if (selectedUserId === null) {
-      // Om ingen användare är vald, visa alla projekt och uppgifter
       this.selectedUserProjects.set(this.projects());
       this.selectedUserTasks.set(this.tasks());
     } else {
-      // Filtrera projekt baserat på användarens ID
       const filteredProjects = this.projects().filter(
         (project) => project.userId === selectedUserId
       );
-      this.selectedUserProjects.set(filteredProjects);
-
-      // Filtrera uppgifter baserat på användarens ID och projektens ID
       const filteredTasks = this.tasks().filter((task) => {
         const project = this.projects().find((p) => p.id === task.projectId);
-        return (
-          task.userId === selectedUserId && project?.userId === selectedUserId
-        );
+        return task.userId === selectedUserId && project?.userId === selectedUserId;
       });
+      this.selectedUserProjects.set(filteredProjects);
       this.selectedUserTasks.set(filteredTasks);
     }
-  });
+  }
 
-  // Funktion för att hämta användarnamn
+  get selectedUserModel() {
+    return this.selectedUser();
+  }
+
+  set selectedUserModel(value: number | null) {
+    this.selectedUser.set(value);
+    this.onUserChange();
+  }
+
   getUserName(userId: number | null): string {
-    if (userId === null) {
-      return 'Unknown';
-    }
+    if (userId === null) return 'Unknown';
     const user = this.users().find((u) => u.id === userId);
     return user ? user.name : 'Unknown';
   }
-
- // Definiera onUserChange metoden
- onUserChange(): void {
-  this.selectedUserChange(); // Uppdatera data när användaren ändras
-}
 }
