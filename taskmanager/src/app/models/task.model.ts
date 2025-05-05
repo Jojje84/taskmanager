@@ -6,6 +6,7 @@ export interface Task {
   priority: string;
   projectId: number;
   userId: number;
-  deadline?: string;
-  projectName?: string; 
+  userIds: number[];
+  deadline?: string; // ISO-format, ex: "2025-05-06"
+  projectName?: string;
 }

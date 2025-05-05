@@ -58,8 +58,8 @@ export class UserDetailComponent implements OnInit {
      
       });
 
-      this.projectService.getProjectsByUserId(user.id).subscribe((projects) => {
-        this.projects = projects;
+      this.projectService.fetchProjects().subscribe((allProjects) => {
+        this.projects = allProjects.filter(p => p.userIds.includes(user.id));
         console.log('Projects:', this.projects);
 
         this.taskService.getTasksByUserId(user.id).subscribe((tasks) => {

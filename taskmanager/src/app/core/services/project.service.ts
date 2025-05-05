@@ -41,7 +41,8 @@ export class ProjectService {
       id: 0,
       name: project.name,
       description: project.description,
-      userId: project.userId,
+      creatorId: project.creatorId,
+      userIds: project.userIds,
     };
     return this.http.post<Project>(this.baseUrl, newProject).pipe(
       tap(created => {

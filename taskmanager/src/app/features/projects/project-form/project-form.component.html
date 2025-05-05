@@ -2,23 +2,28 @@
 <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
   <div>
     <label>Name:</label>
-    <input
-      formControlName="name"
-      type="text"
-      placeholder="Enter project name"
-    />
+    <input formControlName="name" type="text" placeholder="Enter project name" />
   </div>
+
   <div>
     <label>Description:</label>
-    <textarea
-      formControlName="description"
-      placeholder="Enter a short description"
-    ></textarea>
+    <textarea formControlName="description" placeholder="Enter a short description"></textarea>
   </div>
+
   <div>
-    <label>User ID:</label>
-    <input formControlName="userId" type="number" [disabled]="true" />
+    <label>Add Users:</label>
+    <mat-select formControlName="userIds" multiple>
+      <mat-option *ngFor="let user of users" [value]="user.id">
+        {{ user.name }}
+      </mat-option>
+    </mat-select>
   </div>
+
+  <div>
+    <label>Creator ID:</label>
+    <input formControlName="creatorId" type="number" [disabled]="true" />
+  </div>
+
   <div>
     <button type="submit" [disabled]="projectForm.invalid">Create</button>
     <button type="button" (click)="onCancel()">Cancel</button>

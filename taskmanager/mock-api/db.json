@@ -35,27 +35,44 @@
     {
       "id": 1,
       "name": "Website Redesign",
-      "userId": 1
+      "creatorId": 1,
+      "userIds": [
+        1
+      ]
     },
     {
       "id": 2,
       "name": "Mobile App Development",
-      "userId": 2
+      "creatorId": 2,
+      "userIds": [
+        2
+      ]
     },
     {
       "id": 3,
       "name": "Backend API",
-      "userId": 3
+      "creatorId": 3,
+      "userIds": [
+        3
+      ]
     },
     {
       "id": 4,
-      "name": "Testing Automation",
-      "userId": 4
-    },
-    {
-      "id": 5,
-      "name": "Cloud Infrastructure",
-      "userId": 5
+      "name": "veesees",
+      "description": "",
+      "creatorId": 1,
+      "userIds": [
+        2,
+        3,
+        4,
+        1
+      ],
+      "userId": [
+        2,
+        3,
+        4,
+        1
+      ]
     }
   ],
   "tasks": [
@@ -65,7 +82,9 @@
       "status": "active",
       "priority": "High",
       "projectId": 1,
-      "userId": 1
+      "userIds": [
+        1
+      ]
     },
     {
       "id": 2,
@@ -73,7 +92,9 @@
       "status": "completed",
       "priority": "Medium",
       "projectId": 1,
-      "userId": 1
+      "userIds": [
+        1
+      ]
     },
     {
       "id": 3,
@@ -81,7 +102,9 @@
       "status": "active",
       "priority": "Low",
       "projectId": 2,
-      "userId": 2
+      "userIds": [
+        2
+      ]
     },
     {
       "id": 4,
@@ -89,47 +112,9 @@
       "status": "active",
       "priority": "High",
       "projectId": 3,
-      "userId": 3
-    },
-    {
-      "id": 5,
-      "title": "Set up database",
-      "status": "completed",
-      "priority": "Medium",
-      "projectId": 3,
-      "userId": 3
-    },
-    {
-      "id": 6,
-      "title": "Write test cases",
-      "status": "active",
-      "priority": "High",
-      "projectId": 4,
-      "userId": 4
-    },
-    {
-      "id": 7,
-      "title": "Execute regression tests",
-      "status": "completed",
-      "priority": "Medium",
-      "projectId": 4,
-      "userId": 4
-    },
-    {
-      "id": 8,
-      "title": "Set up CI/CD pipeline",
-      "status": "active",
-      "priority": "High",
-      "projectId": 5,
-      "userId": 5
-    },
-    {
-      "id": 9,
-      "title": "Monitor cloud resources",
-      "status": "completed",
-      "priority": "Low",
-      "projectId": 5,
-      "userId": 5
+      "userIds": [
+        3
+      ]
     }
   ]
 }

@@ -38,6 +38,13 @@
   background-color: #0056b3;
 }
 
+.no-tasks-message {
+  text-align: center;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #777;
+}
+
 .task-container {
   display: flex;
   flex-wrap: wrap;

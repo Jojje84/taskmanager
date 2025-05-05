@@ -38,7 +38,7 @@ export class ProjectDetailComponent implements OnInit {
         this.projectForm = this.fb.group({
           name: [project.name],
           description: [project.description],
-          userId: [project.userId],
+          userId: [project.userIds],
         });
 
         // Hämta uppgifter kopplade till projektet

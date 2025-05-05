@@ -9,6 +9,13 @@
     <button class="btn-newtask" (click)="openTaskFormDialog()">New Task</button>
   </div>
 
+  <div
+    *ngIf="!loading && (!tasks || tasks.length === 0)"
+    class="no-tasks-message"
+  >
+    <p>No tasks available for this project.</p>
+  </div>
+
   <div class="task-container">
     <div class="task-columns">
       <!-- Kolumn för Low Priority -->

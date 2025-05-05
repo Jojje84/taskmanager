@@ -82,7 +82,7 @@ import {
         .pipe(takeUntil(this.destroy$))
         .subscribe((projects) => {
           const userProjects = projects.filter(
-            (p: Project) => p.userId === this.selectedUserId
+            (p: Project) => p.userIds.includes(this.selectedUserId)
           );
   
           this.chart.data.labels = userProjects.map((p) => p.name);

@@ -29,8 +29,11 @@ export class TaskService {
 
   // Hämtar alla tasks per användare och uppdaterar signalen
   getTasksByUserId(userId: number): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.baseUrl}?userId=${userId}`).pipe(
-      tap(data => this.tasks.set(data))
+    return this.http.get<Task[]>(this.baseUrl).pipe(
+      tap(data => {
+        const filtered = data.filter(t => t.userIds?.includes(userId));
+        this.tasks.set(filtered);
+      })
     );
   }
 

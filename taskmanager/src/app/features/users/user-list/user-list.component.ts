@@ -80,15 +80,13 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   fetchAllUserTasks(): void {
-    for (const user of this.users) {
-      this.http
-        .get<Task[]>(`http://localhost:3000/tasks?userId=${user.id}`)
-        .subscribe((tasks) => {
-          this.tasksPerUser[user.id] = tasks.filter(
-            (t) => t.status.toLowerCase() !== 'completed'
-          );
-        });
-    }
+    this.http.get<Task[]>(`http://localhost:3000/tasks`).subscribe((tasks) => {
+      for (const user of this.users) {
+        this.tasksPerUser[user.id] = tasks.filter(
+          (t) => t.userIds?.includes(user.id) && t.status.toLowerCase() !== 'completed'
+        );
+      }
+    });
   }
 
   filterUsers(): void {
@@ -171,7 +169,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   getProjectCount(user: User): number {
     return this.projectService
       .allProjects()
-      .filter((p) => p.userId === user.id).length;
+      .filter(p => p.userIds.includes(user.id)).length;
   }
 
   getTaskCount(user: User): number {

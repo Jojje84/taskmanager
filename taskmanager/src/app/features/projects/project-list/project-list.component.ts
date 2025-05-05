@@ -58,18 +58,21 @@ export class ProjectListComponent {
   }
 
   loadProjects(userId: number): void {
-    this.loading = true; // Starta loader
-    this.projectService.getProjectsByUserId(userId).subscribe(
-      (projects) => {
-        this.projects = projects;
-        this.loading = false; // Stoppa loader
-      },
-      (error) => {
-        console.error('Failed to load projects:', error);
-        this.loading = false; // Stoppa loader även vid fel
-      }
-    );
-  }
+  this.loading = true;
+  this.projectService.fetchProjects().subscribe(
+    (allProjects) => {
+      this.projects = allProjects.filter(p =>
+        Array.isArray(p.userIds) && p.userIds.includes(userId)
+      );
+      this.loading = false;
+    },
+    (error) => {
+      console.error('Failed to load projects:', error);
+      this.loading = false;
+    }
+  );
+}
+
 
   onSearch(term: string): void {
     this.searchTerm.set(term); // Uppdatera söktermen

@@ -49,44 +49,44 @@ export class TaskListComponent {
   constructor(private taskService: TaskService, private dialog: MatDialog) {}
 
   ngOnChanges(): void {
-    if (this.userId) {
+    if (this.userId && this.projectId) {
       this.loadTasks(this.userId);
     }
   }
 
   loadTasks(userId: number): void {
     this.loading = true;
-    this.taskService.getTasksByUserId(userId).subscribe(
-      (tasks) => {
-        console.log('Tasks loaded:', tasks); // Kontrollera att nya uppgifter hämtas
-        this.tasks = tasks;
+    console.log('Loading tasks...');
 
-        // Töm befintliga listor utan att byta referens
-        this.lowPriorityTasks.length = 0;
-        this.mediumPriorityTasks.length = 0;
-        this.highPriorityTasks.length = 0;
-        this.completedTasks.length = 0;
+    this.taskService.fetchTasks().subscribe(() => {
+      const allTasks = this.taskService.allTasks();
+      const tasks = allTasks.filter(
+        (t) => t.userIds?.includes(userId) && t.projectId === this.projectId
+      );
 
-        // Lägg till varje task i rätt kolumn
-        for (const task of tasks) {
-          if (task.status.toLowerCase() === 'completed') {
-            this.completedTasks.push(task);
-          } else {
-            if (task.priority === 'Low') this.lowPriorityTasks.push(task);
-            else if (task.priority === 'Medium') this.mediumPriorityTasks.push(task);
-            else if (task.priority === 'High') this.highPriorityTasks.push(task);
-          }
+      this.tasks = tasks;
+
+      console.log('Tasks loaded:', this.tasks);
+
+      this.lowPriorityTasks.length = 0;
+      this.mediumPriorityTasks.length = 0;
+      this.highPriorityTasks.length = 0;
+      this.completedTasks.length = 0;
+
+      for (const task of tasks) {
+        if (task.status.toLowerCase() === 'completed') {
+          this.completedTasks.push(task);
+        } else {
+          if (task.priority === 'Low') this.lowPriorityTasks.push(task);
+          else if (task.priority === 'Medium') this.mediumPriorityTasks.push(task);
+          else if (task.priority === 'High') this.highPriorityTasks.push(task);
         }
-
-        this.loading = false;
-      },
-      (error) => {
-        console.error('Failed to load tasks:', error);
-        this.loading = false;
       }
-    );
+
+      this.loading = false;
+      console.log('Loading complete. Tasks:', this.tasks);
+    });
   }
-  
 
   onSearch(term: string): void {
     this.searchTerm.set(term);
