@@ -7,13 +7,13 @@ import { DownloadComponent } from './features/download/download.component';
 
 export const routes: Routes = [
   // Omdirigera roten till "dashboard"
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-
-  // Dashboard
-  { path: 'dashboard', component: DashboardComponent },
+  { path: '', redirectTo: 'Home', pathMatch: 'full' },
 
   // Home
   { path: 'home', component: HomeComponent },
+
+   // Dashboard
+   { path: 'dashboard', component: DashboardComponent },
 
   // List
   { path: 'list', component: ListComponent },
