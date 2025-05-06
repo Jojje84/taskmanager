@@ -33,11 +33,13 @@ export class DownloadComponent implements OnInit {
 
   ngOnInit() {
     this.userService.getUsers().subscribe((users) => (this.users = users));
-    this.projectService.getProjects().subscribe((projects) => (this.projects = projects));
+    this.projectService
+      .getProjects()
+      .subscribe((projects) => (this.projects = projects));
 
     // Använd effect för att lyssna på förändringar i tasks
     effect(() => {
-      this.tasks = this.taskService.allTasks();
+      this.tasks = this.taskService['tasks'](); // Använd signalen direkt
     });
   }
 
@@ -45,11 +47,15 @@ export class DownloadComponent implements OnInit {
     let filteredTasks = this.tasks;
 
     if (this.selectedUserId) {
-      filteredTasks = filteredTasks.filter((task) => task.userId === this.selectedUserId);
+      filteredTasks = filteredTasks.filter((task) =>
+        task.userIds.includes(this.selectedUserId!)
+      );
     }
 
     if (this.selectedTaskId) {
-      filteredTasks = filteredTasks.filter((task) => task.id === this.selectedTaskId);
+      filteredTasks = filteredTasks.filter(
+        (task) => task.id === this.selectedTaskId
+      );
     }
 
     const filteredProjects = this.selectedProjectId

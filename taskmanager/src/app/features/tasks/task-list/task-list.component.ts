@@ -5,7 +5,9 @@ import {
   EventEmitter,
   WritableSignal,
   signal,
-  computed,
+  effect,
+  OnInit,
+  OnChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Task } from '../../../models/task.model';
@@ -23,69 +25,103 @@ import { TaskDetailComponent } from '../task-detail/task-detail.component';
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss'],
 })
-export class TaskListComponent {
+export class TaskListComponent implements OnInit {
   @Input() userId!: number;
-  @Input() tasks: Task[] = [];
-  @Output() taskSelected = new EventEmitter<number>();
   @Input() projectId!: number;
+  @Output() taskSelected = new EventEmitter<number>();
 
+  tasks: WritableSignal<Task[]> = signal([]);
   searchTerm: WritableSignal<string> = signal('');
-  loading: boolean = false;
+
+  localTasks: Task[] = [];
   filteredTasksList: Task[] = [];
+  loading: boolean = false;
 
-  filteredTasks = computed(() => {
-    const term = this.searchTerm().toLowerCase();
-    if (!term) {
-      return this.tasks;
-    }
-    return this.tasks.filter(
-      (task) =>
-        task.title.toLowerCase().includes(term) ||
-        task.status.toLowerCase().includes(term) ||
-        task.priority.toLowerCase().includes(term)
-    );
-  });
+  lowPriorityTasks: Task[] = [];
+  mediumPriorityTasks: Task[] = [];
+  highPriorityTasks: Task[] = [];
+  completedTasks: Task[] = [];
 
-  constructor(private taskService: TaskService, private dialog: MatDialog) {}
+  constructor(private taskService: TaskService, private dialog: MatDialog) {
+    // Lägg till effekt för att lyssna på förändringar i signalen
+    effect(() => {
+      const allTasks = this.taskService['tasks'](); // Hämta signalvärdet
+      console.log('All tasks from signal:', allTasks);
 
-  ngOnChanges(): void {
-    if (this.userId && this.projectId) {
-      this.loadTasks(this.userId);
-    }
-  }
-
-  loadTasks(userId: number): void {
-    this.loading = true;
-    console.log('Loading tasks...');
-
-    this.taskService.fetchTasks().subscribe(() => {
-      const allTasks = this.taskService.allTasks();
       const tasks = allTasks.filter(
-        (t) => t.userIds?.includes(userId) && t.projectId === this.projectId
+        (t) => t.userIds?.includes(this.userId) && t.projectId === this.projectId
       );
 
-      this.tasks = tasks;
+      this.localTasks = tasks;
+      this.filteredTasksList = tasks;
 
-      console.log('Tasks loaded:', this.tasks);
-
-      this.lowPriorityTasks.length = 0;
-      this.mediumPriorityTasks.length = 0;
-      this.highPriorityTasks.length = 0;
-      this.completedTasks.length = 0;
+      this.lowPriorityTasks = [];
+      this.mediumPriorityTasks = [];
+      this.highPriorityTasks = [];
+      this.completedTasks = [];
 
       for (const task of tasks) {
         if (task.status.toLowerCase() === 'completed') {
           this.completedTasks.push(task);
         } else {
           if (task.priority === 'Low') this.lowPriorityTasks.push(task);
-          else if (task.priority === 'Medium') this.mediumPriorityTasks.push(task);
+          else if (task.priority === 'Medium')
+            this.mediumPriorityTasks.push(task);
           else if (task.priority === 'High') this.highPriorityTasks.push(task);
         }
       }
-
-      this.loading = false;
-      console.log('Loading complete. Tasks:', this.tasks);
     });
+  }
+
+  ngOnInit(): void {
+    this.taskService.fetchTasks(); // Hämta tasks från servern
+  }
+
+  ngOnChanges(): void {
+    if (this.userId && this.projectId) {
+      console.log(
+        'ngOnChanges triggered with userId:',
+        this.userId,
+        'and projectId:',
+        this.projectId
+      );
+    }
+  }
+
+  loadTasks(userId: number): void {
+    this.loading = true;
+    this.taskService.fetchTasks();
+
+    const allTasks = this.taskService['tasks'](); // Hämta signalvärdet
+    const tasks = allTasks.filter(
+      (t) => t.userIds?.includes(userId) && t.projectId === this.projectId
+    );
+
+    this.tasks.set(tasks);
+    this.localTasks = tasks;
+    this.filteredTasksList = tasks;
+
+    this.lowPriorityTasks = [];
+    this.mediumPriorityTasks = [];
+    this.highPriorityTasks = [];
+    this.completedTasks = [];
+
+    for (const task of tasks) {
+      if (task.status.toLowerCase() === 'completed') {
+        this.completedTasks.push(task);
+      } else {
+        if (task.priority === 'Low') this.lowPriorityTasks.push(task);
+        else if (task.priority === 'Medium')
+          this.mediumPriorityTasks.push(task);
+        else if (task.priority === 'High') this.highPriorityTasks.push(task);
+      }
+    }
+
+    this.loading = false;
+  }
+
+  editTask(task: Task): void {
+    this.openTaskFormDialog(task);
   }
 
   onSearch(term: string): void {
@@ -93,14 +129,21 @@ export class TaskListComponent {
     this.filterTasks();
   }
 
+  filterTasks(): void {
+    const query = this.searchTerm().toLowerCase();
+    this.filteredTasksList = this.localTasks.filter(
+      (task) =>
+        task.title.toLowerCase().includes(query) ||
+        task.status.toLowerCase().includes(query) ||
+        task.priority.toLowerCase().includes(query)
+    );
+  }
+
   openTaskFormDialog(task?: Task): void {
-    if (!this.userId || !this.projectId) {
-      console.error('User ID or Project ID is missing');
-      return;
-    }
+    if (!this.userId || !this.projectId) return;
 
     const dialogRef = this.dialog.open(TaskFormComponent, {
-      panelClass: 'newtask-dialog', 
+      panelClass: 'newtask-dialog',
       data: {
         userId: this.userId,
         projectId: this.projectId,
@@ -108,9 +151,10 @@ export class TaskListComponent {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe((result: Task | false) => {
       if (result) {
-        this.loadTasks(this.userId);
+        console.log('Task form dialog closed with result:', result);
+        this.taskService.fetchTasks(); // Hämta uppdaterade tasks från servern
       }
     });
   }
@@ -126,113 +170,41 @@ export class TaskListComponent {
       .afterClosed()
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.taskService.deleteTask(taskId).subscribe(
-            () => {
-              // Uppdatera listan med uppgifter
-              this.tasks = this.tasks.filter((t) => t.id !== taskId);
-
-              // Logga att uppgiften har tagits bort
-              console.log('Task deleted:', taskId);
-
-              // Lägg till eventuell extra logik här
-              this.lowPriorityTasks = this.lowPriorityTasks.filter((t) => t.id !== taskId);
-              this.mediumPriorityTasks = this.mediumPriorityTasks.filter((t) => t.id !== taskId);
-              this.highPriorityTasks = this.highPriorityTasks.filter((t) => t.id !== taskId);
-              this.completedTasks = this.completedTasks.filter((t) => t.id !== taskId);
-            },
-            (error) => {
-              // Hantera fel om borttagningen misslyckas
-              console.error('Failed to delete task:', error);
-            }
-          );
+          this.taskService.deleteTask(taskId);
         }
       });
   }
 
-  filterTasks(): void {
-    const query = this.searchTerm().toLowerCase();
-    this.filteredTasksList = this.tasks.filter(
-      (task) =>
-        task.title.toLowerCase().includes(query) ||
-        task.status.toLowerCase().includes(query) ||
-        task.priority.toLowerCase().includes(query)
-    );
-  }
-
   filteredTasksByPriority(priority: string) {
-    return this.filteredTasks().filter((task) => task.priority === priority);
-  }
-
-  lowPriorityTasks: Task[] = [];
-  mediumPriorityTasks: Task[] = [];
-  highPriorityTasks: Task[] = [];
-  completedTasks: Task[] = [];
-
-  onTaskDrop(event: any): void {
-    if (event.previousContainer === event.container) return;
-  
-    const task = event.previousContainer.data[event.previousIndex];
-    const previousList = event.previousContainer.data;
-    const targetList = event.container.data;
-    const targetId = event.container.id;
-  
-    if (targetId === 'completed') {
-      task.status = 'completed';
-    } else {
-      task.status = 'active';
-      task.priority = this.getPriorityFromContainer(targetId);
-    }
-  
-    previousList.splice(event.previousIndex, 1);
-    targetList.splice(event.currentIndex, 0, task);
-  
-    this.updateTask(task);
-  }
-
-  getPriorityFromContainer(containerId: string): string {
-    if (containerId === 'low') return 'Low';
-    if (containerId === 'medium') return 'Medium';
-    if (containerId === 'high') return 'High';
-    return '';
+    return this.filteredTasksList.filter((task) => task.priority === priority);
   }
 
   updateTask(task: Task): void {
-    this.taskService.updateTask(task.id, task).subscribe(() => {
-      console.log('Task updated:', task);
-    });
+    this.taskService.updateTask(task.id, task);
+    this.loadTasks(this.userId);
   }
 
-  editTask(task: Task): void {
-    const dialogRef = this.dialog.open(TaskDetailComponent, {
-      panelClass: 'edittask-detail-dialog', // CSS-klass för styling
-      data: { task }, // Skicka uppgiftsdata till dialogen
-    });
+  onTaskDrop(event: any): void {
+    const previousIndex = event.previousIndex;
+    const currentIndex = event.currentIndex;
+    const task = event.item.data;
 
-    dialogRef.afterClosed().subscribe((updatedTask: Task | undefined) => {
-      if (updatedTask) {
-        // Uppdatera den specifika uppgiften i listan
-        const index = this.tasks.findIndex((t) => t.id === updatedTask.id);
-        if (index !== -1) {
-          this.tasks[index] = updatedTask;
+    console.log('Task dropped:', task);
+    console.log('Previous index:', previousIndex);
+    console.log('Current index:', currentIndex);
 
-          // Uppdatera rätt kolumn
-          this.lowPriorityTasks = this.tasks.filter(
-            (t) => t.priority === 'Low' && t.status === 'active'
-          );
-          this.mediumPriorityTasks = this.tasks.filter(
-            (t) => t.priority === 'Medium' && t.status === 'active'
-          );
-          this.highPriorityTasks = this.tasks.filter(
-            (t) => t.priority === 'High' && t.status === 'active'
-          );
-          this.completedTasks = this.tasks.filter(
-            (t) => t.status === 'completed'
-          );
-        }
-      }
-      console.log('Task detail dialog closed');
-    });
+    // Uppdatera taskens status eller prioritet baserat på droppositionen
+    if (event.container.id === 'completed') {
+      task.status = 'completed';
+    } else if (event.container.id === 'low') {
+      task.priority = 'Low';
+    } else if (event.container.id === 'medium') {
+      task.priority = 'Medium';
+    } else if (event.container.id === 'high') {
+      task.priority = 'High';
+    }
+
+    // Uppdatera task i backend
+    this.updateTask(task);
   }
 }
-
-

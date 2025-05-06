@@ -1,17 +1,8 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, Input, OnChanges, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartType, ChartData, ChartOptions, Chart } from 'chart.js';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { TaskService } from '../../../core/services/task.service';
 import { Task } from '../../../models/task.model';
 
@@ -23,13 +14,13 @@ import { Task } from '../../../models/task.model';
   styleUrls: ['./bar-chart.component.scss'],
 })
 export class BarChartComponent
-  implements OnInit, OnDestroy, OnChanges, AfterViewInit
+  implements OnChanges, AfterViewInit, OnDestroy
 {
   @Input() selectedUserId!: number | undefined;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef;
 
   private destroy$ = new Subject<void>();
- chart!: Chart<'bar'>;
+  chart!: Chart<'bar'>;
 
   barChartData: ChartData<'bar'> = {
     labels: [],
@@ -60,15 +51,6 @@ export class BarChartComponent
 
   constructor(private taskService: TaskService) {}
 
-  ngOnInit(): void {
-    if (this.selectedUserId) {
-      this.fetchTasksForUser();
-      this.taskService.taskChanged$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => this.fetchTasksForUser());
-    }
-  }
-
   ngOnChanges(): void {
     if (this.selectedUserId) {
       this.fetchTasksForUser();
@@ -84,21 +66,24 @@ export class BarChartComponent
     });
   }
 
+  // Fetch tasks for a given user
   fetchTasksForUser(): void {
     if (this.selectedUserId === undefined) return;
 
-    this.taskService
-      .getTasksByUserId(this.selectedUserId)
-      .subscribe((tasks) => this.updateChartWithTasks(tasks));
+    // Använd signalen från TaskService för att läsa tasks
+    const allTasks = this.taskService['tasks'](); // Anropa signalen via en metod
+    const userTasks = allTasks.filter((task) =>
+      task.userIds.includes(this.selectedUserId!)
+    );
+    this.updateChartWithTasks(userTasks);
   }
 
+  // Update the chart with task data
   updateChartWithTasks(tasks: Task[]): void {
-    const projectMap: {
-      [projectId: string]: { active: number; completed: number };
-    } = {};
+    const projectMap: { [projectId: string]: { active: number; completed: number } } = {};
 
     tasks.forEach((task) => {
-      const key = task.projectId ?? 'unknown';
+      const key = task.projectId ? task.projectId.toString() : 'unknown';
       if (!projectMap[key]) {
         projectMap[key] = { active: 0, completed: 0 };
       }
@@ -110,9 +95,9 @@ export class BarChartComponent
     const activeData = Object.values(projectMap).map((p) => p.active);
     const completedData = Object.values(projectMap).map((p) => p.completed);
 
-    this.chart.data.labels = labels;
-    this.chart.data.datasets[0].data = activeData;
-    this.chart.data.datasets[1].data = completedData;
+    this.barChartData.labels = labels;
+    this.barChartData.datasets[0].data = activeData;
+    this.barChartData.datasets[1].data = completedData;
 
     this.chart.update();
   }

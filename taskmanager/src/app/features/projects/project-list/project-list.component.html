@@ -13,27 +13,26 @@
 
   <!-- Projektlista -->
   <div class="project-container">
-    <div class="project-card" *ngFor="let project of projects">
+    <div class="project-card" *ngFor="let project of filteredProjects()">
       <h4>{{ project.name }}</h4>
       <p>{{ project.description }}</p>
-    
 
-    <!-- Actions för varje projekt -->
-    <div class="project-actions">
-      <button class="btn btn-view" (click)="onProjectClick(project.id)">
-        <img src="view-icon.png" alt="View" class="btn-icon" />
-      </button>
-      <button class="btn btn-edit" (click)="editProject(project)">
-        <img src="edit-icon.png" alt="Edit" class="btn-icon" />
-      </button>
-      <button class="btn btn-delete" (click)="deleteProject(project.id)">
-        <img src="delete-icon.png" alt="Delete" class="btn-icon" />
-      </button>
+      <!-- Actions för varje projekt -->
+      <div class="project-actions">
+        <button class="btn btn-view" (click)="onProjectClick(project.id)">
+          <img src="view-icon.png" alt="View" class="btn-icon" />
+        </button>
+        <button class="btn btn-edit" (click)="editProject(project)">
+          <img src="edit-icon.png" alt="Edit" class="btn-icon" />
+        </button>
+        <button class="btn btn-delete" (click)="deleteProject(project.id)">
+          <img src="delete-icon.png" alt="Delete" class="btn-icon" />
+        </button>
+      </div>
     </div>
   </div>
-  </div>
-</div>
 
-<div *ngIf="loading" class="loader">
-  <p>Loading projects...</p>
+  <div *ngIf="loading" class="loader">
+    <p>Loading projects...</p>
+  </div>
 </div>

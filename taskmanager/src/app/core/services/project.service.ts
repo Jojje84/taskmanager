@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, WritableSignal, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Project } from '../../models/project.model';
 import { Observable, tap } from 'rxjs';
@@ -7,16 +7,16 @@ import { Observable, tap } from 'rxjs';
 export class ProjectService {
   private baseUrl = 'http://localhost:3000/projects';
 
-  private projects = signal<Project[]>([]);
-  readonly allProjects = this.projects;
+  // Signal för att hålla alla projekt
+  private projects: WritableSignal<Project[]> = signal([]);
 
   constructor(private http: HttpClient) {}
 
-  // ✅ Reaktiv fetch
-  fetchProjects(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.baseUrl).pipe(
-      tap(data => this.projects.set(data))
-    );
+  // Hämtar alla projekt från API och uppdaterar signalen
+  fetchProjects(): void {
+    this.http.get<Project[]>(this.baseUrl).subscribe((data) => {
+      this.projects.set(data); // Uppdaterar signalen med de hämtade projekten
+    });
   }
 
   // ✅ Fortsatt stöd för äldre komponenter
@@ -24,48 +24,66 @@ export class ProjectService {
     return this.http.get<Project[]>(this.baseUrl);
   }
 
-  getProjectsByUserId(userId: number): Observable<Project[]> {
-    return this.http.get<Project[]>(`${this.baseUrl}?userId=${userId}`);
+  // Hämtar projekt för en specifik användare och uppdaterar signalen
+  getProjectsByUserId(userId: number): void {
+    this.http
+      .get<Project[]>(`${this.baseUrl}?userId=${userId}`)
+      .subscribe((data) => {
+        const filtered = data.filter((p) => p.userIds?.includes(userId));
+        this.projects.set(filtered); // Uppdatera signalen med filtrerade projekt
+      });
   }
 
   getProjectById(id: number): Observable<Project> {
     return this.http.get<Project>(`${this.baseUrl}/${id}`);
   }
 
-  createProject(project: Project): Observable<Project> {
-    return this.http.post<Project>(this.baseUrl, project);
+  // Skapa ett nytt projekt och uppdatera signalen
+  createProject(project: Project): void {
+    this.http
+      .post<Project>(this.baseUrl, project)
+      .subscribe((created: Project) => {
+        this.projects.set([...this.projects(), created]); // Lägg till projekt i signalen
+      });
   }
 
-  addProject(project: Project): Observable<Project> {
+  // Lägg till ett projekt och uppdatera signalen
+  addProject(project: Project): void {
     const newProject: Project = {
-      id: 0,
+      id: 0, // Låt backend generera id om det inte sätts här
       name: project.name,
       description: project.description,
       creatorId: project.creatorId,
       userIds: project.userIds,
     };
-    return this.http.post<Project>(this.baseUrl, newProject).pipe(
-      tap(created => {
-        this.projects.update(ps => [...ps, created]);
-      })
-    );
+
+    this.http
+      .post<Project>(this.baseUrl, newProject)
+      .subscribe((created: Project) => {
+        this.projects.set([...this.projects(), created]); // Lägg till projekt i signalen
+      });
   }
 
-  updateProject(project: Project): Observable<Project> {
-    return this.http.put<Project>(`${this.baseUrl}/${project.id}`, project).pipe(
-      tap(updated => {
-        this.projects.update(ps =>
-          ps.map(p => (p.id === updated.id ? updated : p))
-        );
-      })
-    );
+  // Ta bort ett projekt och uppdatera signalen
+  deleteProject(id: number): void {
+    this.http.delete<void>(`${this.baseUrl}/${id}`).subscribe(() => {
+      this.projects.set(this.projects().filter((p) => p.id !== id)); // Ta bort projekt från signalen
+    });
   }
 
-  deleteProject(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
-      tap(() => {
-        this.projects.update(ps => ps.filter(p => p.id !== id));
-      })
-    );
+  // Uppdatera ett projekt och uppdatera signalen
+  updateProject(project: Project): void {
+    this.http
+      .put<Project>(`${this.baseUrl}/${project.id}`, project)
+      .subscribe((updated: Project) => {
+        this.projects.set(
+          this.projects().map((p) => (p.id === updated.id ? updated : p))
+        ); // Uppdatera projekt i signalen
+      });
+  }
+
+  // Exponera signalens värde
+  getProjectsSignal(): Project[] {
+    return this.projects();
   }
 }

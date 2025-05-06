@@ -1,84 +1,82 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Task } from '../../models/task.model';
-import { Observable, tap, Subject } from 'rxjs';
+import { WritableSignal, signal } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TaskService {
   private baseUrl = 'http://localhost:3000/tasks';
 
   // Signal för att hålla alla tasks
-  private tasks = signal<Task[]>([]);
-  
-  // Computed signal för att filtrera tasks
-  readonly allTasks = computed(() => this.tasks());
-
-  // Notifiering vid task-ändring
-  taskChanged$ = new Subject<void>();
+  private tasks: WritableSignal<Task[]> = signal([]); // Använd signal istället för BehaviorSubject
 
   constructor(private http: HttpClient) {}
 
   // Hämtar alla tasks från API och uppdaterar signalen
-  fetchTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.baseUrl).pipe(
-      tap(data => this.tasks.set(data))
-    );
+  fetchTasks() {
+    this.http.get<Task[]>(this.baseUrl).subscribe((data) => {
+      console.log('Fetched tasks:', data); // Logga hela datan från API
+      this.tasks.set(data); // Uppdaterar signalen
+      console.log('Updated tasks signal:', this.tasks()); // Logga den uppdaterade signalen
+  
+      // Logga varje task individuellt för att inspektera strukturen
+      data.forEach(task => {
+        console.log('Task details:', task);
+      });
+    });
   }
 
   // Hämtar alla tasks per användare och uppdaterar signalen
-  getTasksByUserId(userId: number): Observable<Task[]> {
-    return this.http.get<Task[]>(this.baseUrl).pipe(
-      tap(data => {
-        const filtered = data.filter(t => t.userIds?.includes(userId));
-        this.tasks.set(filtered);
-      })
-    );
+  getTasksByUserId(userId: number) {
+    this.http.get<Task[]>(this.baseUrl).subscribe((data) => {
+      const filtered = data.filter((t) => t.userIds?.includes(userId));
+      this.tasks.set(filtered); // Uppdatera signalen med filtrerade tasks
+    });
   }
 
   // Hämtar tasks för ett specifikt projekt
-  getTasksForProject(projectId: number): Observable<Task[]> {
+  getTasksForProject(projectId: number) {
     return this.http.get<Task[]>(`${this.baseUrl}?projectId=${projectId}`);
   }
 
   // Skapa en ny task och uppdatera signalen
-  createTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(this.baseUrl, task).pipe(
-      tap(created => {
-        this.tasks.update(ts => [...ts, created]);
-        this.taskChanged$.next(); // 🔔 notifiera om ändring
-      })
-    );
+  createTask(task: Task) {
+    this.http.post<Task>(this.baseUrl, task).subscribe((created: Task) => {
+      this.tasks.set([...this.tasks(), created]); // Lägg till task i signalen
+    });
   }
 
   // Lägg till en task och uppdatera signalen
-  addTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(this.baseUrl, task).pipe(
-      tap(created => {
-        this.tasks.update(ts => [...ts, created]);
-        this.taskChanged$.next(); // 🔔 notifiera om ändring
-      })
-    );
+  addTask(task: Task) {
+    const newTask: Task = {
+      id: 0, // Låt backend generera id om det inte sätts här
+      title: task.title,
+      priority: task.priority,
+      status: task.status,
+      projectId: task.projectId,
+      userIds: task.userIds,
+      deadline: task.deadline,
+      projectName: task.projectName,
+    };
+
+    this.http.post<Task>(this.baseUrl, newTask).subscribe((created: Task) => {
+      this.tasks.set([...this.tasks(), created]); // Lägg till task i signalen
+    });
   }
 
   // Ta bort en task och uppdatera signalen
-  deleteTask(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
-      tap(() => {
-        this.tasks.update(ts => ts.filter(t => t.id !== id));
-        this.taskChanged$.next(); // 🔔 notifiera om ändring
-      })
-    );
+  deleteTask(id: number) {
+    this.http.delete<void>(`${this.baseUrl}/${id}`).subscribe(() => {
+      this.tasks.set(this.tasks().filter((t) => t.id !== id)); // Ta bort task från signalen
+    });
   }
 
   // Uppdatera en task och uppdatera signalen
-  updateTask(id: number, task: Task): Observable<Task> {
-    return this.http.put<Task>(`${this.baseUrl}/${id}`, task).pipe(
-      tap(updated => {
-        this.tasks.update(ts => ts.map(t => (t.id === id ? updated : t)));
-        this.taskChanged$.next(); // 🔔 notifiera om ändring
-      })
-    );
+  updateTask(id: number, task: Task) {
+    this.http.put<Task>(`${this.baseUrl}/${id}`, task).subscribe((updated: Task) => {
+      this.tasks.set(this.tasks().map((t) => (t.id === id ? updated : t))); // Uppdatera task i signalen
+    });
   }
 }

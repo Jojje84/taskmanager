@@ -37,11 +37,13 @@ export class TaskFormComponent implements OnInit {
     this.taskForm = this.fb.group({
       title: ['', Validators.required], // Titel är obligatorisk
       priority: ['medium', Validators.required], // Prioritet är obligatorisk
+      status: ['active', Validators.required], // Lägg till statusfält
       projectId: [
         this.data.projectId,
         [Validators.required, Validators.min(1)],
       ], // Projekt-ID är obligatoriskt
       userId: [this.data.userId, [Validators.required, Validators.min(1)]], // Användar-ID är obligatoriskt
+      userIds: [[]], // Initialisera userIds som en tom array
     });
   }
 
@@ -51,21 +53,41 @@ export class TaskFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.taskForm.valid) {
-      const taskData = {
-        ...this.taskForm.value,
-        status: 'active', // Sätt status till "active"
-      };
+      const formValue = this.taskForm.value;
 
-      this.taskService.addTask(taskData).subscribe((createdTask) => {
-        this.dialogRef.close(createdTask); // Skicka tillbaka den skapade uppgiften
-      });
+      if (!formValue.userIds.includes(this.data.userId)) {
+        formValue.userIds.push(this.data.userId);
+      }
+
+      const taskData = this.createOrderedTaskData(formValue);
+
+      this.taskService.addTask(taskData); // Lägg till uppgiften via signalen
+      this.dialogRef.close(taskData); // Skicka tillbaka skapad uppgift
     } else {
-      console.log('Form is invalid:', this.taskForm.errors); // Logga eventuella fel
-      console.log('Form values:', this.taskForm.value); // Logga formulärets värden
+      console.warn('Form is invalid. Please check the input fields.');
     }
+  }
+
+  createOrderedTaskData(formValue: any): any {
+    // Skapa objektet där id kommer först
+    return {
+      id: formValue.id, // Placera 'id' först
+      title: formValue.title,
+      priority: formValue.priority,
+      status: formValue.status,
+      projectId: formValue.projectId,
+      userId: formValue.userId,
+      userIds: formValue.userIds,
+    };
   }
 
   onCancel(): void {
     this.dialogRef.close(false); // Stäng dialogen utan att skapa uppgiften
+  }
+
+  filterUsers(users: any[], searchTerm: string): any[] {
+    return users.filter((user) =>
+      (user.name || '').toLowerCase().includes((searchTerm || '').toLowerCase())
+    );
   }
 }

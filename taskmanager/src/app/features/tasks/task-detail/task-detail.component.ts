@@ -38,15 +38,9 @@ export class TaskDetailComponent implements OnInit {
   onSubmit(): void {
     if (this.taskForm.valid && this.task) {
       const updatedTask = { ...this.task, ...this.taskForm.value };
-      this.taskService.updateTask(this.task.id, updatedTask).subscribe({
-        next: (updatedData: Task) => {
-          console.log('Task updated successfully!', updatedData);
-          this.dialogRef.close(updatedData); // Returnera uppdaterad uppgift
-        },
-        error: (err) => {
-          console.error('Failed to update task:', err);
-        },
-      });
+      this.taskService.updateTask(this.task.id, updatedTask); // Anropa updateTask utan subscribe
+      console.log('Task updated successfully!', updatedTask);
+      this.dialogRef.close(updatedTask); // Stäng dialogen och returnera uppdaterad uppgift
     }
   }
 

@@ -28,22 +28,26 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.getUsers().subscribe((data) => this.users.set(data));
-    this.projectService.getProjects().subscribe((data) => this.projects.set(data));
+    this.projectService
+      .getProjects()
+      .subscribe((data) => this.projects.set(data));
 
-    this.taskService.fetchTasks().subscribe((taskData) => {
-      const enriched = taskData.map((task) => {
-        const project = this.projects().find((p) => p.id === task.projectId);
-        const user = this.users().find((u) => u.id === task.userId);
-        return {
-          ...task,
-          projectName: project ? project.name : 'Unknown',
-          userName: user ? user.name : 'Unknown',
-        };
-      });
-      this.tasks.set(enriched);
-      this.selectedUserTasks.set(enriched);
-      this.selectedUserProjects.set(this.projects());
+    // Hämta tasks och använd signalen direkt
+    this.taskService.fetchTasks(); // Uppdaterar signalen i TaskService
+
+    const enriched = this.taskService['tasks']().map((task) => {
+      const project = this.projects().find((p) => p.id === task.projectId);
+      const user = this.users().find((u) => task.userIds.includes(u.id));
+      return {
+        ...task,
+        projectName: project ? project.name : 'Unknown',
+        userName: user ? user.name : 'Unknown',
+      };
     });
+
+    this.tasks.set(enriched);
+    this.selectedUserTasks.set(enriched);
+    this.selectedUserProjects.set(this.projects());
   }
 
   onUserChange(): void {
@@ -57,7 +61,9 @@ export class ListComponent implements OnInit {
       );
       const filteredTasks = this.tasks().filter((task) => {
         const project = this.projects().find((p) => p.id === task.projectId);
-        return task.userId === selectedUserId && project?.userId === selectedUserId;
+        return (
+          task.userId === selectedUserId && project?.userId === selectedUserId
+        );
       });
       this.selectedUserProjects.set(filteredProjects);
       this.selectedUserTasks.set(filteredTasks);

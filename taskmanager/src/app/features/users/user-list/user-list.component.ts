@@ -3,7 +3,8 @@ import {
   OnInit,
   OnDestroy,
   Output,
-  EventEmitter
+  EventEmitter,
+  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -51,6 +52,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Hämta användare
     this.userService.getUsers().subscribe({
       next: (data) => {
         this.users = data;
@@ -65,13 +67,14 @@ export class UserListComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.projectService.fetchProjects().subscribe();
+    // Hämta projekt
+    this.projectService.fetchProjects(); // Uppdaterar signalen i ProjectService
 
-    this.taskService.taskChanged$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.fetchAllUserTasks();
-      });
+    // Lyssna på ändringar i tasks via signalen
+    effect(() => {
+      const tasks = this.taskService['tasks'](); // Använd signalen
+      this.updateTasksPerUser(tasks);
+    });
   }
 
   ngOnDestroy(): void {
@@ -83,10 +86,21 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.http.get<Task[]>(`http://localhost:3000/tasks`).subscribe((tasks) => {
       for (const user of this.users) {
         this.tasksPerUser[user.id] = tasks.filter(
-          (t) => t.userIds?.includes(user.id) && t.status.toLowerCase() !== 'completed'
+          (t) =>
+            t.userIds?.includes(user.id) &&
+            t.status.toLowerCase() !== 'completed'
         );
       }
     });
+  }
+
+  updateTasksPerUser(tasks: Task[]): void {
+    for (const user of this.users) {
+      this.tasksPerUser[user.id] = tasks.filter(
+        (t) =>
+          t.userIds?.includes(user.id) && t.status.toLowerCase() !== 'completed'
+      );
+    }
   }
 
   filterUsers(): void {
@@ -167,9 +181,9 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   getProjectCount(user: User): number {
-    return this.projectService
-      .allProjects()
-      .filter(p => p.userIds.includes(user.id)).length;
+    const allProjects = this.projectService['projects'](); // Använd signalen direkt
+    return allProjects.filter((p: Project) => p.userIds.includes(user.id))
+      .length;
   }
 
   getTaskCount(user: User): number {
@@ -184,7 +198,9 @@ export class UserListComponent implements OnInit, OnDestroy {
     return (
       (userTasks.filter(
         (t) => t.priority?.toLowerCase() === priority.toLowerCase()
-      ).length / total) * 100
+      ).length /
+        total) *
+      100
     );
   }
 }

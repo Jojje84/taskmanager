@@ -7,7 +7,7 @@ import { DownloadComponent } from './features/download/download.component';
 
 export const routes: Routes = [
   // Omdirigera roten till "dashboard"
-  { path: '', redirectTo: 'Home', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 
   // Home
   { path: 'home', component: HomeComponent },

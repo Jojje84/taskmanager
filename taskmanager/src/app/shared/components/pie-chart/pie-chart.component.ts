@@ -1,17 +1,11 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
-  OnChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgChartsModule, BaseChartDirective } from 'ng2-charts';
 import { ChartType } from 'chart.js';
 import { Task } from '../../../models/task.model';
-import { Subscription, Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { TaskService } from '../../../core/services/task.service';
+import { WritableSignal, signal } from '@angular/core';
 
 @Component({
   selector: 'app-pie-chart',
@@ -36,37 +30,47 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
   pieChartType: ChartType = 'pie';
   private destroy$ = new Subject<void>();
 
+  // Signal för att hålla alla tasks
+  private tasksSignal = signal<Task[]>([]);
+
   constructor(private taskService: TaskService) {}
 
   ngOnInit(): void {
-    if (this.selectedUserId) {
+    if (this.selectedUserId !== undefined) {
       this.fetchTasksForUser();
       this.listenForTaskChanges();
     }
   }
 
   ngOnChanges(): void {
-    if (this.selectedUserId) {
+    if (this.selectedUserId !== undefined) {
       this.fetchTasksForUser();
     }
   }
 
   fetchTasksForUser(): void {
     if (this.selectedUserId === undefined) return;
-
-    this.taskService
-      .getTasksByUserId(this.selectedUserId)
-      .subscribe((tasks) => this.updateChart(tasks));
+  
+    // Hämta tasks från taskService genom fetchTasks och uppdatera signalen
+    this.taskService.fetchTasks();
+  
+    // Kontrollera att selectedUserId är definierad innan filtrering
+    const tasks = this.tasksSignal();
+    const userTasks = tasks.filter((task: Task) => {
+      return this.selectedUserId !== undefined && task.userIds.includes(this.selectedUserId);
+    });
+  
+    // Uppdatera tasksSignal med filtrerade tasks
+    this.tasksSignal.set(userTasks);
+    this.updateChart(userTasks);
   }
+  
 
   listenForTaskChanges(): void {
-    this.taskService.taskChanged$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        if (this.selectedUserId) {
-          this.fetchTasksForUser();
-        }
-      });
+    // Lyssnar på förändringar i tasksSignal och uppdaterar diagrammet
+    this.tasksSignal().forEach(() => {
+      this.updateChart(this.tasksSignal());
+    });
   }
 
   updateChart(tasks: Task[]): void {

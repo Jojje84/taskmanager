@@ -42,10 +42,10 @@ export class ProjectFormComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { userId: number }
   ) {
     this.projectForm = this.fb.group({
-      name: ['', Validators.required],
-      description: ['', [Validators.required, Validators.minLength(5)]],
-      creatorId: [this.data.userId, Validators.required],
-      userIds: [[], Validators.required],
+      name: [''], // Namn är inte längre obligatoriskt
+      description: [''], // Beskrivning är inte längre obligatorisk
+      creatorId: [this.data.userId], // CreatorId är inte längre obligatoriskt
+      userIds: [[]], // UserIds är inte längre obligatoriskt
     });
   }
 
@@ -56,18 +56,18 @@ export class ProjectFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.projectForm.valid) {
-      const formValue = this.projectForm.value;
-  
-      // ✅ Lägg till creatorId i userIds (om den inte redan finns)
-      if (!formValue.userIds.includes(formValue.creatorId)) {
-        formValue.userIds.push(formValue.creatorId);
-      }
-  
-      this.projectService.addProject(formValue).subscribe(() => {
-        this.dialogRef.close('refresh');
-      });
+    console.log('onSubmit called'); // Kontrollera om metoden körs
+
+    const formValue = this.projectForm.value;
+
+    // ✅ Lägg till creatorId i userIds (om den inte redan finns)
+    if (!formValue.userIds.includes(formValue.creatorId)) {
+      formValue.userIds.push(formValue.creatorId);
     }
+
+    this.projectService.addProject(formValue); // Uppdaterar signalen i ProjectService
+    console.log('Project created successfully');
+    this.dialogRef.close('refresh');
   }
 
   onCancel(): void {

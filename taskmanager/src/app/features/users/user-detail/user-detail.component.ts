@@ -1,4 +1,11 @@
-import { Component, OnInit, Inject, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  EventEmitter,
+  Output,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
 import { ProjectService } from '../../../core/services/project.service';
@@ -13,11 +20,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './user-detail.component.html',
   styleUrls: ['./user-detail.component.scss'],
 })
@@ -30,20 +33,18 @@ export class UserDetailComponent implements OnInit {
   tasks: Task[] = [];
   expandedProjectId: number | null = null;
 
-  searchQuery: string = ''; // Updated to a regular string
+  searchQuery: string = '';
 
   selectedUser: any;
-  userProjects: any[] = [];
+  userProjects: Project[] = [];
   selectedProjectTasks: Task[] = [];
-
-  private projectMap: Map<number, string> = new Map();
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private projectService: ProjectService,
     private taskService: TaskService,
-    @Inject(MAT_DIALOG_DATA) public data: { id: number }, // Ta emot endast id
+    @Inject(MAT_DIALOG_DATA) public data: { id: number },
     private dialogRef: MatDialogRef<UserDetailComponent>
   ) {}
 
@@ -55,25 +56,33 @@ export class UserDetailComponent implements OnInit {
       this.userForm = this.fb.group({
         name: [user.name],
         role: [user.role],
-     
       });
 
-      this.projectService.fetchProjects().subscribe((allProjects) => {
-        this.projects = allProjects.filter(p => p.userIds.includes(user.id));
-        console.log('Projects:', this.projects);
+      this.projectService.fetchProjects();
 
-        this.taskService.getTasksByUserId(user.id).subscribe((tasks) => {
-          this.tasks = tasks.map((task) => {
-            const project = this.projects.find(
-              (p) => Number(p.id) === task.projectId
-            );
-            return {
-              ...task,
-              projectName: project ? project.name : 'Unknown',
-            };
-          });
-          console.log('Tasks:', this.tasks);
+      const allProjects = this.projectService['projects']();
+      this.projects = allProjects.filter((p: Project) =>
+        p.userIds.includes(user.id)
+      );
+      console.log('Projects:', this.projects);
+
+      this.taskService.getTasksByUserId(user.id);
+
+      effect(() => {
+        const tasks = this.taskService['tasks']();
+        this.tasks = tasks.map((task: Task) => {
+          const project = this.projects.find(
+            (p) => Number(p.id) === task.projectId
+          );
+          return {
+            ...task,
+            projectName: project ? project.name : 'Unknown',
+            formattedDeadline: task.deadline
+              ? new Date(task.deadline).toLocaleDateString()
+              : 'No deadline',
+          };
         });
+        console.log('Tasks:', this.tasks);
       });
     });
   }
@@ -100,10 +109,13 @@ export class UserDetailComponent implements OnInit {
     this.selectedUser = user;
     console.log('Selected user:', this.selectedUser);
 
-    this.projectService.getProjectsByUserId(user.id).subscribe((projects) => {
-      console.log('Projects for selected user:', projects);
-      this.userProjects = projects;
-    });
+    this.projectService.getProjectsByUserId(user.id);
+
+    const projects = this.projectService['projects']();
+    this.userProjects = projects.filter((p: Project) =>
+      p.userIds.includes(user.id)
+    );
+    console.log('Projects for selected user:', this.userProjects);
 
     this.selectedProjectTasks = [];
   }

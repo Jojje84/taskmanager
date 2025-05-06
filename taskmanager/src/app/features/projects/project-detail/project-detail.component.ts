@@ -44,23 +44,19 @@ export class ProjectDetailComponent implements OnInit {
         // Hämta uppgifter kopplade till projektet
         this.taskService
           .getTasksForProject(this.project.id)
-          .subscribe((tasks: Task[]) => {
-    
-          });
+          .subscribe((tasks: Task[]) => {});
       });
   }
   onSubmit(): void {
     if (this.projectForm.valid) {
       const updatedProject = { ...this.project, ...this.projectForm.value };
-      this.projectService
-        .updateProject(updatedProject)
-        .subscribe((updatedData: Project) => {
-          // Uppdatera projektets data lokalt
-          this.project = updatedData;
+      this.projectService.updateProject(updatedProject); // Uppdaterar signalen i ProjectService
 
-          // Logga uppdateringen
-          console.log('Project updated successfully!', updatedData);
-        });
+      // Uppdatera projektets data lokalt
+      this.project = updatedProject;
+
+      // Logga uppdateringen
+      console.log('Project updated successfully!', updatedProject);
     }
   }
 }

@@ -1,17 +1,16 @@
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { User } from '../../models/user.model';
-import { Task } from '../../models/task.model'; // Importera Task-modellen
-import { Project } from '../../models/project.model'; // Importera Project-modellen
-import { PieChartComponent } from '../../shared/components/pie-chart/pie-chart.component'; // Importera PieChartComponent
+import { Task } from '../../models/task.model';
+import { Project } from '../../models/project.model';
+import { PieChartComponent } from '../../shared/components/pie-chart/pie-chart.component';
 import { BarChartComponent } from '../../shared/components/bar-chart/bar-chart.component';
 import { SummaryComponent } from '../../shared/components/summary/summary.component';
 import { UserListComponent } from '../users/user-list/user-list.component';
 import { ProjectListComponent } from '../projects/project-list/project-list.component';
 import { TaskListComponent } from '../tasks/task-list/task-list.component';
-import { TaskService } from '../../core/services/task.service'; // Importera TaskService
+import { TaskService } from '../../core/services/task.service';
 import { BarChartByProjectComponent } from '../../shared/components/bar-chart-project/project.component';
-
 
 @Component({
   selector: 'app-dashboard',
@@ -35,37 +34,26 @@ export class DashboardComponent {
   selectedProjectTasks: Task[] = [];
   userProjects: Project[] = [];
 
-  constructor(private taskService: TaskService) {} // Injicera TaskService
+  constructor(private taskService: TaskService) {}
 
   onUserSelected(user: User): void {
     this.selectedUser = user;
-    this.selectedProjectId = null; // Återställ valt projekt
-    this.selectedProjectTasks = []; // Återställ uppgifter
-    console.log('Selected user:', this.selectedUser);
-    this.loadUserProjects(user.id); // Ladda projekt för den nya användaren
+    this.selectedProjectId = null;
+    this.selectedProjectTasks = [];
   }
 
   onProjectClick(projectId: number): void {
     this.selectedProjectId = projectId;
-    console.log('Selected project ID:', this.selectedProjectId);
-    this.loadTasksForProject(projectId); // Ladda uppgifter för det valda projektet
-  }
 
-  loadTasksForProject(projectId: number): void {
-    console.log('Loading tasks for project ID:', projectId);
-    this.taskService.getTasksForProject(projectId).subscribe(
-      (tasks: Task[]) => {
-        this.selectedProjectTasks = tasks;
-        console.log('Tasks loaded for project:', tasks);
-      },
-      (error: any) => {
-        console.error('Failed to load tasks for project:', error);
-      }
-    );
-  }
+    // Hämta tasks och använd signalen direkt
+    this.taskService.fetchTasks(); // Uppdaterar signalen i TaskService
 
-  loadUserProjects(userId: number): void {
-    console.log('Loading projects for user ID:', userId);
-    // Här kan du anropa en tjänst för att hämta projekten
+    const allTasks = this.taskService['tasks'](); // Använd signalen
+    this.selectedProjectTasks = allTasks.filter((t: Task) => {
+      return (
+        t.projectId === projectId &&
+        t.userIds?.includes(this.selectedUser?.id || 0)
+      );
+    });
   }
 }
