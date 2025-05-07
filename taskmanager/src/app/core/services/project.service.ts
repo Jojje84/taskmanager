@@ -15,6 +15,7 @@ export class ProjectService {
   // Hämtar alla projekt från API och uppdaterar signalen
   fetchProjects(): void {
     this.http.get<Project[]>(this.baseUrl).subscribe((data) => {
+      console.log('Fetched projects:', data);
       this.projects.set(data); // Uppdaterar signalen med de hämtade projekten
     });
   }
@@ -39,12 +40,14 @@ export class ProjectService {
   }
 
   // Skapa ett nytt projekt och uppdatera signalen
-  createProject(project: Project): void {
-    this.http
-      .post<Project>(this.baseUrl, project)
-      .subscribe((created: Project) => {
-        this.projects.set([...this.projects(), created]); // Lägg till projekt i signalen
-      });
+  createProject(project: Project): Observable<Project> {
+    return this.http
+      .post<Project>('http://localhost:3000/projects', project)
+      .pipe(
+        tap((createdProject) => {
+          console.log('Project created in backend:', createdProject);
+        })
+      );
   }
 
   // Lägg till ett projekt och uppdatera signalen
@@ -60,6 +63,7 @@ export class ProjectService {
     this.http
       .post<Project>(this.baseUrl, newProject)
       .subscribe((created: Project) => {
+        console.log('Created project:', created); // Debugging: se om created project har id
         this.projects.set([...this.projects(), created]); // Lägg till projekt i signalen
       });
   }
@@ -72,14 +76,24 @@ export class ProjectService {
   }
 
   // Uppdatera ett projekt och uppdatera signalen
-  updateProject(project: Project): void {
-    this.http
+  updateProject(project: Project): Observable<Project> {
+    return this.http
       .put<Project>(`${this.baseUrl}/${project.id}`, project)
-      .subscribe((updated: Project) => {
-        this.projects.set(
-          this.projects().map((p) => (p.id === updated.id ? updated : p))
-        ); // Uppdatera projekt i signalen
-      });
+      .pipe(
+        tap((updatedProject) => {
+          if (!updatedProject.id) {
+            console.error('Project ID is missing in response!', updatedProject);
+          }
+          const index = this.projects().findIndex(
+            (p) => p.id === updatedProject.id
+          );
+          if (index !== -1) {
+            const updatedProjects = [...this.projects()];
+            updatedProjects[index] = updatedProject;
+            this.projects.set(updatedProjects);
+          }
+        })
+      );
   }
 
   // Exponera signalens värde

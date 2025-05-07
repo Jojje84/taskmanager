@@ -12,7 +12,7 @@ import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../models/project.model';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ProjectFormComponent } from '../project-form/project-form.component';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component'; 
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ProjectDetailComponent } from '../project-detail/project-detail.component';
 
 @Component({
@@ -23,21 +23,18 @@ import { ProjectDetailComponent } from '../project-detail/project-detail.compone
   styleUrls: ['./project-list.component.scss'],
 })
 export class ProjectListComponent {
-  @Input() userId!: number; // Tar emot userId från DashboardComponent
-  @Input() projects: Project[] = []; // Tar emot en vanlig array här
-  @Output() projectSelected = new EventEmitter<number>(); // Skickar valt projekt tillbaka till DashboardComponent
+  @Input() userId!: number;
+  @Input() projects: Project[] = [];
+  @Output() projectSelected = new EventEmitter<number>();
 
-  searchTerm: WritableSignal<string> = signal(''); // Använd signal för att skapa en skrivbar signal
+  searchTerm: WritableSignal<string> = signal('');
   loading: boolean = false;
-
-  // Använd computed signal för att filtrera projekt baserat på sökterm
   filteredProjects = signal<Project[]>([]);
 
   constructor(
     private projectService: ProjectService,
     private dialog: MatDialog
   ) {
-    // Lägg till effekt för att lyssna på förändringar i signalen
     effect(() => {
       const term = this.searchTerm().toLowerCase();
       const filtered = this.projects.filter(
@@ -45,12 +42,12 @@ export class ProjectListComponent {
           project.name.toLowerCase().includes(term) ||
           project.description.toLowerCase().includes(term)
       );
-      this.filteredProjects.set(filtered);  // Uppdatera den filtrerade listan av projekt
+      this.filteredProjects.set(filtered);
     });
   }
 
   ngOnInit(): void {
-    this.loadProjects(); // Hämta projekten från servern när komponenten laddas
+    this.loadProjects();
   }
 
   ngOnChanges(): void {
@@ -61,47 +58,52 @@ export class ProjectListComponent {
 
   loadProjects(): void {
     this.loading = true;
-    this.projectService.fetchProjects(); // Hämtar projekten från API
 
-    const allProjects = this.projectService['projects'](); // Hämta signalen
+    // Hämta projekten från signalen i ProjectService
+    const allProjects = this.projectService.getProjectsSignal();
 
-    // Filtrera projekten baserat på userId
-    const userProjects = allProjects.filter(
-      (project) => project.userIds?.includes(this.userId)
-    );
+    console.log('All projects from signal:', allProjects);
 
-    // Uppdatera projekten och sätt dem till signalen
+    // Filtrera projekten baserat på användarens ID
+    const userProjects = allProjects.filter((project) => {
+      if (!project.id) {
+        console.error('Project ID is missing!', project);
+      }
+      return project.userIds?.includes(this.userId);
+    });
+
+    // Uppdatera komponentens projekt och filtrerade projekt
     this.projects = userProjects;
-    this.loading = false;
+    this.filteredProjects.set(this.projects);
 
-    // Uppdatera filteredProjects varje gång projekten ändras
-    this.filteredProjects.set(this.projects);  // Viktigt att uppdatera filteredProjects
+    this.loading = false;
   }
 
   onSearch(term: string): void {
-    this.searchTerm.set(term); // Uppdatera söktermen
+    this.searchTerm.set(term);
   }
 
   onProjectClick(projectId: number): void {
-    this.projectSelected.emit(projectId); // Skicka projektets ID till DashboardComponent
+    this.projectSelected.emit(projectId);
   }
 
-  openProjectFormDialog(): void {
+  openProjectFormDialog(project?: Project): void {
     const dialogRef = this.dialog.open(ProjectFormComponent, {
       panelClass: 'newproject-dialog',
-      data: { userId: this.userId },
+      data: {
+        userId: this.userId,
+        project: project || { name: '', description: '', userIds: [] },
+      },
     });
-  
+
     dialogRef.afterClosed().subscribe((result: Project | false) => {
       if (result) {
-        console.log('New project created:', result);
-        // Lägg till det nya projektet i signalen
-        this.projects = [...this.projects, result]; // Lägg till det nya projektet direkt
-        this.filteredProjects.set(this.projects); // Uppdatera den filtrerade listan också
+        console.log('New project created or updated:', result);
+        this.projects = [...this.projects, result];
+        this.filteredProjects.set(this.projects);
       }
     });
   }
-  
 
   deleteProject(projectId: number): void {
     this.dialog
@@ -116,8 +118,7 @@ export class ProjectListComponent {
         if (confirmed) {
           this.projectService.deleteProject(projectId);
           this.projects = this.projects.filter((p) => p.id !== projectId);
-          console.log('Project deleted:', projectId);
-          this.filteredProjects.set(this.projects);  // Uppdatera filteredProjects efter borttagning
+          this.filteredProjects.set(this.projects);
         }
       });
   }
@@ -128,9 +129,20 @@ export class ProjectListComponent {
       data: { project },
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('Project detail dialog closed');
-      this.loadProjects(); // Uppdatera projektlistan efter dialogen stängts
+    dialogRef.afterClosed().subscribe((updatedProject) => {
+      if (updatedProject) {
+        if (!updatedProject.id) {
+          console.error('Project ID is missing!', updatedProject);
+          return; // Avbryt om ID saknas
+        }
+        const index = this.projects.findIndex(
+          (p) => p.id === updatedProject.id
+        );
+        if (index !== -1) {
+          this.projects[index] = updatedProject;
+          this.filteredProjects.set([...this.projects]);
+        }
+      }
     });
   }
 }

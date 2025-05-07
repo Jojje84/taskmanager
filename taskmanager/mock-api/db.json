@@ -38,7 +38,8 @@
       "creatorId": 1,
       "userIds": [
         1
-      ]
+      ],
+      "description": null
     },
     {
       "id": 2,
@@ -57,9 +58,9 @@
       ]
     },
     {
-      "id": 7,
-      "name": "caeafea",
-      "description": "fafaeafe",
+      "id": 4,
+      "name": "test",
+      "description": "",
       "creatorId": 1,
       "userIds": [
         1

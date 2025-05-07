@@ -12,6 +12,7 @@ import {
 } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../core/services/task.service';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Importera MatSnackBar
 
 @Component({
   selector: 'app-task-form',
@@ -31,6 +32,7 @@ export class TaskFormComponent implements OnInit {
     private fb: FormBuilder,
     private taskService: TaskService,
     private dialogRef: MatDialogRef<TaskFormComponent>,
+    private snackBar: MatSnackBar, // Injicera MatSnackBar
     @Inject(MAT_DIALOG_DATA)
     public data: { userId: number; projectId: number }
   ) {
@@ -62,6 +64,12 @@ export class TaskFormComponent implements OnInit {
       const taskData = this.createOrderedTaskData(formValue);
 
       this.taskService.addTask(taskData); // Lägg till uppgiften via signalen
+
+      // Visa snackbar med bekräftelse på skapandet av uppgiften
+      this.snackBar.open('New task created successfully!', 'Close', {
+        duration: 3000, // Snackbaren visas i 3 sekunder
+      });
+
       this.dialogRef.close(taskData); // Skicka tillbaka skapad uppgift
     } else {
       console.warn('Form is invalid. Please check the input fields.');
