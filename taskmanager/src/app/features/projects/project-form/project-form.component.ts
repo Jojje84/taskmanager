@@ -54,7 +54,8 @@ export class ProjectFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.getUsers().subscribe((users) => {
-      this.users = users;
+      // Filtrera bort skaparen från användarlistan
+      this.users = users.filter((user) => user.id !== this.data.userId);
     });
   }
 

@@ -42,54 +42,63 @@ export class ProjectDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const projectId = this.data.project.id;
-  
+
     // Kontrollera om id finns innan vi gör GET-begäran
     if (!projectId) {
       console.error('Project ID is missing!');
-      return;  // Avsluta om id saknas
+      return; // Avsluta om id saknas
     }
-  
+
     this.projectService
       .getProjectById(projectId)
       .subscribe((project: Project) => {
         this.project = project;
         console.log('Project:', this.project);
-  
+
         // Initiera formuläret med projektdata
         this.projectForm = this.fb.group({
           name: [project.name],
           description: [project.description],
           userIds: [project.userIds || []],
         });
-  
+
         // Hämta användare
         this.userService.getUsers().subscribe((users: User[]) => {
           this.users = users;
         });
-  
+
         // Hämta uppgifter kopplade till projektet
-        this.taskService.getTasksForProject(this.project.id).subscribe((tasks: Task[]) => {
-          this.tasks = tasks;
-        });
+        this.taskService
+          .getTasksForProject(this.project.id)
+          .subscribe((tasks: Task[]) => {
+            this.tasks = tasks;
+          });
       });
   }
-  
 
   onSubmit(): void {
     if (this.projectForm.valid) {
-      const updatedProject = { ...this.project, ...this.projectForm.value };
-  
-      // Uppdatera projektet via ProjectService och signalen
-      this.projectService.updateProject(updatedProject);
-  
-      // Skicka tillbaka det uppdaterade projektet till listan
-      this.dialogRef.close(updatedProject);  // Skicka tillbaka det uppdaterade projektet till listan
-  
-      // Visa en snackbar med bekräftelse
-      this.snackBar.open('Project updated successfully!', 'Close', {
-        duration: 3000,  // Snackbaren visas i 3 sekunder
+      const formValue = this.projectForm.value;
+
+      // Uppdatera projektets userIds med de nya användarna
+      const updatedProject = {
+        ...this.project,
+        ...formValue,
+        userIds: [
+          ...new Set([...(this.project?.userIds || []), ...formValue.userIds]),
+        ], // Kombinera och ta bort dubbletter
+      };
+
+      // Uppdatera projektet via ProjectService
+      this.projectService.updateProject(updatedProject).subscribe(() => {
+        // Skicka tillbaka det uppdaterade projektet till listan
+        this.dialogRef.close(updatedProject);
+
+        // Visa en snackbar med bekräftelse
+        this.snackBar.open('Project updated successfully!', 'Close', {
+          duration: 3000,
+        });
       });
     }
   }
-  
 }
