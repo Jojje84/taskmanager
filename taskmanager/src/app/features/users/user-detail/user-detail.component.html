@@ -1,6 +1,11 @@
 <div class="UserEdit">
   <div *ngIf="user">
-    <h2>Edit User: {{ user.name }}</h2>
+    <div class="dialog-header">
+      <h2>Edit User: {{ user.name }}</h2>
+      <button class="close-btn" (click)="close()">&#10005;</button>
+    </div>
+
+    
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="form-container">
       <div class="form-group">
         <label>Name:</label>

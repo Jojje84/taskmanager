@@ -1,80 +1,84 @@
-<h2>Create New Task</h2>
-
-<form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-  <!-- Title -->
-  <div>
-    <label for="title">Title:</label>
-    <input
-      id="title"
-      type="text"
-      formControlName="title"
-      placeholder="Enter task title"
-      required
-    />
+<div class="Taskadd">
+  <div class="dialog-header">
+    <h2>Create New Task</h2>
+    <button class="close-btn" (click)="close()">&#10005;</button>
   </div>
 
-  <!-- Description -->
-  <div>
-    <label for="description">Description:</label>
-    <textarea
-      id="description"
-      formControlName="description"
-      placeholder="Enter task description"
-    ></textarea>
-  </div>
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="form-container">
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        placeholder="Enter task title"
+        required
+      />
+    </div>
 
-  <!-- Priority -->
-  <div>
-    <label for="priority">Priority:</label>
-    <select id="priority" formControlName="priority">
-      <option value="Low">Low</option>
-      <option value="Medium">Medium</option>
-      <option value="High">High</option>
-    </select>
-  </div>
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        placeholder="Enter task description"
+      ></textarea>
+    </div>
 
-  <!-- Status -->
-  <div>
-    <label for="status">Status:</label>
-    <select id="status" formControlName="status">
-      <option value="active">Active</option>
-      <option value="completed">Completed</option>
-    </select>
-  </div>
+    <!-- Priority -->
+    <div class="form-group">
+      <label for="priority">Priority:</label>
+      <select id="priority" formControlName="priority">
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
+    </div>
 
-  <!-- Project ID -->
-  <div>
-    <label for="projectId">Project:</label>
-    <input
-      id="projectId"
-      type="number"
-      formControlName="projectId"
-      placeholder="Enter project ID"
-      required
-    />
-  </div>
+    <!-- Status -->
+    <div class="form-group">
+      <label for="status">Status:</label>
+      <select id="status" formControlName="status">
+        <option value="active">Active</option>
+        <option value="completed">Completed</option>
+      </select>
+    </div>
 
-  <!-- Creator ID -->
-  <div>
-    <label for="creatorId">Creator ID:</label>
-    <input
-      id="creatorId"
-      type="number"
-      formControlName="creatorId"
-      placeholder="Enter creator ID"
-      required
-    />
-  </div>
+    <!-- Project ID -->
+    <div class="form-group">
+      <label for="projectId">Project:</label>
+      <input
+        id="projectId"
+        type="number"
+        formControlName="projectId"
+        placeholder="Enter project ID"
+        required
+      />
+    </div>
 
-  <!-- Deadline -->
-  <div>
-    <label for="deadline">Deadline:</label>
-    <input id="deadline" type="date" formControlName="deadline" />
-  </div>
+    <!-- Creator ID -->
+    <div class="form-group">
+      <label for="creatorId">Creator ID:</label>
+      <input
+        id="creatorId"
+        type="number"
+        formControlName="creatorId"
+        placeholder="Enter creator ID"
+        required
+      />
+    </div>
 
-  <!-- Buttons -->
-  <div>
-    <button type="submit" [disabled]="taskForm.invalid">Create</button>
-    <button type="button" (click)="onCancel()">Cancel</button>
-  </div>
-</form>
+    <!-- Deadline -->
+    <div class="form-group">
+      <label for="deadline">Deadline:</label>
+      <input id="deadline" type="date" formControlName="deadline" />
+    </div>
+
+    <!-- Buttons -->
+    <div class="form-actions">
+      <button type="submit" class="btn">Create</button>
+      <button type="button" class="btn btn-cancel" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>

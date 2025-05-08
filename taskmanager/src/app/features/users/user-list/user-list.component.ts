@@ -135,8 +135,8 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.dialog
       .open(ConfirmDialogComponent, {
         data: {
-          title: 'Radera användare',
-          content: 'Är du säker på att du vill radera den här användaren?',
+          title: 'Delete User',
+          content: 'Are you sure you want to delete this user?',
         },
       })
       .afterClosed()

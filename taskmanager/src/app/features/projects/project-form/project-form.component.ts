@@ -110,4 +110,8 @@ export class ProjectFormComponent implements OnInit {
       userIds: formValue.userIds,
     };
   }
+
+  close() {
+    this.dialogRef.close();
+  }
 }

@@ -51,4 +51,8 @@ export class TaskDetailComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close(); // Stäng dialogen utan att returnera data
   }
+
+  close(): void {
+    this.dialogRef.close();
+  }
 }

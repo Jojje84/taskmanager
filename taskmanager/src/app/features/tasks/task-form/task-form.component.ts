@@ -95,4 +95,8 @@ export class TaskFormComponent implements OnInit {
       deadline: formValue.deadline,
     };
   }
+
+  close(): void {
+    this.dialogRef.close();
+  }
 }

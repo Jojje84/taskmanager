@@ -102,4 +102,8 @@ export class ProjectDetailComponent implements OnInit {
       });
     }
   }
+
+  close() {
+    this.dialogRef.close();
+  }
 }
