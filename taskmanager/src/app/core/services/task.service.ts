@@ -17,21 +17,14 @@ export class TaskService {
   // Hämtar alla tasks från API och uppdaterar signalen
   fetchTasks() {
     this.http.get<Task[]>(this.baseUrl).subscribe((data) => {
-      console.log('Fetched tasks:', data); // Logga hela datan från API
       this.tasks.set(data); // Uppdaterar signalen
-      console.log('Updated tasks signal:', this.tasks()); // Logga den uppdaterade signalen
-  
-      // Logga varje task individuellt för att inspektera strukturen
-      data.forEach(task => {
-        console.log('Task details:', task);
-      });
     });
   }
 
   // Hämtar alla tasks per användare och uppdaterar signalen
   getTasksByUserId(userId: number) {
     this.http.get<Task[]>(this.baseUrl).subscribe((data) => {
-      const filtered = data.filter((t) => t.userIds?.includes(userId));
+      const filtered = data.filter((t) => t.creatorId === userId);
       this.tasks.set(filtered); // Uppdatera signalen med filtrerade tasks
     });
   }
@@ -56,7 +49,7 @@ export class TaskService {
       priority: task.priority,
       status: task.status,
       projectId: task.projectId,
-      userIds: task.userIds,
+      creatorId: task.creatorId,
       deadline: task.deadline,
       projectName: task.projectName,
     };
@@ -75,8 +68,10 @@ export class TaskService {
 
   // Uppdatera en task och uppdatera signalen
   updateTask(id: number, task: Task) {
-    this.http.put<Task>(`${this.baseUrl}/${id}`, task).subscribe((updated: Task) => {
-      this.tasks.set(this.tasks().map((t) => (t.id === id ? updated : t))); // Uppdatera task i signalen
-    });
+    this.http
+      .put<Task>(`${this.baseUrl}/${id}`, task)
+      .subscribe((updated: Task) => {
+        this.tasks.set(this.tasks().map((t) => (t.id === id ? updated : t))); // Uppdatera task i signalen
+      });
   }
 }

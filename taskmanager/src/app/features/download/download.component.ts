@@ -48,7 +48,7 @@ export class DownloadComponent implements OnInit {
 
     if (this.selectedUserId) {
       filteredTasks = filteredTasks.filter((task) =>
-        task.userIds.includes(this.selectedUserId!)
+        task.creatorId === this.selectedUserId
       );
     }
 

@@ -4,7 +4,7 @@ import { User } from '../../models/user.model';
 import { Task } from '../../models/task.model';
 import { Project } from '../../models/project.model';
 import { PieChartComponent } from '../../shared/components/pie-chart/pie-chart.component';
-import { BarChartComponent } from '../../shared/components/bar-chart/bar-chart.component';
+import { BarChartTaskComponent } from '../../shared/components/bar-chart-task/bar-chart-task.component';
 import { SummaryComponent } from '../../shared/components/summary/summary.component';
 import { UserListComponent } from '../users/user-list/user-list.component';
 import { ProjectListComponent } from '../projects/project-list/project-list.component';
@@ -19,7 +19,7 @@ import { BarChartByProjectComponent } from '../../shared/components/bar-chart-pr
     CommonModule,
     UserListComponent,
     PieChartComponent,
-    BarChartComponent,
+    BarChartTaskComponent,
     SummaryComponent,
     ProjectListComponent,
     TaskListComponent,
@@ -52,7 +52,7 @@ export class DashboardComponent {
     this.selectedProjectTasks = allTasks.filter((t: Task) => {
       return (
         t.projectId === projectId &&
-        t.userIds?.includes(this.selectedUser?.id || 0)
+        t.creatorId === (this.selectedUser?.id || 0)
       );
     });
   }

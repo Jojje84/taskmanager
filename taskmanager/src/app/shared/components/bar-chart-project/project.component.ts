@@ -6,6 +6,7 @@ import {
   Input,
   ViewChild,
   ElementRef,
+  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
@@ -30,12 +31,17 @@ export class BarChartByProjectComponent
   private destroy$ = new Subject<void>();
 
   chartData: ChartData<'bar'> = {
-    labels: [],
+    labels: ['My', 'Shared'],
     datasets: [
       {
-        label: 'Projects',
-        data: [],
+        label: 'My projekt',
+        data: [0],
         backgroundColor: '#42a5f5',
+      },
+      {
+        label: 'Shared projekt',
+        data: [0],
+        backgroundColor: '#66bb6a',
       },
     ],
   };
@@ -53,10 +59,35 @@ export class BarChartByProjectComponent
     },
   };
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService) {
+    effect(() => {
+      if (!this.selectedUserId) return;
+
+      const allProjects = this.projectService['projects']();
+
+      // Egna projekt: där användaren är creator OCH det INTE är delat
+      const ownProjects = allProjects.filter(
+        (p: Project) =>
+          p.creatorId === this.selectedUserId && p.userIds.length === 1 // Bara skaparen är med
+      );
+
+      // Delade projekt: där användaren är med och det är fler än en användare
+      const sharedProjects = allProjects.filter(
+        (p: Project) =>
+          p.userIds.includes(this.selectedUserId) && p.userIds.length > 1 // Delat projekt
+      );
+
+      if (this.chart) {
+        this.chart.data.labels = ['Projekt'];
+        this.chart.data.datasets[0].data = [ownProjects.length];
+        this.chart.data.datasets[1].data = [sharedProjects.length];
+        this.chart.update();
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.loadProjects();
+    this.projectService.fetchProjects();
   }
 
   ngOnChanges(): void {
@@ -79,15 +110,25 @@ export class BarChartByProjectComponent
   loadProjects(): void {
     if (!this.selectedUserId) return;
 
-    this.projectService.fetchProjects(); // Uppdaterar signalen i ProjectService
+    this.projectService.fetchProjects();
 
-    const allProjects = this.projectService['projects'](); // Använd signalen direkt
-    const userProjects = allProjects.filter((p: Project) =>
-      p.userIds.includes(this.selectedUserId)
+    const allProjects = this.projectService['projects']();
+
+    // Egna projekt: där användaren är creator OCH det INTE är delat
+    const ownProjects = allProjects.filter(
+      (p: Project) =>
+        p.creatorId === this.selectedUserId && p.userIds.length === 1 // Bara skaparen är med
     );
 
-    this.chart.data.labels = userProjects.map((p) => p.name);
-    this.chart.data.datasets[0].data = userProjects.map(() => 1);
+    // Delade projekt: där användaren är med och det är fler än en användare
+    const sharedProjects = allProjects.filter(
+      (p: Project) =>
+        p.userIds.includes(this.selectedUserId) && p.userIds.length > 1 // Delat projekt
+    );
+
+    this.chart.data.labels = ['My'];
+    this.chart.data.datasets[0].data = [ownProjects.length];
+    this.chart.data.datasets[1].data = [sharedProjects.length];
     this.chart.update();
   }
 }

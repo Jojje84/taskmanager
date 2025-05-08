@@ -26,7 +26,7 @@ import { TaskDetailComponent } from '../task-detail/task-detail.component';
   styleUrls: ['./task-list.component.scss'],
 })
 export class TaskListComponent implements OnInit {
-  @Input() userId!: number;
+  @Input() userId!: number; // Behåll om det används någon annanstans
   @Input() projectId!: number;
   @Output() taskSelected = new EventEmitter<number>();
 
@@ -43,14 +43,13 @@ export class TaskListComponent implements OnInit {
   completedTasks: Task[] = [];
 
   constructor(private taskService: TaskService, private dialog: MatDialog) {
-    // Lägg till effekt för att lyssna på förändringar i signalen
+    // Effekt för att lyssna på förändringar i signalen
     effect(() => {
       const allTasks = this.taskService['tasks'](); // Hämta signalvärdet
       console.log('All tasks from signal:', allTasks);
 
-      const tasks = allTasks.filter(
-        (t) => t.userIds?.includes(this.userId) && t.projectId === this.projectId
-      );
+      // Filtrera endast baserat på projectId
+      const tasks = allTasks.filter((t) => t.projectId === this.projectId);
 
       this.localTasks = tasks;
       this.filteredTasksList = tasks;
@@ -78,74 +77,18 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnChanges(): void {
-    if (this.userId && this.projectId) {
-      console.log(
-        'ngOnChanges triggered with userId:',
-        this.userId,
-        'and projectId:',
-        this.projectId
-      );
+    if (this.projectId) {
+      console.log('ngOnChanges triggered with projectId:', this.projectId);
     }
-  }
-
-  loadTasks(userId: number): void {
-    this.loading = true;
-    this.taskService.fetchTasks();
-
-    const allTasks = this.taskService['tasks'](); // Hämta signalvärdet
-    const tasks = allTasks.filter(
-      (t) => t.userIds?.includes(userId) && t.projectId === this.projectId
-    );
-
-    this.tasks.set(tasks);
-    this.localTasks = tasks;
-    this.filteredTasksList = tasks;
-
-    this.lowPriorityTasks = [];
-    this.mediumPriorityTasks = [];
-    this.highPriorityTasks = [];
-    this.completedTasks = [];
-
-    for (const task of tasks) {
-      if (task.status.toLowerCase() === 'completed') {
-        this.completedTasks.push(task);
-      } else {
-        if (task.priority === 'Low') this.lowPriorityTasks.push(task);
-        else if (task.priority === 'Medium')
-          this.mediumPriorityTasks.push(task);
-        else if (task.priority === 'High') this.highPriorityTasks.push(task);
-      }
-    }
-
-    this.loading = false;
-  }
-
-  editTask(task: Task): void {
-    this.openTaskFormDialog(task);
-  }
-
-  onSearch(term: string): void {
-    this.searchTerm.set(term);
-    this.filterTasks();
-  }
-
-  filterTasks(): void {
-    const query = this.searchTerm().toLowerCase();
-    this.filteredTasksList = this.localTasks.filter(
-      (task) =>
-        task.title.toLowerCase().includes(query) ||
-        task.status.toLowerCase().includes(query) ||
-        task.priority.toLowerCase().includes(query)
-    );
   }
 
   openTaskFormDialog(task?: Task): void {
-    if (!this.userId || !this.projectId) return;
+    if (!this.projectId) return;
 
     const dialogRef = this.dialog.open(TaskFormComponent, {
       panelClass: 'newtask-dialog',
       data: {
-        userId: this.userId,
+        userId: this.userId, // Behåll om det behövs i TaskFormComponent
         projectId: this.projectId,
         task: task || null,
       },
@@ -175,12 +118,65 @@ export class TaskListComponent implements OnInit {
       });
   }
 
+  onSearch(term: string): void {
+    this.searchTerm.set(term);
+    this.filterTasks();
+  }
+
+  filterTasks(): void {
+    const query = this.searchTerm().toLowerCase();
+    this.filteredTasksList = this.localTasks.filter(
+      (task) =>
+        task.title.toLowerCase().includes(query) ||
+        task.status.toLowerCase().includes(query) ||
+        task.priority.toLowerCase().includes(query)
+    );
+  }
+
+  loadTasks(userId: number): void {
+    this.loading = true;
+    this.taskService.fetchTasks();
+
+    const allTasks = this.taskService['tasks'](); // Hämta signalvärdet
+    const tasks = allTasks.filter(
+      (t) => t.creatorId === userId && t.projectId === this.projectId
+    );
+
+    this.tasks.set(tasks);
+    this.localTasks = tasks;
+    this.filteredTasksList = tasks;
+
+    this.lowPriorityTasks = [];
+    this.mediumPriorityTasks = [];
+    this.highPriorityTasks = [];
+    this.completedTasks = [];
+
+    for (const task of tasks) {
+      if (task.status.toLowerCase() === 'completed') {
+        this.completedTasks.push(task);
+      } else {
+        if (task.priority === 'Low') this.lowPriorityTasks.push(task);
+        else if (task.priority === 'Medium')
+          this.mediumPriorityTasks.push(task);
+        else if (task.priority === 'High') this.highPriorityTasks.push(task);
+      }
+    }
+
+    this.loading = false;
+  }
+
+  editTask(task: Task): void {
+    this.openTaskFormDialog(task);
+  }
+
   filteredTasksByPriority(priority: string) {
     return this.filteredTasksList.filter((task) => task.priority === priority);
   }
 
   updateTask(task: Task): void {
-    this.taskService.updateTask(task.id, task);
+    if (task.id !== undefined) {
+      this.taskService.updateTask(task.id, task);
+    }
     this.loadTasks(this.userId);
   }
 

@@ -15,7 +15,6 @@ export class ProjectService {
   // Hämtar alla projekt från API och uppdaterar signalen
   fetchProjects(): void {
     this.http.get<Project[]>(this.baseUrl).subscribe((data) => {
-      console.log('Fetched projects:', data);
       this.projects.set(data); // Uppdaterar signalen med de hämtade projekten
     });
   }
@@ -41,13 +40,12 @@ export class ProjectService {
 
   // Skapa ett nytt projekt och uppdatera signalen
   createProject(project: Project): Observable<Project> {
-    return this.http
-      .post<Project>('http://localhost:3000/projects', project)
-      .pipe(
-        tap((createdProject) => {
-          console.log('Project created in backend:', createdProject);
-        })
-      );
+    return this.http.post<Project>(this.baseUrl, project).pipe(
+      tap((createdProject) => {
+        const existingProjects = this.projects();
+        this.projects.set([...existingProjects, createdProject]);
+      })
+    );
   }
 
   // Lägg till ett projekt och uppdatera signalen
@@ -63,15 +61,18 @@ export class ProjectService {
     this.http
       .post<Project>(this.baseUrl, newProject)
       .subscribe((created: Project) => {
-        console.log('Created project:', created); // Debugging: se om created project har id
-        this.projects.set([...this.projects(), created]); // Lägg till projekt i signalen
+        const existingProjects = this.projects();
+        if (!existingProjects.some((p) => p.id === created.id)) {
+          this.projects.set([...existingProjects, created]);
+        }
       });
   }
 
   // Ta bort ett projekt och uppdatera signalen
   deleteProject(id: number): void {
     this.http.delete<void>(`${this.baseUrl}/${id}`).subscribe(() => {
-      this.projects.set(this.projects().filter((p) => p.id !== id)); // Ta bort projekt från signalen
+      const updatedProjects = this.projects().filter((p) => p.id !== id);
+      this.projects.set(updatedProjects);
     });
   }
 
@@ -82,7 +83,7 @@ export class ProjectService {
       .pipe(
         tap((updatedProject) => {
           if (!updatedProject.id) {
-            console.error('Project ID is missing in response!', updatedProject);
+            return;
           }
           const index = this.projects().findIndex(
             (p) => p.id === updatedProject.id

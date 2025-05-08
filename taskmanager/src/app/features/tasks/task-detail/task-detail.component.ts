@@ -36,11 +36,15 @@ export class TaskDetailComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.taskForm.valid && this.task) {
+    if (this.taskForm.valid && this.task && this.task.id !== undefined) {
       const updatedTask = { ...this.task, ...this.taskForm.value };
-      this.taskService.updateTask(this.task.id, updatedTask); // Anropa updateTask utan subscribe
+      this.taskService.updateTask(this.task.id, updatedTask); // Anropa updateTask
       console.log('Task updated successfully!', updatedTask);
       this.dialogRef.close(updatedTask); // Stäng dialogen och returnera uppdaterad uppgift
+    } else {
+      console.error(
+        'Task ID is undefined or form is invalid. Cannot update task.'
+      );
     }
   }
 

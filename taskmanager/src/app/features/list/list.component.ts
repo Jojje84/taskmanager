@@ -37,7 +37,7 @@ export class ListComponent implements OnInit {
 
     const enriched = this.taskService['tasks']().map((task) => {
       const project = this.projects().find((p) => p.id === task.projectId);
-      const user = this.users().find((u) => task.userIds.includes(u.id));
+      const user = this.users().find((u) => u.id === task.creatorId); // Använd creatorId istället för userIds
       return {
         ...task,
         projectName: project ? project.name : 'Unknown',

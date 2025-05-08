@@ -1,0 +1,121 @@
+import {
+  Component,
+  Input,
+  ViewChild,
+  ElementRef,
+  effect,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgChartsModule } from 'ng2-charts';
+import { Chart, ChartData, ChartOptions } from 'chart.js';
+import { TaskService } from '../../../core/services/task.service';
+import { ProjectService } from '../../../core/services/project.service';
+import { Task } from '../../../models/task.model';
+import { Project } from '../../../models/project.model';
+import { Subject } from 'rxjs';
+
+@Component({
+  selector: 'app-bar-chart-task',
+  standalone: true,
+  imports: [CommonModule, NgChartsModule],
+  template: `<canvas #chartCanvas></canvas>`,
+})
+export class BarChartTaskComponent implements OnInit, AfterViewInit, OnDestroy {
+  @Input() selectedUserId!: number;
+  @ViewChild('chartCanvas') chartCanvas!: ElementRef;
+  chart!: Chart<'bar'>;
+
+  private destroy$ = new Subject<void>();
+
+  chartData: ChartData<'bar'> = {
+    labels: ['Task'],
+    datasets: [
+      {
+        label: 'My Task',
+        data: [0],
+        backgroundColor: '#42a5f5',
+      },
+      {
+        label: 'Shared Tasks',
+        data: [0],
+        backgroundColor: '#66bb6a',
+      },
+    ],
+  };
+
+  chartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    indexAxis: 'x',
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { stepSize: 1 },
+      },
+    },
+  };
+
+  constructor(
+    private taskService: TaskService,
+    private projectService: ProjectService
+  ) {
+    effect(() => {
+      if (!this.selectedUserId) return;
+
+      const allProjects = this.projectService['projects']();
+      const allTasks = this.taskService['tasks']();
+
+      // Egna projekt: där användaren är creator och det INTE är delat
+      const ownProjectIds = allProjects
+        .filter(
+          (p: Project) =>
+            p.creatorId === this.selectedUserId && p.userIds.length === 1
+        )
+        .map((p: Project) => p.id);
+
+      // Delade projekt: där användaren är med och det är fler än en användare
+      const sharedProjectIds = allProjects
+        .filter(
+          (p: Project) =>
+            p.userIds.includes(this.selectedUserId) && p.userIds.length > 1
+        )
+        .map((p: Project) => p.id);
+
+      // Tasks i egna projekt
+      const ownTasks = allTasks.filter((t: Task) =>
+        ownProjectIds.includes(t.projectId)
+      );
+      // Tasks i delade projekt
+      const sharedTasks = allTasks.filter((t: Task) =>
+        sharedProjectIds.includes(t.projectId)
+      );
+
+      if (this.chart) {
+        this.chart.data.labels = ['My'];
+        this.chart.data.datasets[0].data = [ownTasks.length];
+        this.chart.data.datasets[1].data = [sharedTasks.length];
+        this.chart.update();
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.projectService.fetchProjects();
+    this.taskService.fetchTasks();
+  }
+
+  ngAfterViewInit(): void {
+    this.chart = new Chart(this.chartCanvas.nativeElement, {
+      type: 'bar',
+      data: this.chartData,
+      options: this.chartOptions,
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

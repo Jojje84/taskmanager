@@ -80,13 +80,11 @@ export class ProjectDetailComponent implements OnInit {
     if (this.projectForm.valid) {
       const formValue = this.projectForm.value;
 
-      // Uppdatera projektets userIds med de nya användarna
+      // Uppdatera projektets userIds med endast de användare som valts i formuläret
       const updatedProject = {
         ...this.project,
         ...formValue,
-        userIds: [
-          ...new Set([...(this.project?.userIds || []), ...formValue.userIds]),
-        ], // Kombinera och ta bort dubbletter
+        userIds: formValue.userIds, // Använd endast de användare som skickas från formuläret
       };
 
       // Uppdatera projektet via ProjectService
@@ -98,6 +96,9 @@ export class ProjectDetailComponent implements OnInit {
         this.snackBar.open('Project updated successfully!', 'Close', {
           duration: 3000,
         });
+
+        // Hämta projekten igen för att säkerställa att signalen är uppdaterad
+        this.projectService.fetchProjects();
       });
     }
   }

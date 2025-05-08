@@ -17,18 +17,6 @@
       "name": "Antony",
       "role": "Programmer",
       "avatar": "path-to-avatar3.jpg"
-    },
-    {
-      "id": 4,
-      "name": "Sophia",
-      "role": "Tester",
-      "avatar": "path-to-avatar4.jpg"
-    },
-    {
-      "id": 5,
-      "name": "Daniel",
-      "role": "DevOps",
-      "avatar": "path-to-avatar5.jpg"
     }
   ],
   "projects": [
@@ -39,7 +27,7 @@
       "userIds": [
         1
       ],
-      "description": null
+      "description": "ssscczs"
     },
     {
       "id": 2,
@@ -59,7 +47,7 @@
     },
     {
       "id": 4,
-      "name": "test",
+      "name": "dwadwd",
       "description": "",
       "creatorId": 1,
       "userIds": [
@@ -71,53 +59,23 @@
   "tasks": [
     {
       "id": 1,
-      "title": "Create wireframes",
-      "status": "active",
-      "priority": "High",
-      "projectId": 1,
-      "userIds": [
-        1
-      ]
-    },
-    {
-      "id": 2,
-      "title": "Develop homepage",
-      "status": "completed",
-      "priority": "Medium",
-      "projectId": 1,
-      "userIds": [
-        1
-      ]
-    },
-    {
-      "id": 3,
-      "title": "Design app logo",
-      "status": "active",
+      "title": "wd",
+      "description": "",
       "priority": "Low",
-      "projectId": 2,
-      "userIds": [
-        2
-      ]
+      "status": "active",
+      "projectId": 1,
+      "creatorId": 1,
+      "deadline": ""
     },
     {
       "id": 4,
-      "title": "Implement authentication",
-      "status": "active",
-      "priority": "High",
-      "projectId": 3,
-      "userIds": [
-        3
-      ]
-    },
-    {
-      "id": 5,
-      "title": "ceeaea",
-      "priority": "Medium",
-      "status": "active",
+      "title": "r",
+      "description": "",
+      "priority": "Low",
+      "status": "completed",
       "projectId": 4,
-      "userIds": [
-        1
-      ]
+      "creatorId": 1,
+      "deadline": ""
     }
   ]
 }

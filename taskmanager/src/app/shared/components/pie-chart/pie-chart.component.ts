@@ -1,11 +1,19 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgChartsModule, BaseChartDirective } from 'ng2-charts';
 import { ChartType } from 'chart.js';
 import { Task } from '../../../models/task.model';
 import { Subject } from 'rxjs';
 import { TaskService } from '../../../core/services/task.service';
-import { WritableSignal, signal } from '@angular/core';
+import { signal, effect } from '@angular/core';
+import { ProjectService } from '../../../core/services/project.service';
 
 @Component({
   selector: 'app-pie-chart',
@@ -33,12 +41,36 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
   // Signal för att hålla alla tasks
   private tasksSignal = signal<Task[]>([]);
 
-  constructor(private taskService: TaskService) {}
+  constructor(
+    private taskService: TaskService,
+    private projectService: ProjectService // <-- Lägg till denna rad
+  ) {
+    effect(() => {
+      if (this.selectedUserId === undefined) return;
+
+      const allTasks = this.taskService['tasks']();
+      const allProjects = this.projectService['projects'](); // <-- Använd ProjectService direkt
+
+      const userProjectIds = allProjects
+        .filter((project: any) =>
+          project.userIds?.includes(this.selectedUserId)
+        )
+        .map((project: any) => project.id);
+
+      const userTasks = allTasks.filter(
+        (task: Task) =>
+          task.creatorId === this.selectedUserId ||
+          userProjectIds.includes(task.projectId)
+      );
+
+      this.tasksSignal.set(userTasks);
+      this.updateChart(userTasks);
+    });
+  }
 
   ngOnInit(): void {
     if (this.selectedUserId !== undefined) {
       this.fetchTasksForUser();
-      this.listenForTaskChanges();
     }
   }
 
@@ -50,27 +82,7 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
 
   fetchTasksForUser(): void {
     if (this.selectedUserId === undefined) return;
-  
-    // Hämta tasks från taskService genom fetchTasks och uppdatera signalen
     this.taskService.fetchTasks();
-  
-    // Kontrollera att selectedUserId är definierad innan filtrering
-    const tasks = this.tasksSignal();
-    const userTasks = tasks.filter((task: Task) => {
-      return this.selectedUserId !== undefined && task.userIds.includes(this.selectedUserId);
-    });
-  
-    // Uppdatera tasksSignal med filtrerade tasks
-    this.tasksSignal.set(userTasks);
-    this.updateChart(userTasks);
-  }
-  
-
-  listenForTaskChanges(): void {
-    // Lyssnar på förändringar i tasksSignal och uppdaterar diagrammet
-    this.tasksSignal().forEach(() => {
-      this.updateChart(this.tasksSignal());
-    });
   }
 
   updateChart(tasks: Task[]): void {

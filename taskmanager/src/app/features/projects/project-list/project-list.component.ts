@@ -35,14 +35,18 @@ export class ProjectListComponent {
     private projectService: ProjectService,
     private dialog: MatDialog
   ) {
+    // Effekt för att lyssna på förändringar i projektlistan
     effect(() => {
-      const term = this.searchTerm().toLowerCase();
-      const filtered = this.projects.filter(
-        (project) =>
-          project.name.toLowerCase().includes(term) ||
-          project.description.toLowerCase().includes(term)
+      const allProjects = this.projectService.getProjectsSignal();
+
+      // Filtrera projekten baserat på användarens ID
+      const userProjects = allProjects.filter((project) =>
+        project.userIds?.includes(this.userId)
       );
-      this.filteredProjects.set(filtered);
+
+      // Uppdatera komponentens projekt och filtrerade projekt
+      this.projects = userProjects;
+      this.filteredProjects.set(this.projects);
     });
   }
 
@@ -62,12 +66,10 @@ export class ProjectListComponent {
     // Hämta projekten från signalen i ProjectService
     const allProjects = this.projectService.getProjectsSignal();
 
-    console.log('All projects from signal:', allProjects);
-
     // Filtrera projekten baserat på användarens ID
     const userProjects = allProjects.filter((project) => {
       if (!project.id) {
-        console.error('Project ID is missing!', project);
+        return false; // Ignorera projekt utan ID
       }
       return project.userIds?.includes(this.userId);
     });
@@ -98,9 +100,7 @@ export class ProjectListComponent {
 
     dialogRef.afterClosed().subscribe((result: Project | false) => {
       if (result) {
-        console.log('New project created or updated:', result);
-        this.projects = [...this.projects, result];
-        this.filteredProjects.set(this.projects);
+        // Hantera resultatet om det behövs
       }
     });
   }
@@ -132,16 +132,20 @@ export class ProjectListComponent {
     dialogRef.afterClosed().subscribe((updatedProject) => {
       if (updatedProject) {
         if (!updatedProject.id) {
-          console.error('Project ID is missing!', updatedProject);
           return; // Avbryt om ID saknas
         }
-        const index = this.projects.findIndex(
-          (p) => p.id === updatedProject.id
-        );
-        if (index !== -1) {
-          this.projects[index] = updatedProject;
-          this.filteredProjects.set([...this.projects]);
-        }
+
+        // Uppdatera projektet via ProjectService
+        this.projectService.updateProject(updatedProject).subscribe(() => {
+          // Uppdatera den lokala listan
+          const index = this.projects.findIndex(
+            (p) => p.id === updatedProject.id
+          );
+          if (index !== -1) {
+            this.projects[index] = updatedProject;
+            this.filteredProjects.set([...this.projects]);
+          }
+        });
       }
     });
   }

@@ -16,11 +16,11 @@ import { UserDetailComponent } from '../user-detail/user-detail.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ProjectService } from '../../../core/services/project.service';
-import { Project } from '../../../models/project.model';
 import { Task } from '../../../models/task.model';
 import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { WritableSignal, signal } from '@angular/core';
 import { TaskService } from '../../../core/services/task.service';
-import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
@@ -37,8 +37,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   loading: boolean = true;
   errorMessage: string = '';
-  projects: Project[] = [];
-  tasksPerUser: { [userId: number]: Task[] } = {};
+  tasksPerUser: WritableSignal<{ [userId: number]: Task[] }> = signal({}); // Gör tasksPerUser till en signal
 
   private destroy$ = new Subject<void>();
 
@@ -58,8 +57,6 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.users = data;
         this.filteredUsers = data;
         this.loading = false;
-
-        this.fetchAllUserTasks();
       },
       error: () => {
         this.errorMessage = 'Failed to load users';
@@ -67,40 +64,19 @@ export class UserListComponent implements OnInit, OnDestroy {
       },
     });
 
-    // Hämta projekt
     this.projectService.fetchProjects(); // Uppdaterar signalen i ProjectService
+    this.taskService.fetchTasks(); // Uppdaterar signalen i TaskService
 
-    // Lyssna på ändringar i tasks via signalen
+    // Effekt för att säkerställa att tasksPerUser uppdateras i realtid
     effect(() => {
-      const tasks = this.taskService['tasks'](); // Använd signalen
-      this.updateTasksPerUser(tasks);
+      const tasks = this.tasksPerUser();
+      this.filteredUsers = [...this.filteredUsers]; // Tvinga omrendering
     });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  fetchAllUserTasks(): void {
-    this.http.get<Task[]>(`http://localhost:3000/tasks`).subscribe((tasks) => {
-      for (const user of this.users) {
-        this.tasksPerUser[user.id] = tasks.filter(
-          (t) =>
-            t.userIds?.includes(user.id) &&
-            t.status.toLowerCase() !== 'completed'
-        );
-      }
-    });
-  }
-
-  updateTasksPerUser(tasks: Task[]): void {
-    for (const user of this.users) {
-      this.tasksPerUser[user.id] = tasks.filter(
-        (t) =>
-          t.userIds?.includes(user.id) && t.status.toLowerCase() !== 'completed'
-      );
-    }
   }
 
   filterUsers(): void {
@@ -144,7 +120,6 @@ export class UserListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'refresh') {
         this.refreshUsers();
-        this.fetchAllUserTasks();
       }
     });
   }
@@ -153,7 +128,6 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
       this.filteredUsers = users;
-      this.fetchAllUserTasks();
     });
   }
 
@@ -174,33 +148,62 @@ export class UserListComponent implements OnInit, OnDestroy {
             this.filteredUsers = this.filteredUsers.filter(
               (u) => Number(u.id) !== idToDelete
             );
-            delete this.tasksPerUser[idToDelete];
+            const updatedTasks = { ...this.tasksPerUser() };
+            delete updatedTasks[idToDelete];
+            this.tasksPerUser.set(updatedTasks); // Uppdatera signalen
           });
         }
       });
   }
 
   getProjectCount(user: User): number {
-    const allProjects = this.projectService['projects'](); // Använd signalen direkt
-    return allProjects.filter((p: Project) => p.userIds.includes(user.id))
-      .length;
+    const allProjects = this.projectService['projects'](); // Hämta projekten från signalen
+    return allProjects.filter((p) => p.userIds?.includes(user.id)).length;
   }
 
   getTaskCount(user: User): number {
-    return this.tasksPerUser[user.id]?.length || 0;
+    const allTasks = this.taskService['tasks'](); // Hämta alla tasks från signalen i TaskService
+    const allProjects = this.projectService['projects'](); // Hämta alla projekt från signalen i ProjectService
+
+    // Hämta projekt där användaren är associerad
+    const userProjectIds = allProjects
+      .filter((project) => project.userIds?.includes(user.id))
+      .map((project) => project.id);
+
+    // Filtrera tasks baserat på creatorId eller projektId
+    return allTasks.filter(
+      (task: Task) =>
+        task.creatorId === user.id || userProjectIds.includes(task.projectId)
+    ).length;
   }
 
   getTaskPercentage(user: User, priority: string): number {
-    const userTasks = this.tasksPerUser[user.id] || [];
-    const total = userTasks.length;
-    if (total === 0) return 0;
+    const allTasks = this.taskService['tasks'](); // Hämta alla tasks från signalen i TaskService
+    const allProjects = this.projectService['projects'](); // Hämta alla projekt från signalen i ProjectService
 
-    return (
-      (userTasks.filter(
-        (t) => t.priority?.toLowerCase() === priority.toLowerCase()
-      ).length /
-        total) *
-      100
+    // Hämta projekt där användaren är associerad eller projekt som är delade
+    const userProjectIds = allProjects
+      .filter((project) => project.userIds?.includes(user.id)) // Endast projekt där användaren är associerad
+      .map((project) => project.id);
+
+    // Filtrera tasks baserat på creatorId eller projektId
+    const userTasks = allTasks.filter(
+      (task: Task) =>
+        task.creatorId === user.id || userProjectIds.includes(task.projectId)
     );
+
+    const total = userTasks.length;
+
+    // Om användaren inte har några tasks, returnera 0%
+    if (total === 0) {
+      return 0;
+    }
+
+    // Beräkna procentandelen baserat på prioritet
+    const priorityTasks = userTasks.filter(
+      (t) => t.priority?.toLowerCase() === priority.toLowerCase()
+    );
+
+    return (priorityTasks.length / total) * 100;
   }
 }

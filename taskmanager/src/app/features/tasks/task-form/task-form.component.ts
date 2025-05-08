@@ -12,16 +12,13 @@ import {
 } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../core/services/task.service';
-import { MatSnackBar } from '@angular/material/snack-bar'; // Importera MatSnackBar
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Task } from '../../../models/task.model';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [
-    CommonModule, // För grundläggande Angular-direktiv som *ngIf och *ngFor
-    ReactiveFormsModule, // För att använda reaktiva formulär
-    MatDialogModule, // För att använda Angular Material-dialoger
-  ],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss'],
 })
@@ -32,70 +29,70 @@ export class TaskFormComponent implements OnInit {
     private fb: FormBuilder,
     private taskService: TaskService,
     private dialogRef: MatDialogRef<TaskFormComponent>,
-    private snackBar: MatSnackBar, // Injicera MatSnackBar
+    private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA)
-    public data: { userId: number; projectId: number }
+    public data: { userId: number; projectId: number; task?: Task }
   ) {
     this.taskForm = this.fb.group({
-      title: ['', Validators.required], // Titel är obligatorisk
-      priority: ['medium', Validators.required], // Prioritet är obligatorisk
-      status: ['active', Validators.required], // Lägg till statusfält
-      projectId: [
-        this.data.projectId,
-        [Validators.required, Validators.min(1)],
-      ], // Projekt-ID är obligatoriskt
-      userId: [this.data.userId, [Validators.required, Validators.min(1)]], // Användar-ID är obligatoriskt
-      userIds: [[]], // Initialisera userIds som en tom array
+      title: [data.task?.title || '', [Validators.required]],
+      description: [data.task?.description || ''],
+      priority: [data.task?.priority || 'Low', [Validators.required]],
+      status: [data.task?.status || 'active', [Validators.required]],
+      projectId: [data.projectId, [Validators.required]],
+      creatorId: [data.userId, [Validators.required]], // Sätt creatorId från data
+      deadline: [data.task?.deadline || ''],
     });
   }
 
-  ngOnInit(): void {
-    console.log('Dialog data:', this.data); // Kontrollera att userId, projectId och task är korrekta
-  }
+  ngOnInit(): void {}
 
   onSubmit(): void {
     if (this.taskForm.valid) {
       const formValue = this.taskForm.value;
 
-      if (!formValue.userIds.includes(this.data.userId)) {
-        formValue.userIds.push(this.data.userId);
+      if (this.data.task?.id) {
+        // Uppdatera en befintlig uppgift
+        const updatedTask = this.createOrderedTaskData({
+          ...this.data.task,
+          ...formValue,
+        });
+
+        this.taskService.updateTask(updatedTask.id, updatedTask); // Uppdatera uppgiften
+        this.snackBar.open('Task updated successfully!', 'Close', {
+          duration: 3000,
+        });
+        this.dialogRef.close(updatedTask); // Skicka tillbaka den uppdaterade uppgiften
+      } else {
+        // Skapa en ny uppgift
+        const newTask = this.createOrderedTaskData({
+          ...formValue,
+          creatorId: this.data.userId,
+        });
+
+        this.taskService.createTask(newTask); // Skapa uppgiften
+        this.snackBar.open('Task created successfully!', 'Close', {
+          duration: 3000,
+        });
+        this.dialogRef.close(newTask); // Skicka tillbaka den skapade uppgiften
       }
-
-      const taskData = this.createOrderedTaskData(formValue);
-
-      this.taskService.addTask(taskData); // Lägg till uppgiften via signalen
-
-      // Visa snackbar med bekräftelse på skapandet av uppgiften
-      this.snackBar.open('New task created successfully!', 'Close', {
-        duration: 3000, // Snackbaren visas i 3 sekunder
-      });
-
-      this.dialogRef.close(taskData); // Skicka tillbaka skapad uppgift
-    } else {
-      console.warn('Form is invalid. Please check the input fields.');
     }
+  }
+
+  onCancel(): void {
+    this.dialogRef.close(false); // Stänger dialogen utan att skicka något tillbaka
   }
 
   createOrderedTaskData(formValue: any): any {
     // Skapa objektet där id kommer först
     return {
-      id: formValue.id, // Placera 'id' först
+      id: formValue.id || 0, // Placera 'id' först, låt backend generera om det inte finns
       title: formValue.title,
+      description: formValue.description,
       priority: formValue.priority,
       status: formValue.status,
       projectId: formValue.projectId,
-      userId: formValue.userId,
-      userIds: formValue.userIds,
+      creatorId: formValue.creatorId,
+      deadline: formValue.deadline,
     };
-  }
-
-  onCancel(): void {
-    this.dialogRef.close(false); // Stäng dialogen utan att skapa uppgiften
-  }
-
-  filterUsers(users: any[], searchTerm: string): any[] {
-    return users.filter((user) =>
-      (user.name || '').toLowerCase().includes((searchTerm || '').toLowerCase())
-    );
   }
 }

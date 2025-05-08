@@ -1,6 +1,7 @@
 <h2>Create New Task</h2>
 
 <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+  <!-- Title -->
   <div>
     <label for="title">Title:</label>
     <input
@@ -12,6 +13,17 @@
     />
   </div>
 
+  <!-- Description -->
+  <div>
+    <label for="description">Description:</label>
+    <textarea
+      id="description"
+      formControlName="description"
+      placeholder="Enter task description"
+    ></textarea>
+  </div>
+
+  <!-- Priority -->
   <div>
     <label for="priority">Priority:</label>
     <select id="priority" formControlName="priority">
@@ -21,6 +33,46 @@
     </select>
   </div>
 
+  <!-- Status -->
+  <div>
+    <label for="status">Status:</label>
+    <select id="status" formControlName="status">
+      <option value="active">Active</option>
+      <option value="completed">Completed</option>
+    </select>
+  </div>
+
+  <!-- Project ID -->
+  <div>
+    <label for="projectId">Project:</label>
+    <input
+      id="projectId"
+      type="number"
+      formControlName="projectId"
+      placeholder="Enter project ID"
+      required
+    />
+  </div>
+
+  <!-- Creator ID -->
+  <div>
+    <label for="creatorId">Creator ID:</label>
+    <input
+      id="creatorId"
+      type="number"
+      formControlName="creatorId"
+      placeholder="Enter creator ID"
+      required
+    />
+  </div>
+
+  <!-- Deadline -->
+  <div>
+    <label for="deadline">Deadline:</label>
+    <input id="deadline" type="date" formControlName="deadline" />
+  </div>
+
+  <!-- Buttons -->
   <div>
     <button type="submit" [disabled]="taskForm.invalid">Create</button>
     <button type="button" (click)="onCancel()">Cancel</button>

@@ -9,7 +9,10 @@
     <button class="btn-newtask" (click)="openTaskFormDialog()">New Task</button>
   </div>
 
-  <div *ngIf="!loading && filteredTasksList.length === 0" class="no-tasks-message">
+  <div
+    *ngIf="!loading && filteredTasksList.length === 0"
+    class="no-tasks-message"
+  >
     <p>No tasks available for this project.</p>
   </div>
 
@@ -29,6 +32,7 @@
           class="task-card low"
           *ngFor="let task of lowPriorityTasks"
           cdkDrag
+          [cdkDragData]="task"
         >
           <h4>{{ task.title }}</h4>
           <p>{{ task.status }}</p>
@@ -37,7 +41,11 @@
             <button class="btn btn-edit" (click)="editTask(task)">
               <img src="edit-icon.png" alt="Edit" class="btn-icon" />
             </button>
-            <button class="btn btn-delete" (click)="deleteTask(task.id)">
+            <button
+              class="btn btn-delete"
+              *ngIf="task.id !== undefined"
+              (click)="deleteTask(task.id)"
+            >
               <img src="delete-icon.png" alt="Delete" class="btn-icon" />
             </button>
           </div>
@@ -58,6 +66,7 @@
           class="task-card medium"
           *ngFor="let task of mediumPriorityTasks"
           cdkDrag
+          [cdkDragData]="task"
         >
           <h4>{{ task.title }}</h4>
           <p>{{ task.status }}</p>
@@ -66,7 +75,11 @@
             <button class="btn btn-edit" (click)="editTask(task)">
               <img src="edit-icon.png" alt="Edit" class="btn-icon" />
             </button>
-            <button class="btn btn-delete" (click)="deleteTask(task.id)">
+            <button
+              class="btn btn-delete"
+              *ngIf="task.id !== undefined"
+              (click)="deleteTask(task.id)"
+            >
               <img src="delete-icon.png" alt="Delete" class="btn-icon" />
             </button>
           </div>
@@ -87,6 +100,7 @@
           class="task-card high"
           *ngFor="let task of highPriorityTasks"
           cdkDrag
+          [cdkDragData]="task"
         >
           <h4>{{ task.title }}</h4>
           <p>{{ task.status }}</p>
@@ -95,7 +109,11 @@
             <button class="btn btn-edit" (click)="editTask(task)">
               <img src="edit-icon.png" alt="Edit" class="btn-icon" />
             </button>
-            <button class="btn btn-delete" (click)="deleteTask(task.id)">
+            <button
+              class="btn btn-delete"
+              *ngIf="task.id !== undefined"
+              (click)="deleteTask(task.id)"
+            >
               <img src="delete-icon.png" alt="Delete" class="btn-icon" />
             </button>
           </div>
@@ -116,6 +134,7 @@
           class="task-card completed"
           *ngFor="let task of completedTasks"
           cdkDrag
+          [cdkDragData]="task"
         >
           <h4>{{ task.title }}</h4>
           <p>{{ task.status }}</p>
@@ -124,8 +143,12 @@
             <button class="btn btn-edit" (click)="editTask(task)">
               <img src="edit-icon.png" alt="Edit" class="btn-icon" />
             </button>
-            <button class="btn btn-delete" (click)="deleteTask(task.id)">
-              <img src="delete-icon.png" alt="Delete" class="btn-icon" />
+            <button
+              class="btn btn-delete"
+              *ngIf="task.id !== undefined"
+              (click)="deleteTask(task.id)"
+            >
+              Delete
             </button>
           </div>
         </div>

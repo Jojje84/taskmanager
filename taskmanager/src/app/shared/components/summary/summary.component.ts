@@ -1,6 +1,13 @@
-import { Component, Input, WritableSignal, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  WritableSignal,
+  signal,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../core/services/task.service';
+import { ProjectService } from '../../../core/services/project.service';
 import { Task } from '../../../models/task.model';
 
 @Component({
@@ -8,7 +15,7 @@ import { Task } from '../../../models/task.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './summary.component.html',
-  styleUrls: ['./summary.component.scss']
+  styleUrls: ['./summary.component.scss'],
 })
 export class SummaryComponent {
   private selectedUserIdSignal: WritableSignal<number | null> = signal(null);
@@ -26,9 +33,14 @@ export class SummaryComponent {
   high: WritableSignal<number> = signal(0);
   progress: WritableSignal<number> = signal(0);
 
-  constructor(private taskService: TaskService) {
-    // Uppdatera sammanfattningen när komponenten initialiseras
-    this.updateSummary();
+  constructor(
+    private taskService: TaskService,
+    private projectService: ProjectService
+  ) {
+    // Kör updateSummary när tasks eller projekt ändras
+    effect(() => {
+      this.updateSummary();
+    });
   }
 
   // Funktion för att uppdatera sammanfattning baserat på vald användare
@@ -37,6 +49,7 @@ export class SummaryComponent {
 
     // Hämta uppgifter från TaskService direkt via signalen
     const allTasks = this.taskService['tasks'](); // Hämta tasks från signalen i TaskService
+    const allProjects = this.projectService['projects']();
 
     if (!userId) {
       // Om ingen användare är vald, sätt alla signaler till 0
@@ -49,18 +62,39 @@ export class SummaryComponent {
       return;
     }
 
-    // Filtrera uppgifter baserat på användarens ID
-    const tasks = allTasks.filter((t: Task) => t.userIds.includes(userId));
+    // Hämta projekt där användaren är medlem
+    const userProjectIds = allProjects
+      .filter((project) => project.userIds?.includes(userId))
+      .map((project) => project.id);
+
+    // Filtrera tasks: skapade av användaren eller tillhör projekt där användaren är medlem
+    const tasks = allTasks.filter(
+      (t: Task) =>
+        t.creatorId === userId || userProjectIds.includes(t.projectId)
+    );
 
     // Uppdatera signaler med data från filtrerade uppgifter
     this.total.set(tasks.length);
-    this.completed.set(tasks.filter((t: Task) => t.status === 'completed').length);
-    this.low.set(tasks.filter((t: Task) => t.priority === 'Low' && t.status === 'active').length);
-    this.medium.set(tasks.filter((t: Task) => t.priority === 'Medium' && t.status === 'active').length);
-    this.high.set(tasks.filter((t: Task) => t.priority === 'High' && t.status === 'active').length);
+    this.completed.set(
+      tasks.filter((t: Task) => t.status === 'completed').length
+    );
+    this.low.set(
+      tasks.filter((t: Task) => t.priority === 'Low' && t.status === 'active')
+        .length
+    );
+    this.medium.set(
+      tasks.filter(
+        (t: Task) => t.priority === 'Medium' && t.status === 'active'
+      ).length
+    );
+    this.high.set(
+      tasks.filter((t: Task) => t.priority === 'High' && t.status === 'active')
+        .length
+    );
 
     // Beräkna progress (procent)
-    const progressValue = this.total() > 0 ? (this.completed() / this.total()) * 100 : 0;
+    const progressValue =
+      this.total() > 0 ? (this.completed() / this.total()) * 100 : 0;
     this.progress.set(progressValue);
   }
 }
