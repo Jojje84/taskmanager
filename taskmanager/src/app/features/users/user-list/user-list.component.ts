@@ -178,28 +178,28 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   getTaskPercentage(user: User, priority: string): number {
-    const allTasks = this.taskService['tasks'](); // Hämta alla tasks från signalen i TaskService
-    const allProjects = this.projectService['projects'](); // Hämta alla projekt från signalen i ProjectService
+    const allTasks = this.taskService['tasks']();
+    const allProjects = this.projectService['projects']();
 
-    // Hämta projekt där användaren är associerad eller projekt som är delade
+    // Hämta projekt där användaren är associerad
     const userProjectIds = allProjects
-      .filter((project) => project.userIds?.includes(user.id)) // Endast projekt där användaren är associerad
+      .filter((project) => project.userIds?.includes(user.id))
       .map((project) => project.id);
 
-    // Filtrera tasks baserat på creatorId eller projektId
+    // Filtrera ENDAST aktiva tasks baserat på creatorId eller projektId
     const userTasks = allTasks.filter(
       (task: Task) =>
-        task.creatorId === user.id || userProjectIds.includes(task.projectId)
+        (task.creatorId === user.id ||
+          userProjectIds.includes(task.projectId)) &&
+        task.status?.toLowerCase() === 'active'
     );
 
     const total = userTasks.length;
-
-    // Om användaren inte har några tasks, returnera 0%
     if (total === 0) {
       return 0;
     }
 
-    // Beräkna procentandelen baserat på prioritet
+    // Beräkna procentandelen baserat på prioritet (bland aktiva tasks)
     const priorityTasks = userTasks.filter(
       (t) => t.priority?.toLowerCase() === priority.toLowerCase()
     );

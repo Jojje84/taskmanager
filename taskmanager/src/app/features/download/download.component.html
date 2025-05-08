@@ -1,50 +1,38 @@
-<h2>Download</h2>
-
+<h2>Download Data</h2>
 
 <div class="download-section">
-  <h1> Data</h1>
-  <p>
-    Choose a user, task, or project to download specific data, or download all
-    data.
-  </p>
+  <h3>Select Data to Download</h3>
 
-  <!-- Dropdown för att välja användare -->
+  <!-- User Selection -->
   <div class="filter-section">
     <label for="user-select">Select User:</label>
     <select id="user-select" [(ngModel)]="selectedUserId">
-      <option [value]="null">All Users</option>
-      <option *ngFor="let user of users" [value]="user.id">
-        {{ user.name }}
-      </option>
+      <option [ngValue]="null">All Users</option>
+      <option *ngFor="let user of users" [ngValue]="user.id">{{ user.name }}</option>
     </select>
   </div>
 
-  <!-- Dropdown för att välja task -->
-  <div class="filter-section">
-    <label for="task-select">Select Task:</label>
-    <select id="task-select" [(ngModel)]="selectedTaskId">
-      <option [value]="null">All Tasks</option>
-      <option *ngFor="let task of tasks" [value]="task.id">
-        {{ task.title }}
-      </option>
-    </select>
-  </div>
-
-  <!-- Dropdown för att välja projekt -->
+  <!-- Project Selection -->
   <div class="filter-section">
     <label for="project-select">Select Project:</label>
     <select id="project-select" [(ngModel)]="selectedProjectId">
-      <option [value]="null">All Projects</option>
-      <option *ngFor="let project of projects" [value]="project.id">
-        {{ project.name }}
-      </option>
+      <option [ngValue]="null">All Projects</option>
+      <option *ngFor="let project of projects" [ngValue]="project.id">{{ project.name }}</option>
     </select>
   </div>
 
-  <!-- Knappar för att ladda ner data -->
+  <!-- Task Selection -->
+  <div class="filter-section">
+    <label for="task-select">Select Task:</label>
+    <select id="task-select" [(ngModel)]="selectedTaskId">
+      <option [ngValue]="null">All Tasks</option>
+      <option *ngFor="let task of tasks" [ngValue]="task.id">{{ task.title }}</option>
+    </select>
+  </div>
+
+  <!-- Download Buttons -->
   <div class="button-group">
-    <button (click)="downloadAsJSON()">Download as JSON</button>
-    <button (click)="downloadAsCSV()">Download as CSV</button>
-    <button (click)="downloadAsExcel()">Download as Excel</button>
+    <button (click)="downloadFilteredData('json')">Download as JSON</button>
+    <button (click)="downloadFilteredData('csv')">Download as CSV</button>
   </div>
 </div>

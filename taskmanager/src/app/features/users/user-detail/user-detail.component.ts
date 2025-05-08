@@ -5,6 +5,8 @@ import {
   EventEmitter,
   Output,
   effect,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../core/services/user.service';
@@ -39,6 +41,10 @@ export class UserDetailComponent implements OnInit {
   userProjects: Project[] = [];
   selectedProjectTasks: Task[] = [];
 
+  private userSignal: WritableSignal<User | null> = signal(null);
+
+  users: User[] = []; // Fyll denna med alla användare, t.ex. via UserService
+
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
@@ -46,31 +52,26 @@ export class UserDetailComponent implements OnInit {
     private taskService: TaskService,
     @Inject(MAT_DIALOG_DATA) public data: { id: number },
     private dialogRef: MatDialogRef<UserDetailComponent>
-  ) {}
+  ) {
+    effect(() => {
+      const user = this.userSignal();
+      if (!user) return;
 
-  ngOnInit(): void {
-    this.userService.getUserById(this.data.id).subscribe((user) => {
-      this.user = user;
-      console.log('User:', this.user);
+      const allProjects = this.projectService['projects']() ?? [];
+      const allTasks = this.taskService['tasks']() ?? [];
 
-      this.userForm = this.fb.group({
-        name: [user.name],
-        role: [user.role],
-      });
-
-      this.projectService.fetchProjects();
-
-      const allProjects = this.projectService['projects']();
       this.projects = allProjects.filter((p: Project) =>
         p.userIds.includes(user.id)
       );
-      console.log('Projects:', this.projects);
 
-      this.taskService.getTasksByUserId(user.id);
-
-      effect(() => {
-        const tasks = this.taskService['tasks']();
-        this.tasks = tasks.map((task: Task) => {
+      const userProjectIds = this.projects.map((p) => Number(p.id));
+      this.tasks = allTasks
+        .filter(
+          (task: Task) =>
+            task.creatorId === user.id ||
+            userProjectIds.includes(Number(task.projectId))
+        )
+        .map((task: Task) => {
           const project = this.projects.find(
             (p) => Number(p.id) === task.projectId
           );
@@ -82,7 +83,24 @@ export class UserDetailComponent implements OnInit {
               : 'No deadline',
           };
         });
-        console.log('Tasks:', this.tasks);
+    });
+  }
+
+  ngOnInit(): void {
+    this.userService.getUserById(this.data.id).subscribe((user) => {
+      this.user = user;
+      this.userForm = this.fb.group({
+        name: [user.name],
+        role: [user.role],
+      });
+      this.userSignal.set(user);
+
+      this.projectService.fetchProjects();
+      this.taskService.fetchTasks?.();
+
+      // Lägg till detta för att fylla users-arrayen!
+      this.userService.getUsers().subscribe((users) => {
+        this.users = users;
       });
     });
   }
@@ -132,6 +150,11 @@ export class UserDetailComponent implements OnInit {
     return project ? project.name : 'Unknown';
   }
 
+  getUserName(id: number): string {
+    const user = this.users.find((u) => u.id === id);
+    return user ? user.name : id.toString();
+  }
+
   onSubmit(): void {
     if (this.userForm.valid) {
       const updatedUser = { ...this.user, ...this.userForm.value };
@@ -158,5 +181,10 @@ export class UserDetailComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  getProjectUserCount(projectId: number): number {
+    const project = this.projects.find((p) => p.id === projectId);
+    return project ? project.userIds.length : 0;
   }
 }

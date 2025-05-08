@@ -1,81 +1,108 @@
 .list-wrapper {
-  margin: 20px;
-  background-color: #ffffff; /* Vit bakgrund för hela innehållet */
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin: 2rem auto;
+  max-width: 900px;
 }
 
-.user-select {
-  margin-bottom: 20px;
-  background-color: #f4f4f4; /* Grå bakgrund endast för select-container */
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.user-select select {
-  background-color: #ffffff; /* Vit inuti select */
-  border: 1px solid #ccc;
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.user-projects-tasks {
-  background-color: #ffffff;
+h2,
+h3 {
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  background-color: #ffffff; /* Vit bakgrund för tabellen */
+  border-collapse: collapse; // Ändra här!
+  margin-bottom: 2rem;
+
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
+  th {
+    background: #5cb85c;
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 2px solid #4cae4c;
+  }
+
+  th:first-child {
+    border-top-left-radius: 6px;
+  }
+  th:last-child {
+    border-top-right-radius: 6px;
+  }
+
+  tr:nth-child(even) {
+    background: #f8f8f8;
+  }
 }
 
-table th {
-  background-color: #66bb7b;
-  font-weight: bold;
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
-  color: #fff;
-  border: 0px;
-}
+.user-select {
+  margin-bottom: 1.5rem;
 
-table td {
-  padding: 10px;
-  text-align: left;
-}
-
-table tr:nth-child(even) {
-  background-color: #f9f9f9; /* Ljus bakgrund för jämna rader */
-}
-
-table tr:hover {
-  background-color: #f1f1f1; /* Hover-effekt */
+  select {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+  }
 }
 
 .priority {
-  display: flex;
-  align-items: left;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
   border-radius: 12px;
   font-size: 0.7rem;
   font-weight: 500;
-  width: 50px;
+  width: 60px; // Lägg till denna rad!
+  padding: 0.2em 0.8em;
+  margin-right: 0.2em;
 }
-
 
 .priority.high {
   background-color: #ffc0cb;
+  color: #a94442;
 }
 
 .priority.medium {
   background-color: #87ceeb;
-
+  color: #2b3990;
 }
 
 .priority.low {
-  background-color: #f5ecb8; /* Gul för låg prioritet */
+  background-color: #f5ecb8;
+  color: #7c6f29;
+}
 
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  width: 60px;
+  padding: 0.2em 0.8em;
+  margin-right: 0.2em;
+}
+
+.type-badge.own {
+  background-color: #e0f7e9;
+  color: #218838;
+}
+
+.type-badge.shared {
+  background-color: #e3e6fc;
+  color: #2b3990;
+}
+.status-text {
+  text-transform: capitalize;
 }

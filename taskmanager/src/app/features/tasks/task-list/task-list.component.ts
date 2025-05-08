@@ -166,7 +166,10 @@ export class TaskListComponent implements OnInit {
   }
 
   editTask(task: Task): void {
-    this.openTaskFormDialog(task);
+    this.dialog.open(TaskDetailComponent, {
+      data: { task },
+      panelClass: 'task-detail-dialog',
+    });
   }
 
   filteredTasksByPriority(priority: string) {
@@ -185,19 +188,17 @@ export class TaskListComponent implements OnInit {
     const currentIndex = event.currentIndex;
     const task = event.item.data;
 
-    console.log('Task dropped:', task);
-    console.log('Previous index:', previousIndex);
-    console.log('Current index:', currentIndex);
-
     // Uppdatera taskens status eller prioritet baserat på droppositionen
     if (event.container.id === 'completed') {
       task.status = 'completed';
-    } else if (event.container.id === 'low') {
-      task.priority = 'Low';
-    } else if (event.container.id === 'medium') {
-      task.priority = 'Medium';
-    } else if (event.container.id === 'high') {
-      task.priority = 'High';
+    } else if (['low', 'medium', 'high'].includes(event.container.id)) {
+      task.priority =
+        event.container.id.charAt(0).toUpperCase() +
+        event.container.id.slice(1);
+      // Om tasken var completed, ändra till active
+      if (task.status === 'completed') {
+        task.status = 'active';
+      }
     }
 
     // Uppdatera task i backend

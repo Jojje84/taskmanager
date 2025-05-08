@@ -23,16 +23,27 @@
     <table class="table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Project Name</th>
           <th>Description</th>
-          <th>User ID</th>
+          <th>Type</th>
+          <th>Users</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let project of projects">
+        <tr *ngFor="let project of projects; let i = index">
+          <td>{{ i + 1 }}</td>
           <td>{{ project.name }}</td>
           <td>{{ project.description }}</td>
-          <td>{{ project.userIds }}</td>
+          <td>
+            <span *ngIf="project.userIds.length > 1; else own">Shared</span>
+            <ng-template #own>Own</ng-template>
+          </td>
+          <td>
+            <ng-container *ngFor="let id of project.userIds; let last = last">
+              {{ getUserName(id) }}<span *ngIf="!last">, </span>
+            </ng-container>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -53,22 +64,32 @@
     <table class="table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Title</th>
           <th>Project Name</th>
           <th>Priority</th>
-          <th>User ID</th>
+          <th>User</th>
           <th>Status</th>
+          <th>Type</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let task of tasks">
+        <tr *ngFor="let task of tasks; let i = index">
+          <td>{{ i + 1 }}</td>
           <td>{{ task.title }}</td>
           <td>{{ task.projectName }}</td>
           <td [ngClass]="getPriorityClass(task.priority)">
             {{ task.priority }}
           </td>
-          <td>{{ task.creatorId }}</td>
+          <td>{{ getUserName(task.creatorId) }}</td>
           <td>{{ task.status }}</td>
+          <td>
+            <ng-container
+              *ngIf="getProjectUserCount(task.projectId) > 1; else ownTask"
+              >Shared</ng-container
+            >
+            <ng-template #ownTask>Own</ng-template>
+          </td>
         </tr>
       </tbody>
     </table>

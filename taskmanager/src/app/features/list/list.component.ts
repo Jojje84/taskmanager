@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../core/services/user.service';
@@ -24,30 +24,54 @@ export class ListComponent implements OnInit {
     private userService: UserService,
     private projectService: ProjectService,
     private taskService: TaskService
-  ) {}
+  ) {
+    // Kör denna effect när users, projects eller tasks ändras
+    effect(() => {
+      const users = this.users();
+      const projects = this.projects();
+      const tasksRaw = this.taskService['tasks']();
+
+      // Enrich tasks
+      const enriched = tasksRaw.map((task) => {
+        const project = projects.find((p) => p.id === task.projectId);
+        const user = users.find((u) => u.id === task.creatorId);
+        return {
+          ...task,
+          projectName: project ? project.name : 'Unknown',
+          userName: user ? user.name : 'Unknown',
+        };
+      });
+
+      this.tasks.set(enriched);
+
+      // Filtrera på selectedUser om någon är vald
+      const selectedUserId = this.selectedUser();
+      if (selectedUserId === null) {
+        this.selectedUserProjects.set(projects);
+        this.selectedUserTasks.set(enriched);
+      } else {
+        const filteredProjects = projects.filter(
+          (project) =>
+            project.userIds && project.userIds.includes(selectedUserId)
+        );
+        const userProjectIds = filteredProjects.map((p) => p.id);
+        const filteredTasks = enriched.filter(
+          (task) =>
+            task.creatorId === selectedUserId ||
+            userProjectIds.includes(task.projectId)
+        );
+        this.selectedUserProjects.set(filteredProjects);
+        this.selectedUserTasks.set(filteredTasks);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.userService.getUsers().subscribe((data) => this.users.set(data));
     this.projectService
       .getProjects()
       .subscribe((data) => this.projects.set(data));
-
-    // Hämta tasks och använd signalen direkt
-    this.taskService.fetchTasks(); // Uppdaterar signalen i TaskService
-
-    const enriched = this.taskService['tasks']().map((task) => {
-      const project = this.projects().find((p) => p.id === task.projectId);
-      const user = this.users().find((u) => u.id === task.creatorId); // Använd creatorId istället för userIds
-      return {
-        ...task,
-        projectName: project ? project.name : 'Unknown',
-        userName: user ? user.name : 'Unknown',
-      };
-    });
-
-    this.tasks.set(enriched);
-    this.selectedUserTasks.set(enriched);
-    this.selectedUserProjects.set(this.projects());
+    this.taskService.fetchTasks();
   }
 
   onUserChange(): void {
@@ -83,5 +107,12 @@ export class ListComponent implements OnInit {
     if (userId === null) return 'Unknown';
     const user = this.users().find((u) => u.id === userId);
     return user ? user.name : 'Unknown';
+  }
+
+  getProjectType(projectId: number): string {
+    const project = this.projects().find((p) => p.id === projectId);
+    return project && project.userIds && project.userIds.length > 1
+      ? 'Shared'
+      : 'Own';
   }
 }

@@ -61,7 +61,7 @@
       "id": 1,
       "title": "wd",
       "description": "",
-      "priority": "Low",
+      "priority": "Medium",
       "status": "active",
       "projectId": 1,
       "creatorId": 1,

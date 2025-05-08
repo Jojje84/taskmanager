@@ -4,62 +4,95 @@
   <!-- Dropdown för att välja användare -->
   <div class="user-select">
     <label for="userDropdown">Select User:</label>
-    <select
-      id="userDropdown"
-      [(ngModel)]="selectedUser"
-      (change)="onUserChange()"
-    >
+    <select id="userDropdown" [(ngModel)]="selectedUserModel">
       <option [ngValue]="null">All Users</option>
-      <option *ngFor="let user of users()" [value]="user.id">
+      <option *ngFor="let user of users()" [ngValue]="user.id">
         {{ user.name }}
       </option>
     </select>
   </div>
 
-  <section class="user-projects-tasks"><br>
+  <section class="user-projects-tasks">
+    <br />
     <!-- Tabell för projekt -->
     <div class="projects-table" *ngIf="selectedUserProjects().length > 0">
       <h3>All Projects</h3>
       <table>
         <thead>
           <tr>
+            <th>#</th>
             <th>Project Name</th>
             <th>Description</th>
+            <th>Type</th>
             <th>User Name</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let project of selectedUserProjects()">
+          <tr *ngFor="let project of selectedUserProjects(); let i = index">
+            <td>{{ i + 1 }}</td>
             <td>{{ project.name }}</td>
             <td>{{ project.description }}</td>
-            <td>{{ getUserName(project.userId) }}</td>
+            <td>
+              <span
+                *ngIf="project.userIds && project.userIds.length > 1; else own"
+                class="type-badge shared"
+                >Shared</span
+              >
+              <ng-template #own>
+                <span class="type-badge own">Own</span>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngFor="let id of project.userIds; let last = last">
+                {{ getUserName(id) }}<span *ngIf="!last">, </span>
+              </ng-container>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <!-- Tabell för uppgifter -->
-    <div class="tasks-table" *ngIf="selectedUserTasks().length > 0"><br>
+    <div class="tasks-table" *ngIf="selectedUserTasks().length > 0">
+      <br />
       <h3>All Tasks</h3>
       <table>
         <thead>
           <tr>
+            <th>#</th>
             <th>Title</th>
             <th>Project Name</th>
             <th>Priority</th>
+            <th>Type</th>
             <th>User Name</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let task of selectedUserTasks()">
+          <tr *ngFor="let task of selectedUserTasks(); let i = index">
+            <td>{{ i + 1 }}</td>
             <td>{{ task.title }}</td>
             <td>{{ task.projectName }}</td>
-            <td [ngClass]="'priority ' + task.priority.toLowerCase()">
-              {{ task.priority }}
+            <td>
+              <span [ngClass]="'priority ' + task.priority.toLowerCase()">
+                {{ task.priority }}</span
+              >
+            </td>
+            <td>
+              <span
+                *ngIf="
+                  getProjectType(task.projectId) === 'Shared';
+                  else ownTask
+                "
+                class="type-badge shared"
+                >Shared</span
+              >
+              <ng-template #ownTask>
+                <span class="type-badge own">Own</span>
+              </ng-template>
             </td>
             <td>{{ task.userName }}</td>
-            <td>{{ task.status }}</td>
+            <td class="status-text">{{ task.status }}</td>
           </tr>
         </tbody>
       </table>

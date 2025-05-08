@@ -5,7 +5,11 @@
       <div class="form-group">
         <label>Title:</label>
         <input formControlName="title" type="text" />
-        <div *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched">
+        <div
+          *ngIf="
+            taskForm.get('title')?.invalid && taskForm.get('title')?.touched
+          "
+        >
           <small class="error">Title is required</small>
         </div>
       </div>
@@ -28,8 +32,22 @@
           <option value="completed">Completed</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>Deadline:</label>
+        <input formControlName="deadline" type="date" />
+      </div>
+      <div class="form-group">
+        <label>Project:</label>
+        <input
+          [value]="task.projectName || task.projectId"
+          type="text"
+          readonly
+        />
+      </div>
       <div class="form-actions">
-        <button type="submit" class="btn-save" [disabled]="taskForm.invalid">Save Changes</button>
+        <button type="submit" class="btn-save" [disabled]="taskForm.invalid">
+          Save Changes
+        </button>
       </div>
     </form>
   </div>
