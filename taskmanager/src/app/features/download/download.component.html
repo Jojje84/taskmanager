@@ -1,38 +1,51 @@
-<h2>Download Data</h2>
-
-<div class="download-section">
-  <h3>Select Data to Download</h3>
+<section class="download-section">
+  <div class="title">
+    <h3>Select Data to Download</h3>
+  </div>
+  <div class="info-text">
+    Select data to download based on specific criteria. You can filter by user,
+    project, and task to refine your data export.
+  </div>
 
   <!-- User Selection -->
   <div class="filter-section">
-    <label for="user-select">Select User:</label>
+    <div class="instruction">Choose a user to filter the data:</div>
     <select id="user-select" [(ngModel)]="selectedUserId">
       <option [ngValue]="null">All Users</option>
-      <option *ngFor="let user of users" [ngValue]="user.id">{{ user.name }}</option>
+      <option *ngFor="let user of users" [ngValue]="user.id">
+        {{ user.name }}
+      </option>
     </select>
   </div>
 
   <!-- Project Selection -->
   <div class="filter-section">
-    <label for="project-select">Select Project:</label>
+    <div class="instruction">Choose a project to refine your selection:</div>
     <select id="project-select" [(ngModel)]="selectedProjectId">
       <option [ngValue]="null">All Projects</option>
-      <option *ngFor="let project of projects" [ngValue]="project.id">{{ project.name }}</option>
+      <option *ngFor="let project of projects" [ngValue]="project.id">
+        {{ project.name }}
+      </option>
     </select>
   </div>
 
   <!-- Task Selection -->
   <div class="filter-section">
-    <label for="task-select">Select Task:</label>
+    <div class="instruction">Select a task to narrow down the data:</div>
     <select id="task-select" [(ngModel)]="selectedTaskId">
       <option [ngValue]="null">All Tasks</option>
-      <option *ngFor="let task of tasks" [ngValue]="task.id">{{ task.title }}</option>
+      <option *ngFor="let task of tasks" [ngValue]="task.id">
+        {{ task.title }}
+      </option>
     </select>
   </div>
 
   <!-- Download Buttons -->
+  <div class="download-info">
+    The downloaded file will contain all selected data in the specified format.
+  </div>
   <div class="button-group">
     <button (click)="downloadFilteredData('json')">Download as JSON</button>
     <button (click)="downloadFilteredData('csv')">Download as CSV</button>
   </div>
-</div>
+</section>

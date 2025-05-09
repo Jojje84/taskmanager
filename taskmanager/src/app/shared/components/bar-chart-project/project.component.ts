@@ -13,7 +13,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { Chart, ChartData, ChartOptions } from 'chart.js';
 import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../models/project.model';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-bar-chart-by-project',
@@ -31,15 +31,15 @@ export class BarChartByProjectComponent
   private destroy$ = new Subject<void>();
 
   chartData: ChartData<'bar'> = {
-    labels: ['My', 'Shared'],
+    labels: ['Own', 'Shared'],
     datasets: [
       {
-        label: 'My projekt',
+        label: 'Own',
         data: [0],
         backgroundColor: '#42a5f5',
       },
       {
-        label: 'Shared projekt',
+        label: 'Shared',
         data: [0],
         backgroundColor: '#66bb6a',
       },
@@ -78,7 +78,7 @@ export class BarChartByProjectComponent
       );
 
       if (this.chart) {
-        this.chart.data.labels = ['Projekt'];
+        this.chart.data.labels = ['Project'];
         this.chart.data.datasets[0].data = [ownProjects.length];
         this.chart.data.datasets[1].data = [sharedProjects.length];
         this.chart.update();
@@ -100,6 +100,7 @@ export class BarChartByProjectComponent
       data: this.chartData,
       options: this.chartOptions,
     });
+    
   }
 
   ngOnDestroy(): void {
@@ -108,13 +109,13 @@ export class BarChartByProjectComponent
   }
 
   loadProjects(): void {
-    if (!this.selectedUserId) return;
+    if (!this.selectedUserId || !this.chart) return;
 
     this.projectService.fetchProjects();
 
     const allProjects = this.projectService['projects']();
 
-    // Egna projekt: där användaren är creator OCH det INTE är delat
+  
     const ownProjects = allProjects.filter(
       (p: Project) =>
         p.creatorId === this.selectedUserId && p.userIds.length === 1 // Bara skaparen är med

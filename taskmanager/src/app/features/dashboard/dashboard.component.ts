@@ -31,6 +31,7 @@ import { BarChartByProjectComponent } from '../../shared/components/bar-chart-pr
 export class DashboardComponent {
   selectedUser: User | null = null;
   selectedProjectId: number | null = null;
+  selectedProjectName: string = 'No Project Selected';
   selectedProjectTasks: Task[] = [];
   userProjects: Project[] = [];
 
@@ -42,8 +43,9 @@ export class DashboardComponent {
     this.selectedProjectTasks = [];
   }
 
-  onProjectClick(projectId: number): void {
-    this.selectedProjectId = projectId;
+  onProjectClick(projectData: { id: number; name: string }): void {
+    this.selectedProjectId = projectData.id;
+    this.selectedProjectName = projectData.name;
 
     // Hämta tasks och använd signalen direkt
     this.taskService.fetchTasks(); // Uppdaterar signalen i TaskService
@@ -51,9 +53,23 @@ export class DashboardComponent {
     const allTasks = this.taskService['tasks'](); // Använd signalen
     this.selectedProjectTasks = allTasks.filter((t: Task) => {
       return (
-        t.projectId === projectId &&
+        t.projectId === projectData.id &&
         t.creatorId === (this.selectedUser?.id || 0)
       );
     });
+  }
+
+  onProjectDeleted(projectId: number): void {
+    console.log(
+      'onProjectDeleted received in DashboardComponent with ID:',
+      projectId
+    );
+    if (this.selectedProjectId === projectId) {
+      this.selectedProjectId = null;
+      this.selectedProjectName = 'No Project Selected';
+      this.selectedProjectTasks = [];
+      console.log('Cleared selected project!');
+    }
+    this.userProjects = this.userProjects.filter((p) => p.id !== projectId);
   }
 }

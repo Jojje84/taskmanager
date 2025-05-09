@@ -14,24 +14,27 @@
   <!-- Projektlista -->
   <div class="project-container">
     <div class="project-card" *ngFor="let project of filteredProjects()">
-      <h4>{{ project.name }}</h4>
-      <p class="description">
+      <div class="project-name">
+        <!-- Visa projektets namn -->
+        {{ project.name.length > 35 ? (project.name | slice: 0: 35) + "..." : project.name }}
+      </div>
+      <div class="description">
         {{
           project.description
             ? (project.description | slice : 0 : 5) + "..."
             : "No description"
         }}
-      </p>
+      </div>
 
       <!-- Visa "Shared" om projektet har fler än en användare -->
-      <p *ngIf="project.userIds.length > 1" class="shared-text">Shared</p>
+      <div *ngIf="project.userIds.length > 1" class="shared-text">Shared</div>
 
       <!-- Visa "Own" om projektet har endast en användare -->
-      <p *ngIf="project.userIds.length === 1" class="own-text">Own</p>
+      <div *ngIf="project.userIds.length === 1" class="own-text">Own</div>
 
       <!-- Actions för varje projekt -->
       <div class="project-actions">
-        <button class="btn btn-view" (click)="onProjectClick(project.id)">
+        <button class="btn btn-view" (click)="onProjectClick(project)">
           <img src="view-icon.png" alt="View" class="btn-icon" />
         </button>
         <button class="btn btn-edit" (click)="editProject(project)">

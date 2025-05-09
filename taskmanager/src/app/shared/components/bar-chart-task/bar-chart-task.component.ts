@@ -34,12 +34,12 @@ export class BarChartTaskComponent implements OnInit, AfterViewInit, OnDestroy {
     labels: ['Task'],
     datasets: [
       {
-        label: 'My Task',
+        label: 'Own',
         data: [0],
         backgroundColor: '#42a5f5',
       },
       {
-        label: 'Shared Tasks',
+        label: 'Shared',
         data: [0],
         backgroundColor: '#66bb6a',
       },
@@ -93,7 +93,7 @@ export class BarChartTaskComponent implements OnInit, AfterViewInit, OnDestroy {
       );
 
       if (this.chart) {
-        this.chart.data.labels = ['My'];
+        this.chart.data.labels = ['Task'];
         this.chart.data.datasets[0].data = [ownTasks.length];
         this.chart.data.datasets[1].data = [sharedTasks.length];
         this.chart.update();

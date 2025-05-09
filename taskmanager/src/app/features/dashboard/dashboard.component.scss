@@ -6,6 +6,22 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: solid 1px #d4d3d3;
 }
+.dashboard-section h3 {
+  font-size: 1rem;
+  font-weight: 600px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.state {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 600;
+  text-transform: capitalize;
+  padding: 1px;
+}
 
 .chart-wrapper {
   display: grid;
@@ -18,14 +34,32 @@
 .stats-card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
-              0 6px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.08);
   padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Titeln längst upp */
   align-items: center;
-  min-height: 280px; // tvingar likhöjd på korten
+  min-height: 420px;  /* Sätt en fast höjd */
+  max-height: 400px;  /* Sätt en fast höjd */
   box-sizing: border-box;
   border: solid 1px #d4d3d3;
+}
+
+.stats-card .title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 10px;
+  text-align: center;
+}
+
+.stats-card .content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }

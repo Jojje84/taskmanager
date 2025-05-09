@@ -25,7 +25,9 @@ import { ProjectDetailComponent } from '../project-detail/project-detail.compone
 export class ProjectListComponent {
   @Input() userId!: number;
   @Input() projects: Project[] = [];
-  @Output() projectSelected = new EventEmitter<number>();
+  @Input() selectedProjectName: string = '';
+  @Output() projectSelected = new EventEmitter<{ id: number; name: string }>();
+  @Output() projectDeleted = new EventEmitter<number>();
 
   searchTerm: WritableSignal<string> = signal('');
   loading: boolean = false;
@@ -85,8 +87,8 @@ export class ProjectListComponent {
     this.searchTerm.set(term);
   }
 
-  onProjectClick(projectId: number): void {
-    this.projectSelected.emit(projectId);
+  onProjectClick(project: Project): void {
+    this.projectSelected.emit({ id: project.id, name: project.name });
   }
 
   openProjectFormDialog(project?: Project): void {
@@ -110,7 +112,9 @@ export class ProjectListComponent {
       .open(ConfirmDialogComponent, {
         data: {
           title: 'Delete Project',
-          content: 'Are you sure you want to delete this project?',
+          content:
+            'Are you sure you want to delete this project? All tasks will be deleted',
+          confirmButtonText: 'Delete',
         },
       })
       .afterClosed()
@@ -119,6 +123,7 @@ export class ProjectListComponent {
           this.projectService.deleteProject(projectId);
           this.projects = this.projects.filter((p) => p.id !== projectId);
           this.filteredProjects.set(this.projects);
+          this.projectDeleted.emit(projectId);
         }
       });
   }

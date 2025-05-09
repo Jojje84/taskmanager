@@ -27,7 +27,7 @@ export class PieChartComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
   pieChartData: any = {
-    labels: ['High Priority', 'Medium Priority', 'Low Priority'],
+    labels: ['High', 'Medium', 'Low'],
     datasets: [
       {
         data: [0, 0, 0],

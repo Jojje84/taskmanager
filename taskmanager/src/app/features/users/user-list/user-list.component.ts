@@ -48,7 +48,12 @@ export class UserListComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private router: Router,
     private dialog: MatDialog
-  ) {}
+  ) {
+    effect(() => {
+      const tasks = this.tasksPerUser();
+      this.filteredUsers = [...this.filteredUsers];
+    });
+  }
 
   ngOnInit(): void {
     // Hämta användare
@@ -66,12 +71,6 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     this.projectService.fetchProjects(); // Uppdaterar signalen i ProjectService
     this.taskService.fetchTasks(); // Uppdaterar signalen i TaskService
-
-    // Effekt för att säkerställa att tasksPerUser uppdateras i realtid
-    effect(() => {
-      const tasks = this.tasksPerUser();
-      this.filteredUsers = [...this.filteredUsers]; // Tvinga omrendering
-    });
   }
 
   ngOnDestroy(): void {

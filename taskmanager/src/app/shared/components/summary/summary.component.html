@@ -1,16 +1,26 @@
-<div class="summary">
-  <h3>Task Summary</h3>
-  <ul>
-    <li>Total tasks: {{ total() }}</li>
-    <li>Low: {{ low() }}</li>
-    <li>Medium: {{ medium() }}</li>
-    <li>High: {{ high() }}</li>
-    <br />
-    <li>Completed: {{ completed() }}</li>
-  </ul>
+<section class="summary">
+  <div class="rows">
+    <span class="label">Total tasks:</span>
+    <span class="value">{{ total() }}</span>
+    
+    <span class="label">Low:</span>
+    <span class="value">{{ low() }}</span>
+    
+    <span class="label">Medium:</span>
+    <span class="value">{{ medium() }}</span>
+    
+    <span class="label">High:</span>
+    <span class="value">{{ high() }}</span>
+    
+    <div class="break"></div> <!-- Radbrytning -->
+    
+    <span class="label">Completed:</span>
+    <span class="value">{{ completed() }}</span>
+  </div>
 
   <div class="progress-bar">
     <div class="progress" [style.width.%]="progress()"></div>
   </div>
-  <p>{{ progress() | number: '1.0-0' }}% done</p>
-</div>
+
+  <div class="text">{{ progress() | number : "1.0-0" }}% - Progress</div>
+</section>

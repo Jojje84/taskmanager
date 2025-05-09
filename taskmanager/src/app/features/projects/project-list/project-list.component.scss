@@ -49,8 +49,7 @@
   padding: 20px;
   width: 200px;
   height: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
-              0 6px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),  0 6px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
   cursor: pointer;
   display: flex;
@@ -63,19 +62,47 @@
   align-items: center;
   border: solid 1px #d4d3d3;
 }
+.project-name {
+  max-width: 180px;  /* Justera bredden efter behov */
+  max-height: 50px; /* Justera höjden efter behov */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 1.2rem;
+  font-weight: 600; 
+  color: #333;
+  margin: 10px;
+  text-align: center;
+  text-transform: capitalize;
+  padding: 0 10px; /* Lägger till padding för att ge lite utrymme */
+  text-decoration: none; /* Ta bort understrykning */
+  transition: color 0.3s ease; /* Lägg till övergång för färgändring */
+}
 
-.project-card .shared-text {
+.description {
+  font-style: italic;
+  color: #888888;
+  font-size: 0.9rem;
+  margin-bottom: 10px;  
+  text-align: center;
+  padding: 010px 10px; /* Lägger till padding för att ge lite utrymme */
+  text-decoration: none; /* Ta bort understrykning */
+  transition: color 0.3s ease; /* Lägg till övergång för färgändring */
+}
+
+.shared-text {
   color: #007bff;
   font-weight: bold;
   margin-top: 5px;
+  text-align: center;
+  padding: 10px 10px; /* Lägger till padding för att ge lite utrymme */
+  text-decoration: none; /* Ta bort understrykning */
+  transition: color 0.3s ease; /* Lägg till övergång för färgändring */
+  text-transform: capitalize;
 }
 
-.project-card .description {
-  font-style: italic;
-  color: #888888;
-}
 
-.project-card .own-text {
+.own-text {
   color: #888888;
   font-weight: bold;
   margin-top: 5px;

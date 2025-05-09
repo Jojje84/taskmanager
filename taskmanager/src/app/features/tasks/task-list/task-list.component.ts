@@ -26,7 +26,7 @@ import { TaskDetailComponent } from '../task-detail/task-detail.component';
   styleUrls: ['./task-list.component.scss'],
 })
 export class TaskListComponent implements OnInit {
-  @Input() userId!: number; // Behåll om det används någon annanstans
+  @Input() userId!: number;
   @Input() projectId!: number;
   @Output() taskSelected = new EventEmitter<number>();
 
@@ -43,12 +43,9 @@ export class TaskListComponent implements OnInit {
   completedTasks: Task[] = [];
 
   constructor(private taskService: TaskService, private dialog: MatDialog) {
-    // Effekt för att lyssna på förändringar i signalen
     effect(() => {
-      const allTasks = this.taskService['tasks'](); // Hämta signalvärdet
-      console.log('All tasks from signal:', allTasks);
+      const allTasks = this.taskService['tasks']();
 
-      // Filtrera endast baserat på projectId
       const tasks = allTasks.filter((t) => t.projectId === this.projectId);
 
       this.localTasks = tasks;
@@ -73,12 +70,12 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.taskService.fetchTasks(); // Hämta tasks från servern
+    this.taskService.fetchTasks();
   }
 
   ngOnChanges(): void {
     if (this.projectId) {
-      console.log('ngOnChanges triggered with projectId:', this.projectId);
+      // No log
     }
   }
 
@@ -88,7 +85,7 @@ export class TaskListComponent implements OnInit {
     const dialogRef = this.dialog.open(TaskFormComponent, {
       panelClass: 'newtask-dialog',
       data: {
-        userId: this.userId, // Behåll om det behövs i TaskFormComponent
+        userId: this.userId,
         projectId: this.projectId,
         task: task || null,
       },
@@ -96,8 +93,7 @@ export class TaskListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: Task | false) => {
       if (result) {
-        console.log('Task form dialog closed with result:', result);
-        this.taskService.fetchTasks(); // Hämta uppdaterade tasks från servern
+        this.taskService.fetchTasks();
       }
     });
   }
@@ -137,7 +133,7 @@ export class TaskListComponent implements OnInit {
     this.loading = true;
     this.taskService.fetchTasks();
 
-    const allTasks = this.taskService['tasks'](); // Hämta signalvärdet
+    const allTasks = this.taskService['tasks']();
     const tasks = allTasks.filter(
       (t) => t.creatorId === userId && t.projectId === this.projectId
     );
@@ -188,20 +184,17 @@ export class TaskListComponent implements OnInit {
     const currentIndex = event.currentIndex;
     const task = event.item.data;
 
-    // Uppdatera taskens status eller prioritet baserat på droppositionen
     if (event.container.id === 'completed') {
       task.status = 'completed';
     } else if (['low', 'medium', 'high'].includes(event.container.id)) {
       task.priority =
         event.container.id.charAt(0).toUpperCase() +
         event.container.id.slice(1);
-      // Om tasken var completed, ändra till active
       if (task.status === 'completed') {
         task.status = 'active';
       }
     }
 
-    // Uppdatera task i backend
     this.updateTask(task);
   }
 }
