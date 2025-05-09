@@ -4,6 +4,7 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: solid 1px #d4d3d3;
 }
 
 .chart-wrapper {
@@ -17,7 +18,8 @@
 .stats-card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
+              0 6px 12px rgba(0, 0, 0, 0.08);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -25,4 +27,5 @@
   align-items: center;
   min-height: 280px; // tvingar likhöjd på korten
   box-sizing: border-box;
+  border: solid 1px #d4d3d3;
 }

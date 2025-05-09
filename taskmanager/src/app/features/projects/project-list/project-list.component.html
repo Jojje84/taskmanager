@@ -15,11 +15,19 @@
   <div class="project-container">
     <div class="project-card" *ngFor="let project of filteredProjects()">
       <h4>{{ project.name }}</h4>
-      <p>{{ project.description }}</p>
+      <p class="description">
+        {{
+          project.description
+            ? (project.description | slice : 0 : 5) + "..."
+            : "No description"
+        }}
+      </p>
 
-          <!-- Visa "Shared" om projektet har fler än en användare -->
-    <p *ngIf="project.userIds.length > 1" class="shared-text">Shared</p>
+      <!-- Visa "Shared" om projektet har fler än en användare -->
+      <p *ngIf="project.userIds.length > 1" class="shared-text">Shared</p>
 
+      <!-- Visa "Own" om projektet har endast en användare -->
+      <p *ngIf="project.userIds.length === 1" class="own-text">Own</p>
 
       <!-- Actions för varje projekt -->
       <div class="project-actions">
@@ -40,4 +48,3 @@
     <p>Loading projects...</p>
   </div>
 </div>
-
