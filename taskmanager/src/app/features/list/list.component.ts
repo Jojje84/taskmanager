@@ -21,6 +21,7 @@ export class ListComponent implements OnInit {
   selectedUserProjects = signal<any[]>([]);
   selectedUserTasks = signal<any[]>([]);
   expandedUserId: number | null = null;
+  expandedProjectId: number | null = null; // Håller reda på vilket projekt som är expanderat
 
   constructor(
     private userService: UserService,
@@ -120,14 +121,43 @@ export class ListComponent implements OnInit {
       ? 'Shared'
       : 'Own';
   }
-    toggleUserData(userId: number): void {
-    // Om samma användare klickas igen, stäng sektionen
+  toggleUserData(userId: number): void {
+    // Om samma användare klickas igen, stäng sektionen och visa "All Users"
     if (this.expandedUserId === userId) {
       this.expandedUserId = null;
+      this.selectedUserModel = null; // Återställ till "All Users"
+      this.onUserChange(); // Uppdatera projekt och uppgifter
     } else {
       this.expandedUserId = userId;
       this.selectedUserModel = userId; // Uppdatera den valda användaren
       this.onUserChange(); // Uppdatera projekt och uppgifter
     }
+  }
+
+  toggleProjectDetails(projectId: number): void {
+    if (this.expandedProjectId === projectId) {
+      this.expandedProjectId = null; // Stäng om samma projekt klickas igen
+    } else {
+      this.expandedProjectId = projectId; // Expandera det valda projektet
+    }
+  }
+
+  // Hämtar tasks för ett specifikt projekt
+  getTasksForProject(projectId: number): any[] {
+    return this.tasks().filter((task) => task.projectId === projectId);
+  }
+
+  getProjectSummary(projectId: number) {
+    const tasks = this.getTasksForProject(projectId);
+    const active = tasks.filter(
+      (t) => t.status?.toLowerCase() === 'active'
+    ).length;
+    const completed = tasks.filter(
+      (t) => t.status?.toLowerCase() === 'completed'
+    ).length;
+    const high = tasks.filter(
+      (t) => t.priority?.toLowerCase() === 'high'
+    ).length;
+    return { active, completed, high };
   }
 }
