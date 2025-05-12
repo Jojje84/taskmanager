@@ -12,6 +12,30 @@
     </div>
 
     <section class="user-projects-tasks">
+      <div class="all-users-table">
+        <h3>All Users</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User Name</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users(); let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ user.name }}</td>
+              <td>{{ user.role }}</td>
+              <td>
+                <button (click)="toggleUserData(user.id)" class="toggle-button">
+                  {{ expandedUserId === user.id ? "Close" : "Open" }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <br />
       <div class="projects-table" *ngIf="selectedUserProjects().length > 0">
         <h3>All projects</h3>

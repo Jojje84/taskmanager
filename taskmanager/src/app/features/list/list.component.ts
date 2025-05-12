@@ -20,6 +20,7 @@ export class ListComponent implements OnInit {
   selectedUser = signal<number | null>(null);
   selectedUserProjects = signal<any[]>([]);
   selectedUserTasks = signal<any[]>([]);
+  expandedUserId: number | null = null;
 
   constructor(
     private userService: UserService,
@@ -118,5 +119,15 @@ export class ListComponent implements OnInit {
     return project && project.userIds && project.userIds.length > 1
       ? 'Shared'
       : 'Own';
+  }
+    toggleUserData(userId: number): void {
+    // Om samma användare klickas igen, stäng sektionen
+    if (this.expandedUserId === userId) {
+      this.expandedUserId = null;
+    } else {
+      this.expandedUserId = userId;
+      this.selectedUserModel = userId; // Uppdatera den valda användaren
+      this.onUserChange(); // Uppdatera projekt och uppgifter
+    }
   }
 }
