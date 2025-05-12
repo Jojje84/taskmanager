@@ -31,6 +31,7 @@ export class ProjectListComponent {
   @Output() projectDeleted = new EventEmitter<number>();
 
   searchTerm: WritableSignal<string> = signal('');
+  searchQuery: string = '';
   loading: boolean = false;
   filteredProjects = signal<Project[]>([]);
 
@@ -39,14 +40,21 @@ export class ProjectListComponent {
     private dialog: MatDialog
   ) {
     // Effekt för att uppdatera projektlistan vid förändringar
-    effect(() => {
-      const allProjects = this.projectService.getProjectsSignal();
-      const userProjects = allProjects.filter((project) =>
-        project.userIds?.includes(this.userId)
-      );
-      this.projects = userProjects;
-      this.filteredProjects.set(this.projects);
-    });
+   effect(() => {
+  const allProjects = this.projectService.getProjectsSignal();
+  const userProjects = allProjects.filter((project) =>
+    project.userIds?.includes(this.userId)
+  );
+  this.projects = userProjects;
+
+  const query = this.searchTerm().toLowerCase();
+  const filtered = this.projects.filter(
+    (project) =>
+      project.name.toLowerCase().includes(query) ||
+      (project.description && project.description.toLowerCase().includes(query))
+  );
+  this.filteredProjects.set(filtered);
+});
   }
 
   ngOnInit(): void {
@@ -74,7 +82,7 @@ export class ProjectListComponent {
     this.loading = false;
   }
 
-  // Sätter sökterm för filtrering
+  // Sätter sökterm och filtrerar uppgifter
   onSearch(term: string): void {
     this.searchTerm.set(term);
   }

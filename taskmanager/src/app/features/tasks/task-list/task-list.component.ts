@@ -49,24 +49,35 @@ export class TaskListComponent implements OnInit {
       const allTasks = this.taskService['tasks']();
       const tasks = allTasks.filter((t) => t.projectId === this.projectId);
 
-      this.localTasks = tasks;
-      this.filteredTasksList = tasks;
+      const query = this.searchTerm().toLowerCase();
 
-      this.lowPriorityTasks = [];
-      this.mediumPriorityTasks = [];
-      this.highPriorityTasks = [];
-      this.completedTasks = [];
+      // Filtrera tasks baserat på söktermen
+      const filtered = tasks.filter(
+        (task) =>
+          task.title.toLowerCase().includes(query) ||
+          task.status.toLowerCase().includes(query) ||
+          task.priority.toLowerCase().includes(query)
+      );
 
-      for (const task of tasks) {
-        if (task.status.toLowerCase() === 'completed') {
-          this.completedTasks.push(task);
-        } else {
-          if (task.priority === 'Low') this.lowPriorityTasks.push(task);
-          else if (task.priority === 'Medium')
-            this.mediumPriorityTasks.push(task);
-          else if (task.priority === 'High') this.highPriorityTasks.push(task);
-        }
-      }
+      this.filteredTasksList = filtered;
+
+      // Filtrera kolumner baserat på söktermen
+      this.lowPriorityTasks = filtered.filter(
+        (task) =>
+          task.priority === 'Low' && task.status.toLowerCase() !== 'completed'
+      );
+      this.mediumPriorityTasks = filtered.filter(
+        (task) =>
+          task.priority === 'Medium' &&
+          task.status.toLowerCase() !== 'completed'
+      );
+      this.highPriorityTasks = filtered.filter(
+        (task) =>
+          task.priority === 'High' && task.status.toLowerCase() !== 'completed'
+      );
+      this.completedTasks = filtered.filter(
+        (task) => task.status.toLowerCase() === 'completed'
+      );
     });
   }
 
@@ -121,7 +132,6 @@ export class TaskListComponent implements OnInit {
   // Sätter sökterm och filtrerar uppgifter
   onSearch(term: string): void {
     this.searchTerm.set(term);
-    this.filterTasks();
   }
 
   // Filtrerar uppgifter baserat på sökterm
