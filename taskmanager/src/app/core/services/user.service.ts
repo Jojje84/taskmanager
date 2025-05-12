@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../../models/user.model';
-import { map, switchMap } from 'rxjs/operators';
 
+// Service för hantering av användare mot API
 @Injectable({
   providedIn: 'root',
 })
@@ -12,17 +12,20 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
+  // Hämtar alla användare från API
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.baseUrl);
   }
 
+  // Hämtar en användare baserat på id
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/${id}`);
   }
 
+  // Lägger till en ny användare
   addUser(user: User): Observable<User> {
     const newUser: User = {
-      id: 0, // Json-server auto-genererar ett nytt id
+      id: 0,
       name: user.name,
       role: user.role,
       avatar: user.avatar,
@@ -30,10 +33,12 @@ export class UserService {
     return this.http.post<User>(this.baseUrl, newUser);
   }
 
+  // Tar bort en användare
   deleteUser(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
+  // Uppdaterar en användare
   updateUser(user: User): Observable<User> {
     return this.http.put<User>(`${this.baseUrl}/${user.id}`, user);
   }

@@ -3,29 +3,28 @@ import { HttpClient } from '@angular/common/http';
 import { Task } from '../../models/task.model';
 import { WritableSignal, signal } from '@angular/core';
 
+// Service för hantering av tasks mot API och signal
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
   private baseUrl = 'http://localhost:3000/tasks';
-
-  // Signal för att hålla alla tasks
-  private tasks: WritableSignal<Task[]> = signal([]); // Använd signal istället för BehaviorSubject
+  private tasks: WritableSignal<Task[]> = signal([]);
 
   constructor(private http: HttpClient) {}
 
   // Hämtar alla tasks från API och uppdaterar signalen
   fetchTasks() {
     this.http.get<Task[]>(this.baseUrl).subscribe((data) => {
-      this.tasks.set(data); // Uppdaterar signalen
+      this.tasks.set(data);
     });
   }
 
-  // Hämtar alla tasks per användare och uppdaterar signalen
+  // Hämtar alla tasks för en användare och uppdaterar signalen
   getTasksByUserId(userId: number) {
     this.http.get<Task[]>(this.baseUrl).subscribe((data) => {
       const filtered = data.filter((t) => t.creatorId === userId);
-      this.tasks.set(filtered); // Uppdatera signalen med filtrerade tasks
+      this.tasks.set(filtered);
     });
   }
 
@@ -34,17 +33,17 @@ export class TaskService {
     return this.http.get<Task[]>(`${this.baseUrl}?projectId=${projectId}`);
   }
 
-  // Skapa en ny task och uppdatera signalen
+  // Skapar en ny task och uppdaterar signalen
   createTask(task: Task) {
     this.http.post<Task>(this.baseUrl, task).subscribe((created: Task) => {
-      this.tasks.set([...this.tasks(), created]); // Lägg till task i signalen
+      this.tasks.set([...this.tasks(), created]);
     });
   }
 
-  // Lägg till en task och uppdatera signalen
+  // Lägger till en task och uppdaterar signalen
   addTask(task: Task) {
     const newTask: Task = {
-      id: 0, // Låt backend generera id om det inte sätts här
+      id: 0,
       title: task.title,
       priority: task.priority,
       status: task.status,
@@ -55,23 +54,23 @@ export class TaskService {
     };
 
     this.http.post<Task>(this.baseUrl, newTask).subscribe((created: Task) => {
-      this.tasks.set([...this.tasks(), created]); // Lägg till task i signalen
+      this.tasks.set([...this.tasks(), created]);
     });
   }
 
-  // Ta bort en task och uppdatera signalen
+  // Tar bort en task och uppdaterar signalen
   deleteTask(id: number) {
     this.http.delete<void>(`${this.baseUrl}/${id}`).subscribe(() => {
-      this.tasks.set(this.tasks().filter((t) => t.id !== id)); // Ta bort task från signalen
+      this.tasks.set(this.tasks().filter((t) => t.id !== id));
     });
   }
 
-  // Uppdatera en task och uppdatera signalen
+  // Uppdaterar en task och uppdaterar signalen
   updateTask(id: number, task: Task) {
     this.http
       .put<Task>(`${this.baseUrl}/${id}`, task)
       .subscribe((updated: Task) => {
-        this.tasks.set(this.tasks().map((t) => (t.id === id ? updated : t))); // Uppdatera task i signalen
+        this.tasks.set(this.tasks().map((t) => (t.id === id ? updated : t)));
       });
   }
 }

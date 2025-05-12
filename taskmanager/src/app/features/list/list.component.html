@@ -1,11 +1,10 @@
+<!-- Lista över användare, projekt och uppgifter -->
 <section class="list-section">
-  
   <div class="list-wrapper">
-    <!-- Dropdown för att välja användare -->
     <div class="user-select">
-      <label for="userDropdown">Select User:</label>
+      <label for="userDropdown">Select user:</label>
       <select id="userDropdown" [(ngModel)]="selectedUserModel">
-        <option [ngValue]="null">All Users</option>
+        <option [ngValue]="null">All users</option>
         <option *ngFor="let user of users()" [ngValue]="user.id">
           {{ user.name }}
         </option>
@@ -14,16 +13,15 @@
 
     <section class="user-projects-tasks">
       <br />
-      <!-- Tabell för projekt -->
       <div class="projects-table" *ngIf="selectedUserProjects().length > 0">
-        <h3>All Projects</h3>
+        <h3>All projects</h3>
         <table>
           <thead>
             <tr>
               <th>#</th>
-              <th>Project Name</th>
+              <th>Project name</th>
               <th>Type</th>
-              <th>User Name</th>
+              <th>User name</th>
             </tr>
           </thead>
           <tbody>
@@ -55,19 +53,18 @@
         </table>
       </div>
 
-      <!-- Tabell för uppgifter -->
       <div class="tasks-table" *ngIf="selectedUserTasks().length > 0">
         <br />
-        <h3>All Tasks</h3>
+        <h3>All tasks</h3>
         <table>
           <thead>
             <tr>
               <th>#</th>
               <th>Title</th>
-              <th>Project Name</th>
+              <th>Project name</th>
               <th>Priority</th>
               <th>Type</th>
-              <th>User Name</th>
+              <th>User name</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -78,8 +75,8 @@
               <td>{{ task.projectName }}</td>
               <td>
                 <span [ngClass]="'priority ' + task.priority.toLowerCase()">
-                  {{ task.priority }}</span
-                >
+                  {{ task.priority }}
+                </span>
               </td>
               <td>
                 <span

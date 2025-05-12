@@ -10,6 +10,7 @@ import { TaskService } from '../../../core/services/task.service';
 import { ProjectService } from '../../../core/services/project.service';
 import { Task } from '../../../models/task.model';
 
+// Komponent för att visa sammanfattning av tasks och progress för en användare
 @Component({
   selector: 'app-summary',
   standalone: true,
@@ -21,8 +22,8 @@ export class SummaryComponent {
   private selectedUserIdSignal: WritableSignal<number | null> = signal(null);
 
   @Input() set selectedUserId(value: number) {
-    this.selectedUserIdSignal.set(value); // Uppdatera signalen med den nya userId
-    this.updateSummary(); // Uppdatera sammanfattningen när selectedUserId ändras
+    this.selectedUserIdSignal.set(value);
+    this.updateSummary();
   }
 
   total: WritableSignal<number> = signal(0);
@@ -37,22 +38,20 @@ export class SummaryComponent {
     private taskService: TaskService,
     private projectService: ProjectService
   ) {
-    // Kör updateSummary när tasks eller projekt ändras
+    // Uppdaterar sammanfattningen när tasks eller projekt ändras
     effect(() => {
       this.updateSummary();
     });
   }
 
-  // Funktion för att uppdatera sammanfattning baserat på vald användare
+  // Uppdaterar sammanfattning baserat på vald användare
   private updateSummary(): void {
-    const userId = this.selectedUserIdSignal(); // Hämta aktuell användare från signal
+    const userId = this.selectedUserIdSignal();
 
-    // Hämta uppgifter från TaskService direkt via signalen
-    const allTasks = this.taskService['tasks'](); // Hämta tasks från signalen i TaskService
+    const allTasks = this.taskService['tasks']();
     const allProjects = this.projectService['projects']();
 
     if (!userId) {
-      // Om ingen användare är vald, sätt alla signaler till 0
       this.total.set(0);
       this.completed.set(0);
       this.low.set(0);
@@ -62,18 +61,15 @@ export class SummaryComponent {
       return;
     }
 
-    // Hämta projekt där användaren är medlem
     const userProjectIds = allProjects
       .filter((project) => project.userIds?.includes(userId))
       .map((project) => project.id);
 
-    // Filtrera tasks: skapade av användaren eller tillhör projekt där användaren är medlem
     const tasks = allTasks.filter(
       (t: Task) =>
         t.creatorId === userId || userProjectIds.includes(t.projectId)
     );
 
-    // Uppdatera signaler med data från filtrerade uppgifter
     this.total.set(tasks.length);
     this.completed.set(
       tasks.filter((t: Task) => t.status === 'completed').length
@@ -92,7 +88,6 @@ export class SummaryComponent {
         .length
     );
 
-    // Beräkna progress (procent)
     const progressValue =
       this.total() > 0 ? (this.completed() / this.total()) * 100 : 0;
     this.progress.set(progressValue);

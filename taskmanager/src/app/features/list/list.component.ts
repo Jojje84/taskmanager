@@ -5,6 +5,7 @@ import { UserService } from '../../core/services/user.service';
 import { ProjectService } from '../../core/services/project.service';
 import { TaskService } from '../../core/services/task.service';
 
+// Komponent för att visa lista över användare, projekt och uppgifter
 @Component({
   selector: 'app-list',
   standalone: true,
@@ -25,13 +26,12 @@ export class ListComponent implements OnInit {
     private projectService: ProjectService,
     private taskService: TaskService
   ) {
-    // Kör denna effect när users, projects eller tasks ändras
+    // Effekt som körs när users, projects eller tasks ändras och uppdaterar filtrerade listor
     effect(() => {
       const users = this.users();
       const projects = this.projects();
       const tasksRaw = this.taskService['tasks']();
 
-      // Enrich tasks
       const enriched = tasksRaw.map((task) => {
         const project = projects.find((p) => p.id === task.projectId);
         const user = users.find((u) => u.id === task.creatorId);
@@ -44,7 +44,6 @@ export class ListComponent implements OnInit {
 
       this.tasks.set(enriched);
 
-      // Filtrera på selectedUser om någon är vald
       const selectedUserId = this.selectedUser();
       if (selectedUserId === null) {
         this.selectedUserProjects.set(projects);
@@ -66,6 +65,7 @@ export class ListComponent implements OnInit {
     });
   }
 
+  // Initierar och hämtar data vid komponentstart
   ngOnInit(): void {
     this.userService.getUsers().subscribe((data) => this.users.set(data));
     this.projectService
@@ -74,6 +74,7 @@ export class ListComponent implements OnInit {
     this.taskService.fetchTasks();
   }
 
+  // Uppdaterar filtrerade projekt och tasks när användare ändras
   onUserChange(): void {
     const selectedUserId = this.selectedUser();
     if (selectedUserId === null) {
@@ -94,6 +95,7 @@ export class ListComponent implements OnInit {
     }
   }
 
+  // Getter och setter för vald användare i dropdown
   get selectedUserModel() {
     return this.selectedUser();
   }
@@ -103,12 +105,14 @@ export class ListComponent implements OnInit {
     this.onUserChange();
   }
 
+  // Hämtar användarnamn baserat på id
   getUserName(userId: number | null): string {
     if (userId === null) return 'Unknown';
     const user = this.users().find((u) => u.id === userId);
     return user ? user.name : 'Unknown';
   }
 
+  // Returnerar typ av projekt (Shared/Eget)
   getProjectType(projectId: number): string {
     const project = this.projects().find((p) => p.id === projectId);
     return project && project.userIds && project.userIds.length > 1

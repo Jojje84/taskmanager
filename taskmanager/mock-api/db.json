@@ -17,6 +17,18 @@
       "name": "Antony",
       "role": "Programmer",
       "avatar": "path-to-avatar3.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Sara",
+      "role": "Tester",
+      "avatar": "path-to-avatar4.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Liam",
+      "role": "Developer",
+      "avatar": "path-to-avatar5.jpg"
     }
   ],
   "projects": [
@@ -27,7 +39,7 @@
       "userIds": [
         1
       ],
-      "description": "dswdszs"
+      "description": "A complete overhaul of the company website to improve UX and branding."
     },
     {
       "id": 2,
@@ -35,7 +47,8 @@
       "creatorId": 2,
       "userIds": [
         2
-      ]
+      ],
+      "description": "Building a cross-platform mobile app for our main services."
     },
     {
       "id": 3,
@@ -43,24 +56,35 @@
       "creatorId": 3,
       "userIds": [
         3
-      ]
+      ],
+      "description": "Developing a robust REST API for all client applications."
     },
     {
       "id": 4,
-      "name": "dwadwd",
-      "description": "ssss",
+      "name": "Marketing Campaign 2025",
+      "description": "Planning and executing the 2025 digital marketing campaign.",
       "creatorId": 1,
       "userIds": [
         1,
         2
+      ]
+    },
+    {
+      "id": 5,
+      "name": "E-commerce Platform",
+      "description": "Online shop for electronics with payment and shipping integration.",
+      "creatorId": 4,
+      "userIds": [
+        4,
+        5
       ]
     }
   ],
   "tasks": [
     {
       "id": 1,
-      "title": "wd",
-      "description": "",
+      "title": "Create wireframes",
+      "description": "Design initial wireframes for the new website layout.",
       "priority": "Low",
       "status": "active",
       "projectId": 1,
@@ -69,13 +93,53 @@
     },
     {
       "id": 4,
-      "title": "r",
-      "description": "",
+      "title": "Finalize campaign slogan",
+      "description": "Brainstorm and select the main slogan for the 2025 campaign.",
       "priority": "Low",
       "status": "completed",
       "projectId": 4,
       "creatorId": 1,
       "deadline": ""
+    },
+    {
+      "id": 5,
+      "title": "Setup homepage",
+      "description": "Implement the homepage based on approved wireframes.",
+      "priority": "Low",
+      "status": "active",
+      "projectId": 1,
+      "creatorId": 1,
+      "deadline": "2025-05-30"
+    },
+    {
+      "id": 6,
+      "title": "Design logo",
+      "description": "Create a new logo for the e-commerce platform.",
+      "priority": "High",
+      "status": "active",
+      "projectId": 5,
+      "creatorId": 4,
+      "deadline": "2025-06-10"
+    },
+    {
+      "id": 7,
+      "title": "Write unit tests",
+      "description": "Increase test coverage for the backend API.",
+      "priority": "Medium",
+      "status": "active",
+      "projectId": 3,
+      "creatorId": 3,
+      "deadline": ""
+    },
+    {
+      "id": 8,
+      "title": "Setup payment gateway",
+      "description": "Integrate Stripe for payments in the e-commerce platform.",
+      "priority": "High",
+      "status": "active",
+      "projectId": 5,
+      "creatorId": 5,
+      "deadline": "2025-06-15"
     }
   ]
 }

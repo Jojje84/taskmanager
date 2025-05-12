@@ -43,7 +43,7 @@ export class UserDetailComponent implements OnInit {
 
   private userSignal: WritableSignal<User | null> = signal(null);
 
-  users: User[] = []; // Fyll denna med alla användare, t.ex. via UserService
+  users: User[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -53,6 +53,7 @@ export class UserDetailComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { id: number },
     private dialogRef: MatDialogRef<UserDetailComponent>
   ) {
+    // Effekt som uppdaterar projekt och tasks när användaren ändras
     effect(() => {
       const user = this.userSignal();
       if (!user) return;
@@ -86,6 +87,7 @@ export class UserDetailComponent implements OnInit {
     });
   }
 
+  // Initierar och hämtar användare, projekt och tasks vid start
   ngOnInit(): void {
     this.userService.getUserById(this.data.id).subscribe((user) => {
       this.user = user;
@@ -98,34 +100,38 @@ export class UserDetailComponent implements OnInit {
       this.projectService.fetchProjects();
       this.taskService.fetchTasks?.();
 
-      // Lägg till detta för att fylla users-arrayen!
       this.userService.getUsers().subscribe((users) => {
         this.users = users;
       });
     });
   }
 
+  // Hämtar tasks för ett specifikt projekt
   getTasksForProject(projectId: number): Task[] {
     return this.tasks.filter((task) => task.projectId === projectId);
   }
 
+  // Hämtar avslutade tasks för ett projekt
   getCompletedTasks(projectId: number): Task[] {
     return this.tasks.filter(
       (task) => task.projectId === projectId && task.status === 'completed'
     );
   }
 
+  // Expandera eller minimera projektsektion
   toggleProject(projectId: number) {
     this.expandedProjectId =
       this.expandedProjectId === projectId ? null : projectId;
   }
 
+  // Stänger dialogen och skickar tillbaka användaren
   close(): void {
-    this.dialogRef.close(this.user); // Skicka tillbaka den uppdaterade användaren
+    this.dialogRef.close(this.user);
   }
+
+  // Hanterar val av användare och uppdaterar projekt och tasks
   onUserSelected(user: any): void {
     this.selectedUser = user;
-    console.log('Selected user:', this.selectedUser);
 
     this.projectService.getProjectsByUserId(user.id);
 
@@ -133,16 +139,18 @@ export class UserDetailComponent implements OnInit {
     this.userProjects = projects.filter((p: Project) =>
       p.userIds.includes(user.id)
     );
-    console.log('Projects for selected user:', this.userProjects);
 
     this.selectedProjectTasks = [];
   }
+
+  // Filtrerar projekt baserat på sökterm
   get filteredProjects(): Project[] {
     return this.projects.filter((project) =>
       project.name.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
+  // Hämtar projektnamn baserat på id
   getProjectName(projectId: number): string {
     const project = this.projects.find(
       (project) => project.id === Number(projectId)
@@ -150,26 +158,24 @@ export class UserDetailComponent implements OnInit {
     return project ? project.name : 'Unknown';
   }
 
+  // Hämtar användarnamn baserat på id
   getUserName(id: number): string {
     const user = this.users.find((u) => u.id === id);
     return user ? user.name : id.toString();
   }
 
+  // Skickar in ändringar och uppdaterar användaren
   onSubmit(): void {
     if (this.userForm.valid) {
       const updatedUser = { ...this.user, ...this.userForm.value };
       this.userService.updateUser(updatedUser).subscribe((updatedData) => {
-        // Uppdatera användarens data lokalt
         this.user = updatedData;
-
-        // Emittera händelsen för att meddela föräldern
         this.userUpdated.emit(updatedData);
-
-        console.log('User updated successfully!', updatedData);
       });
     }
   }
 
+  // Returnerar CSS-klass för prioritet
   getPriorityClass(priority: string): string {
     switch (priority.toLowerCase()) {
       case 'high':
@@ -183,6 +189,7 @@ export class UserDetailComponent implements OnInit {
     }
   }
 
+  // Hämtar antal användare för ett projekt
   getProjectUserCount(projectId: number): number {
     const project = this.projects.find((p) => p.id === projectId);
     return project ? project.userIds.length : 0;

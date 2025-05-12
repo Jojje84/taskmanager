@@ -49,35 +49,33 @@
   display: flex;
   flex-wrap: wrap;
   margin: 20px;
-  
 }
 
 .task-columns {
   display: flex;
-  justify-content: space-between; /* Fördela kolumnerna jämnt */
-  align-items: flex-start; /* Justera kolumnerna till toppen */
-  gap: 10px; /* Lägg till mellanrum mellan kolumnerna */
+  justify-content: space-between; 
+  align-items: flex-start; 
+  gap: 10px; 
   width: 100%;
-  box-sizing: border-box; /* Inkludera padding och border i bredden */
+  box-sizing: border-box; 
 }
 
 .task-column {
-  flex: 1; /* Gör att kolumnerna delar lika mycket utrymme */
+  flex: 1; 
   display: flex;
-  flex-direction: column; /* Placera innehållet i en kolumn */
+  flex-direction: column; 
   background-color: #ffffff;
   padding: 20px;
   border-radius: 12px;
-  min-width: 200px; /* Minsta bredd för kolumner */
-  max-width: 300px; /* Maximala bredd för kolumner */
-  box-sizing: border-box; /* Inkludera padding och border i bredden */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
-              0 6px 12px rgba(0, 0, 0, 0.08);
+  min-width: 200px; 
+  max-width: 300px; 
+  box-sizing: border-box; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.08);
   border: solid 1px #d4d3d3;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin:  1px; /* Avstånd mellan kolumner */
+  margin: 1px; 
 
-  overflow-y: auto; /* Gör att kolumnerna kan scrolla om innehållet är för stort */
+  overflow-y: auto; 
 }
 
 .task-column.cdk-drop-list-dragging {
@@ -94,26 +92,31 @@
 }
 
 .priority.low {
-  color: #8b8000; /* Mörkgul text */
+  color: #8b8000; 
 }
 
 .priority.medium {
-  color: #004080; /* Mörkblå text */
+  color: #004080;
 }
 
 .priority.high {
-  color: #800040; /* Mörkrosa text */
+  color: #800040;
 }
-.task-card h4 {
+
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  margin: 0;
+  margin: 0 auto 10px auto; 
   font-size: 1rem;
   font-weight: bold;
   line-height: 1.5;
+  width: 100%;
 }
 
 .task-card.low {
-  background-color: #f5ecb8; /* Gul för låg prioritet */
+  background-color: #f5ecb8;
 }
 
 .task-card.medium {
@@ -121,7 +124,7 @@
 }
 
 .task-card.high {
-  background-color: #ffc0cb; /* Rosa för hög prioritet */
+  background-color: #ffc0cb; 
 }
 
 .task-column h3 {
@@ -133,15 +136,15 @@
 .task-card p {
   font-size: 0.9rem;
   color: #666;
-  margin: 0;
+  margin: 0 0 10px 0;
   text-align: center;
-  text-transform: capitalize; /* Gör första bokstaven stor */
+  text-transform: capitalize; 
 }
 
 .task-card {
   background-color: #ffffff;
   border-radius: 12px;
-  width: 100%; /* Gör korten lika breda som kolumnen */
+  width: 100%; 
   padding: 20px;
   box-sizing: border-box;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
@@ -163,15 +166,35 @@
 .task-actions {
   display: flex;
   justify-content: center;
-  gap: 10px; /* Mellanrum mellan knapparna */
+  gap: 10px; 
   margin-top: 10px;
+}
+.deadline {
+  font-style: italic;
+  color: #0c0c0c;
+  font-size: 1em;
+  display: block;
+  margin-top: 4px;
+  text-align: center;
+  letter-spacing: 1px;
+  
+}
+
+.no-deadline {
+  font-style: italic;
+  color: #d9534f; 
+  font-size: 1em;
+  display: block;
+  margin-top: 4px;
+  text-align: center;
+  letter-spacing: 1px;
 }
 
 .btn {
   display: flex;
-  align-items: center; /* Centrera text och bild vertikalt */
+  align-items: center; 
   justify-content: center;
-  gap: 8px; /* Mellanrum mellan bild och text */
+  gap: 8px; 
   padding: 10px 20px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -182,7 +205,7 @@
 }
 
 .btn:hover {
-  background-color: #007bff; /* Blå bakgrund vid hover */
-  color: white; /* Vit text vid hover */
-  transform: translateY(-2px); /* Lyft knappen något vid hover */
+  background-color: #007bff; 
+  color: white; 
+  transform: translateY(-2px);
 }

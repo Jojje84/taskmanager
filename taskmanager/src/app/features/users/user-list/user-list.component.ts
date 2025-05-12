@@ -22,6 +22,7 @@ import { Subject } from 'rxjs';
 import { WritableSignal, signal } from '@angular/core';
 import { TaskService } from '../../../core/services/task.service';
 
+// Komponent för att visa och hantera användarlistan
 @Component({
   selector: 'app-user-list',
   standalone: true,
@@ -37,7 +38,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   loading: boolean = true;
   errorMessage: string = '';
-  tasksPerUser: WritableSignal<{ [userId: number]: Task[] }> = signal({}); // Gör tasksPerUser till en signal
+  tasksPerUser: WritableSignal<{ [userId: number]: Task[] }> = signal({});
 
   private destroy$ = new Subject<void>();
 
@@ -49,14 +50,15 @@ export class UserListComponent implements OnInit, OnDestroy {
     private router: Router,
     private dialog: MatDialog
   ) {
+    // Effekt som uppdaterar filtrerade användare vid förändring av tasksPerUser
     effect(() => {
       const tasks = this.tasksPerUser();
       this.filteredUsers = [...this.filteredUsers];
     });
   }
 
+  // Initierar och hämtar användare, projekt och tasks vid start
   ngOnInit(): void {
-    // Hämta användare
     this.userService.getUsers().subscribe({
       next: (data) => {
         this.users = data;
@@ -69,15 +71,17 @@ export class UserListComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.projectService.fetchProjects(); // Uppdaterar signalen i ProjectService
-    this.taskService.fetchTasks(); // Uppdaterar signalen i TaskService
+    this.projectService.fetchProjects();
+    this.taskService.fetchTasks();
   }
 
+  // Rensar subscriptions vid komponentens borttagning
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  // Filtrerar användare baserat på sökterm
   filterUsers(): void {
     const query = this.searchQuery.toLowerCase();
     this.filteredUsers = this.users.filter(
@@ -87,14 +91,17 @@ export class UserListComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Väljer användare och skickar event
   selectUser(user: User): void {
     this.userSelected.emit(user);
   }
 
+  // Navigerar till användardetaljsida
   goToUserDetail(userId: number): void {
     this.router.navigate(['/user', userId]);
   }
 
+  // Öppnar dialog för att visa/redigera användare
   openUserDetailDialog(user: User): void {
     const dialogRef = this.dialog.open(UserDetailComponent, {
       panelClass: 'useredit-dialog-container',
@@ -110,6 +117,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Öppnar dialog för att lägga till ny användare
   openUserFormDialog(): void {
     const dialogRef = this.dialog.open(UserFormComponent, {
       panelClass: 'newuser-dialog-container',
@@ -123,6 +131,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Uppdaterar användarlistan
   refreshUsers(): void {
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
@@ -130,6 +139,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Tar bort användare och uppdaterar listan
   deleteUser(user: User): void {
     this.dialog
       .open(ConfirmDialogComponent, {
@@ -149,43 +159,42 @@ export class UserListComponent implements OnInit, OnDestroy {
             );
             const updatedTasks = { ...this.tasksPerUser() };
             delete updatedTasks[idToDelete];
-            this.tasksPerUser.set(updatedTasks); // Uppdatera signalen
+            this.tasksPerUser.set(updatedTasks);
           });
         }
       });
   }
 
+  // Hämtar antal projekt för användare
   getProjectCount(user: User): number {
-    const allProjects = this.projectService['projects'](); // Hämta projekten från signalen
+    const allProjects = this.projectService['projects']();
     return allProjects.filter((p) => p.userIds?.includes(user.id)).length;
   }
 
+  // Hämtar antal tasks för användare
   getTaskCount(user: User): number {
-    const allTasks = this.taskService['tasks'](); // Hämta alla tasks från signalen i TaskService
-    const allProjects = this.projectService['projects'](); // Hämta alla projekt från signalen i ProjectService
+    const allTasks = this.taskService['tasks']();
+    const allProjects = this.projectService['projects']();
 
-    // Hämta projekt där användaren är associerad
     const userProjectIds = allProjects
       .filter((project) => project.userIds?.includes(user.id))
       .map((project) => project.id);
 
-    // Filtrera tasks baserat på creatorId eller projektId
     return allTasks.filter(
       (task: Task) =>
         task.creatorId === user.id || userProjectIds.includes(task.projectId)
     ).length;
   }
 
+  // Hämtar procentandel av tasks per prioritet för användare
   getTaskPercentage(user: User, priority: string): number {
     const allTasks = this.taskService['tasks']();
     const allProjects = this.projectService['projects']();
 
-    // Hämta projekt där användaren är associerad
     const userProjectIds = allProjects
       .filter((project) => project.userIds?.includes(user.id))
       .map((project) => project.id);
 
-    // Filtrera ENDAST aktiva tasks baserat på creatorId eller projektId
     const userTasks = allTasks.filter(
       (task: Task) =>
         (task.creatorId === user.id ||
@@ -198,7 +207,6 @@ export class UserListComponent implements OnInit, OnDestroy {
       return 0;
     }
 
-    // Beräkna procentandelen baserat på prioritet (bland aktiva tasks)
     const priorityTasks = userTasks.filter(
       (t) => t.priority?.toLowerCase() === priority.toLowerCase()
     );

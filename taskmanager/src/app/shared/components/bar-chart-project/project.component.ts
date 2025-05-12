@@ -15,6 +15,7 @@ import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../models/project.model';
 import { Subject } from 'rxjs';
 
+// Komponent för att visa stapeldiagram över egna och delade projekt för en användare
 @Component({
   selector: 'app-bar-chart-by-project',
   standalone: true,
@@ -53,28 +54,27 @@ export class BarChartByProjectComponent
       y: {
         beginAtZero: true,
         ticks: {
-          stepSize: 1, // ✅ fixat
+          stepSize: 1,
         },
       },
     },
   };
 
   constructor(private projectService: ProjectService) {
+    // Effekt som uppdaterar diagrammet när projektdata ändras
     effect(() => {
       if (!this.selectedUserId) return;
 
       const allProjects = this.projectService['projects']();
 
-      // Egna projekt: där användaren är creator OCH det INTE är delat
       const ownProjects = allProjects.filter(
         (p: Project) =>
-          p.creatorId === this.selectedUserId && p.userIds.length === 1 // Bara skaparen är med
+          p.creatorId === this.selectedUserId && p.userIds.length === 1
       );
 
-      // Delade projekt: där användaren är med och det är fler än en användare
       const sharedProjects = allProjects.filter(
         (p: Project) =>
-          p.userIds.includes(this.selectedUserId) && p.userIds.length > 1 // Delat projekt
+          p.userIds.includes(this.selectedUserId) && p.userIds.length > 1
       );
 
       if (this.chart) {
@@ -86,28 +86,32 @@ export class BarChartByProjectComponent
     });
   }
 
+  // Initierar och hämtar projekt vid start
   ngOnInit(): void {
     this.projectService.fetchProjects();
   }
 
+  // Uppdaterar diagrammet vid förändring av input
   ngOnChanges(): void {
     this.loadProjects();
   }
 
+  // Skapar diagrammet efter att vyn har initierats
   ngAfterViewInit(): void {
     this.chart = new Chart(this.chartCanvas.nativeElement, {
       type: 'bar',
       data: this.chartData,
       options: this.chartOptions,
     });
-    
   }
 
+  // Rensar subscriptions vid komponentens borttagning
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  // Laddar och uppdaterar projektdata i diagrammet
   loadProjects(): void {
     if (!this.selectedUserId || !this.chart) return;
 
@@ -115,16 +119,14 @@ export class BarChartByProjectComponent
 
     const allProjects = this.projectService['projects']();
 
-  
     const ownProjects = allProjects.filter(
       (p: Project) =>
-        p.creatorId === this.selectedUserId && p.userIds.length === 1 // Bara skaparen är med
+        p.creatorId === this.selectedUserId && p.userIds.length === 1
     );
 
-    // Delade projekt: där användaren är med och det är fler än en användare
     const sharedProjects = allProjects.filter(
       (p: Project) =>
-        p.userIds.includes(this.selectedUserId) && p.userIds.length > 1 // Delat projekt
+        p.userIds.includes(this.selectedUserId) && p.userIds.length > 1
     );
 
     this.chart.data.labels = ['My'];

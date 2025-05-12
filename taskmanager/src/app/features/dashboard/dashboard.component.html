@@ -1,3 +1,5 @@
+<!-- Dashboard för användar- och projektstatistik -->
+
 <section class="dashboard-section">
   <div class="title">
     <h3>All Users</h3>
@@ -5,10 +7,11 @@
   <app-user-list (userSelected)="onUserSelected($event)"></app-user-list>
 </section>
 
+<!-- Visar statistik för vald användare -->
 <section class="dashboard-section" *ngIf="selectedUser">
   <div class="title">
     <h3>
-      Statistics for User:
+      Statistics for user:
       <span class="state">{{ selectedUser.name }}</span>
     </h3>
   </div>
@@ -31,7 +34,7 @@
     </div>
 
     <div class="stats-card">
-      <div class="title">Projects</div>
+      <div class="title">Project</div>
       <div class="content">
         <app-bar-chart-by-project
           [selectedUserId]="selectedUser.id"
@@ -48,11 +51,11 @@
   </div>
 </section>
 
-<!-- Section for Projects -->
+<!-- Visar alla projekt för vald användare -->
 <section class="dashboard-section" *ngIf="selectedUser">
   <div class="title">
     <h3>
-      All Projects for selected:
+      All projects for selected:
       <span class="state">{{ selectedUser.name }}</span>
     </h3>
   </div>
@@ -64,11 +67,11 @@
   ></app-project-list>
 </section>
 
-<!-- Sektion för Tasks under det valda projektet -->
+<!-- Visar alla tasks för valt projekt -->
 <section class="dashboard-section" *ngIf="selectedProjectId">
   <div class="title">
     <h3>
-      All Tasks for selected Project:
+      All tasks for selected project:
       <span class="state"> {{ selectedProjectName }}</span>
     </h3>
   </div>

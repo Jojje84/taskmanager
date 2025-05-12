@@ -15,6 +15,7 @@ import { ProjectFormComponent } from '../project-form/project-form.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ProjectDetailComponent } from '../project-detail/project-detail.component';
 
+// Komponent för att visa och hantera projektlistan
 @Component({
   selector: 'app-project-list',
   standalone: true,
@@ -37,16 +38,12 @@ export class ProjectListComponent {
     private projectService: ProjectService,
     private dialog: MatDialog
   ) {
-    // Effekt för att lyssna på förändringar i projektlistan
+    // Effekt för att uppdatera projektlistan vid förändringar
     effect(() => {
       const allProjects = this.projectService.getProjectsSignal();
-
-      // Filtrera projekten baserat på användarens ID
       const userProjects = allProjects.filter((project) =>
         project.userIds?.includes(this.userId)
       );
-
-      // Uppdatera komponentens projekt och filtrerade projekt
       this.projects = userProjects;
       this.filteredProjects.set(this.projects);
     });
@@ -62,35 +59,32 @@ export class ProjectListComponent {
     }
   }
 
+  // Laddar och filtrerar projekt för aktuell användare
   loadProjects(): void {
     this.loading = true;
-
-    // Hämta projekten från signalen i ProjectService
     const allProjects = this.projectService.getProjectsSignal();
-
-    // Filtrera projekten baserat på användarens ID
     const userProjects = allProjects.filter((project) => {
       if (!project.id) {
-        return false; // Ignorera projekt utan ID
+        return false;
       }
       return project.userIds?.includes(this.userId);
     });
-
-    // Uppdatera komponentens projekt och filtrerade projekt
     this.projects = userProjects;
     this.filteredProjects.set(this.projects);
-
     this.loading = false;
   }
 
+  // Sätter sökterm för filtrering
   onSearch(term: string): void {
     this.searchTerm.set(term);
   }
 
+  // Hanterar klick på projekt
   onProjectClick(project: Project): void {
     this.projectSelected.emit({ id: project.id, name: project.name });
   }
 
+  // Öppnar dialog för att skapa nytt eller redigera projekt
   openProjectFormDialog(project?: Project): void {
     const dialogRef = this.dialog.open(ProjectFormComponent, {
       panelClass: 'newproject-dialog',
@@ -102,11 +96,12 @@ export class ProjectListComponent {
 
     dialogRef.afterClosed().subscribe((result: Project | false) => {
       if (result) {
-        // Hantera resultatet om det behövs
+        // Hantera resultat om det behövs
       }
     });
   }
 
+  // Tar bort projekt och uppdaterar listan
   deleteProject(projectId: number): void {
     this.dialog
       .open(ConfirmDialogComponent, {
@@ -128,6 +123,7 @@ export class ProjectListComponent {
       });
   }
 
+  // Öppnar dialog för att redigera projekt
   editProject(project: Project): void {
     const dialogRef = this.dialog.open(ProjectDetailComponent, {
       panelClass: 'editproject-detail-dialog',
@@ -137,12 +133,9 @@ export class ProjectListComponent {
     dialogRef.afterClosed().subscribe((updatedProject) => {
       if (updatedProject) {
         if (!updatedProject.id) {
-          return; // Avbryt om ID saknas
+          return;
         }
-
-        // Uppdatera projektet via ProjectService
         this.projectService.updateProject(updatedProject).subscribe(() => {
-          // Uppdatera den lokala listan
           const index = this.projects.findIndex(
             (p) => p.id === updatedProject.id
           );

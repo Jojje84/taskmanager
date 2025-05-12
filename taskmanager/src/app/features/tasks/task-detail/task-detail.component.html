@@ -1,7 +1,8 @@
+<!-- Formulär för att redigera en task -->
 <div class="TaskEdit">
   <div *ngIf="task">
     <div class="dialog-header">
-      <h2>Edit Task: {{ task.title }}</h2>
+      <h2>Edit task: {{ task.title }}</h2>
       <button class="close-btn" (click)="close()">&#10005;</button>
     </div>
 
@@ -40,17 +41,17 @@
         <label>Deadline:</label>
         <input formControlName="deadline" type="date" />
       </div>
-      <div class="form-group">
+      <div class="form-group" *ngIf="false">
         <label>Project:</label>
         <input
-          [value]="task.projectName || task.projectId"
+          [value]="task?.projectName || task?.projectId"
           type="text"
           readonly
         />
       </div>
       <div class="form-actions">
         <button type="submit" class="btn-save" [disabled]="taskForm.invalid">
-          Save Changes
+          Save changes
         </button>
       </div>
     </form>

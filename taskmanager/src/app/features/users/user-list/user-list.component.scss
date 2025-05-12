@@ -3,8 +3,6 @@
   padding: 20px 0;
   margin-top: 10px;
   border-radius: 15px;
-  
-  
 }
 
 .top-container {
@@ -45,8 +43,6 @@
   flex-wrap: wrap;
   gap: 20px;
   margin: 25px 0 0 25px;
-  
-  
 }
 
 .user-card {
@@ -55,8 +51,7 @@
   padding: 20px;
   width: 200px;
   height: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 
-              0 6px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
   cursor: pointer;
   text-align: center;
@@ -162,20 +157,18 @@ h3 {
   font-size: 0.7rem;
 }
 
-
 .user-actions {
   display: flex;
   justify-content: center;
-  gap: 10px; /* Mellanrum mellan knapparna */
+  gap: 10px; 
   margin-top: 10px;
-  
 }
 
 .btn {
   display: flex;
-  align-items: center; /* Centrera text och bild vertikalt */
+  align-items: center; 
   justify-content: center;
-  gap: 8px; /* Mellanrum mellan bild och text */
+  gap: 8px;
   padding: 10px 20px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -183,20 +176,19 @@ h3 {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  
 }
 
 .btn:hover {
-  background-color: #007bff; /* Blå bakgrund vid hover */
-  color: white; /* Vit text vid hover */
-  transform: translateY(-2px); /* Lyft knappen något vid hover */
+  background-color: #007bff; 
+  color: white; 
+  transform: translateY(-2px); 
 }
 
-.useredit-dialog-container{
-  max-width: 100%; 
-  max-height: 100%; 
+.useredit-dialog-container {
+  max-width: 100%;
+  max-height: 100%;
 }
-.newuser-dialog-container{
-  max-width: 100%; 
-  max-height: 100%; 
+.newuser-dialog-container {
+  max-width: 100%;
+  max-height: 100%;
 }

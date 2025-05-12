@@ -1,6 +1,7 @@
+<!-- Formulär för att skapa ny uppgift -->
 <div class="Taskadd">
   <div class="dialog-header">
-    <h2>Create New Task</h2>
+    <h2>Create new task</h2>
     <button class="close-btn" (click)="close()">&#10005;</button>
   </div>
 
@@ -16,7 +17,6 @@
       />
     </div>
 
-    <!-- Description -->
     <div class="form-group">
       <label for="description">Description:</label>
       <textarea
@@ -26,7 +26,6 @@
       ></textarea>
     </div>
 
-    <!-- Priority -->
     <div class="form-group">
       <label for="priority">Priority:</label>
       <select id="priority" formControlName="priority">
@@ -36,7 +35,6 @@
       </select>
     </div>
 
-    <!-- Status -->
     <div class="form-group">
       <label for="status">Status:</label>
       <select id="status" formControlName="status">
@@ -45,40 +43,38 @@
       </select>
     </div>
 
-    <!-- Project ID -->
-    <div class="form-group">
+    <div class="form-group" *ngIf="false">
       <label for="projectId">Project:</label>
       <input
         id="projectId"
         type="number"
         formControlName="projectId"
-        placeholder="Enter project ID"
+        placeholder="Project ID"
         required
       />
     </div>
 
-    <!-- Creator ID -->
-    <div class="form-group">
-      <label for="creatorId">Creator ID:</label>
+    <div class="form-group" *ngIf="false">
+      <label for="creatorId">Creator:</label>
       <input
         id="creatorId"
         type="number"
         formControlName="creatorId"
-        placeholder="Enter creator ID"
+        placeholder="Creator ID"
         required
       />
     </div>
 
-    <!-- Deadline -->
     <div class="form-group">
       <label for="deadline">Deadline:</label>
       <input id="deadline" type="date" formControlName="deadline" />
     </div>
 
-    <!-- Buttons -->
     <div class="form-actions">
       <button type="submit" class="btn">Create</button>
-      <button type="button" class="btn btn-cancel" (click)="onCancel()">Cancel</button>
+      <button type="button" class="btn btn-cancel" (click)="onCancel()">
+        Cancel
+      </button>
     </div>
   </form>
 </div>

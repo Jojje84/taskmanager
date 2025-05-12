@@ -15,6 +15,7 @@ import { TaskService } from '../../../core/services/task.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Task } from '../../../models/task.model';
 
+// Komponent för formulär att skapa eller uppdatera en uppgift
 @Component({
   selector: 'app-task-form',
   standalone: true,
@@ -39,53 +40,54 @@ export class TaskFormComponent implements OnInit {
       priority: [data.task?.priority || 'Low', [Validators.required]],
       status: [data.task?.status || 'active', [Validators.required]],
       projectId: [data.projectId, [Validators.required]],
-      creatorId: [data.userId, [Validators.required]], // Sätt creatorId från data
+      creatorId: [data.userId, [Validators.required]],
       deadline: [data.task?.deadline || ''],
     });
   }
 
+  // Initierar komponenten
   ngOnInit(): void {}
 
+  // Skickar in formuläret och skapar eller uppdaterar uppgift
   onSubmit(): void {
     if (this.taskForm.valid) {
       const formValue = this.taskForm.value;
 
       if (this.data.task?.id) {
-        // Uppdatera en befintlig uppgift
         const updatedTask = this.createOrderedTaskData({
           ...this.data.task,
           ...formValue,
         });
 
-        this.taskService.updateTask(updatedTask.id, updatedTask); // Uppdatera uppgiften
-        this.snackBar.open('Task updated successfully!', 'Close', {
+        this.taskService.updateTask(updatedTask.id, updatedTask);
+        this.snackBar.open('Uppgiften har uppdaterats!', 'Stäng', {
           duration: 3000,
         });
-        this.dialogRef.close(updatedTask); // Skicka tillbaka den uppdaterade uppgiften
+        this.dialogRef.close(updatedTask);
       } else {
-        // Skapa en ny uppgift
         const newTask = this.createOrderedTaskData({
           ...formValue,
           creatorId: this.data.userId,
         });
 
-        this.taskService.createTask(newTask); // Skapa uppgiften
-        this.snackBar.open('Task created successfully!', 'Close', {
+        this.taskService.createTask(newTask);
+        this.snackBar.open('Uppgiften har skapats!', 'Stäng', {
           duration: 3000,
         });
-        this.dialogRef.close(newTask); // Skicka tillbaka den skapade uppgiften
+        this.dialogRef.close(newTask);
       }
     }
   }
 
+  // Avbryter och stänger dialogen utan att spara
   onCancel(): void {
-    this.dialogRef.close(false); // Stänger dialogen utan att skicka något tillbaka
+    this.dialogRef.close(false);
   }
 
+  // Skapar task-objekt med rätt ordning på fälten
   createOrderedTaskData(formValue: any): any {
-    // Skapa objektet där id kommer först
     return {
-      id: formValue.id || 0, // Placera 'id' först, låt backend generera om det inte finns
+      id: formValue.id || 0,
       title: formValue.title,
       description: formValue.description,
       priority: formValue.priority,
@@ -96,6 +98,7 @@ export class TaskFormComponent implements OnInit {
     };
   }
 
+  // Stänger dialogen
   close(): void {
     this.dialogRef.close();
   }

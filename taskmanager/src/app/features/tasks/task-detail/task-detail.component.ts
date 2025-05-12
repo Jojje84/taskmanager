@@ -19,11 +19,12 @@ export class TaskDetailComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { task: Task },
-    private dialogRef: MatDialogRef<TaskDetailComponent>, // Lägg till MatDialogRef
+    private dialogRef: MatDialogRef<TaskDetailComponent>,
     private taskService: TaskService,
     private fb: FormBuilder
   ) {}
 
+  // Initierar och hämtar task-data vid start
   ngOnInit(): void {
     this.task = this.data.task;
 
@@ -32,26 +33,31 @@ export class TaskDetailComponent implements OnInit {
       description: [this.task?.description],
       priority: [this.task?.priority, [Validators.required]],
       status: [this.task?.status, [Validators.required]],
+      deadline: [
+        this.task?.deadline
+          ? typeof this.task.deadline === 'string'
+            ? this.task.deadline.substring(0, 10)
+            : new Date(this.task.deadline).toISOString().substring(0, 10)
+          : '',
+      ],
     });
   }
 
+  // Skickar in ändringar och uppdaterar task
   onSubmit(): void {
     if (this.taskForm.valid && this.task && this.task.id !== undefined) {
       const updatedTask = { ...this.task, ...this.taskForm.value };
-      this.taskService.updateTask(this.task.id, updatedTask); // Anropa updateTask
-      console.log('Task updated successfully!', updatedTask);
-      this.dialogRef.close(updatedTask); // Stäng dialogen och returnera uppdaterad uppgift
-    } else {
-      console.error(
-        'Task ID is undefined or form is invalid. Cannot update task.'
-      );
+      this.taskService.updateTask(this.task.id, updatedTask);
+      this.dialogRef.close(updatedTask);
     }
   }
 
+  // Avbryter och stänger dialogen utan att spara
   onCancel(): void {
-    this.dialogRef.close(); // Stäng dialogen utan att returnera data
+    this.dialogRef.close();
   }
 
+  // Stänger dialogen
   close(): void {
     this.dialogRef.close();
   }

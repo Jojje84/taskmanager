@@ -17,6 +17,7 @@ import { Task } from '../../../models/task.model';
 import { Project } from '../../../models/project.model';
 import { Subject } from 'rxjs';
 
+// Komponent för att visa stapeldiagram över egna och delade tasks för en användare
 @Component({
   selector: 'app-bar-chart-task',
   standalone: true,
@@ -61,13 +62,14 @@ export class BarChartTaskComponent implements OnInit, AfterViewInit, OnDestroy {
     private taskService: TaskService,
     private projectService: ProjectService
   ) {
+    // Effekt som uppdaterar diagrammet när projekt- eller taskdata ändras
     effect(() => {
       if (!this.selectedUserId) return;
 
       const allProjects = this.projectService['projects']();
       const allTasks = this.taskService['tasks']();
 
-      // Egna projekt: där användaren är creator och det INTE är delat
+      // Egna projekt: där användaren är skapare och det inte är delat
       const ownProjectIds = allProjects
         .filter(
           (p: Project) =>
@@ -101,11 +103,13 @@ export class BarChartTaskComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // Initierar och hämtar projekt och tasks vid start
   ngOnInit(): void {
     this.projectService.fetchProjects();
     this.taskService.fetchTasks();
   }
 
+  // Skapar diagrammet efter att vyn har initierats
   ngAfterViewInit(): void {
     this.chart = new Chart(this.chartCanvas.nativeElement, {
       type: 'bar',
@@ -114,6 +118,7 @@ export class BarChartTaskComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // Rensar subscriptions vid komponentens borttagning
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

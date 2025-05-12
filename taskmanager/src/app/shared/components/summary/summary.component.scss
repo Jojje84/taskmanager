@@ -10,7 +10,7 @@
   grid-template-columns: auto auto;
   gap: 5px 20px; 
   align-items: center;
-  justify-content: center;  /* Centrerar kolumnerna */
+  justify-content: center;  
   width: 100%;
   padding: 0;
   margin-bottom: 20px;
@@ -28,8 +28,8 @@
 }
 
 .break {
-  grid-column: span 2; /* Tar upp hela raden */
-  height: 10px; /* Mellanrum mellan grupper */
+  grid-column: span 2; 
+  height: 10px;
 }
 
 

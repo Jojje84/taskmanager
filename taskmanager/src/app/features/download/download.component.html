@@ -1,48 +1,48 @@
+<!-- Sektion för nedladdning av data -->
 <section class="download-section">
   <div class="title">
-    <h3>Select Data to Download</h3>
+    <h3>Select data to download</h3>
   </div>
   <div class="info-text">
-    Select data to download based on specific criteria. You can filter by user,
-    project, and task to refine your data export.
+    Select data to download based on specific criteria. You can filter by user, project, and task to customize your export.
   </div>
 
-  <!-- User Selection -->
-  <div class="filter-section">
-    <div class="instruction">Choose a user to filter the data:</div>
+  <!-- Användarval -->
+    <div class="filter-section">
+    <div class="instruction">Select a user to filter data:</div>
     <select id="user-select" [(ngModel)]="selectedUserId">
-      <option [ngValue]="null">All Users</option>
+      <option [ngValue]="null">All users</option>
       <option *ngFor="let user of users" [ngValue]="user.id">
         {{ user.name }}
       </option>
     </select>
   </div>
 
-  <!-- Project Selection -->
-  <div class="filter-section">
-    <div class="instruction">Choose a project to refine your selection:</div>
+  <!-- Projektval -->
+    <div class="filter-section">
+    <div class="instruction">Select a project to refine selection:</div>
     <select id="project-select" [(ngModel)]="selectedProjectId">
-      <option [ngValue]="null">All Projects</option>
+      <option [ngValue]="null">All projects</option>
       <option *ngFor="let project of projects" [ngValue]="project.id">
         {{ project.name }}
       </option>
     </select>
   </div>
 
-  <!-- Task Selection -->
-  <div class="filter-section">
-    <div class="instruction">Select a task to narrow down the data:</div>
+  <!-- Taskval -->
+   <div class="filter-section">
+    <div class="instruction">Select a task to limit data:</div>
     <select id="task-select" [(ngModel)]="selectedTaskId">
-      <option [ngValue]="null">All Tasks</option>
+      <option [ngValue]="null">All tasks</option>
       <option *ngFor="let task of tasks" [ngValue]="task.id">
         {{ task.title }}
       </option>
     </select>
   </div>
 
-  <!-- Download Buttons -->
+  <!-- Nedladdningsknappar -->
   <div class="download-info">
-    The downloaded file will contain all selected data in the specified format.
+    The downloaded file will contain all selected data in the chosen format.
   </div>
   <div class="button-group">
     <button (click)="downloadFilteredData('json')">Download as JSON</button>

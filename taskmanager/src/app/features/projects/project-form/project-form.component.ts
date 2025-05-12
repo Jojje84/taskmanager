@@ -19,6 +19,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Project } from '../../../models/project.model';
 
+// Komponent för formulär att skapa eller uppdatera projekt
 @Component({
   selector: 'app-project-form',
   standalone: true,
@@ -52,58 +53,58 @@ export class ProjectFormComponent implements OnInit {
     });
   }
 
+  // Initierar och hämtar användare vid start
   ngOnInit(): void {
     this.userService.getUsers().subscribe((users) => {
-      // Filtrera bort skaparen från användarlistan
       this.users = users.filter((user) => user.id !== this.data.userId);
     });
   }
 
+  // Skickar in formuläret och skapar eller uppdaterar projekt
   onSubmit(): void {
     if (this.projectForm.valid) {
       const formValue = this.projectForm.value;
 
       if (this.data.project?.id) {
-        // Uppdatera ett befintligt projekt
         const updatedProject = this.createOrderedProjectData({
           ...this.data.project,
           ...formValue,
         });
 
         this.projectService.updateProject(updatedProject).subscribe(() => {
-          this.snackBar.open('Project updated successfully!', 'Close', {
+          this.snackBar.open('Projektet har uppdaterats!', 'Stäng', {
             duration: 3000,
           });
-          this.dialogRef.close(updatedProject); // Skicka tillbaka det uppdaterade projektet
+          this.dialogRef.close(updatedProject);
         });
       } else {
-        // Skapa ett nytt projekt
         const newProject = this.createOrderedProjectData({
           ...formValue,
           creatorId: this.data.userId,
-          userIds: [...(formValue.userIds || []), this.data.userId], // Lägg till creatorId i userIds
+          userIds: [...(formValue.userIds || []), this.data.userId],
         });
 
         this.projectService
           .createProject(newProject)
           .subscribe((createdProject) => {
-            this.snackBar.open('Project created successfully!', 'Close', {
+            this.snackBar.open('Projektet har skapats!', 'Stäng', {
               duration: 3000,
             });
-            this.dialogRef.close(createdProject); // Skicka tillbaka det skapade projektet
+            this.dialogRef.close(createdProject);
           });
       }
     }
   }
 
+  // Avbryter och stänger dialogen utan att spara
   onCancel(): void {
-    this.dialogRef.close(false); // Stänger dialogen utan att skicka något tillbaka
+    this.dialogRef.close(false);
   }
 
+  // Skapar projektobjekt med rätt ordning på fälten
   createOrderedProjectData(formValue: any): any {
-    // Skapa objektet där id kommer först
     return {
-      id: formValue.id || 0, // Placera 'id' först, låt backend generera om det inte finns
+      id: formValue.id || 0,
       name: formValue.name,
       description: formValue.description,
       creatorId: formValue.creatorId,
@@ -111,6 +112,7 @@ export class ProjectFormComponent implements OnInit {
     };
   }
 
+  // Stänger dialogen
   close() {
     this.dialogRef.close();
   }

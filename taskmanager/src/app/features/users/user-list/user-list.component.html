@@ -1,12 +1,15 @@
+<!-- Lista över användare med projekt- och task-översikt -->
 <div class="team-wrapper">
   <div class="top-container">
     <input
       [(ngModel)]="searchQuery"
-      placeholder="Search a member"
+      placeholder="Sök medlem"
       class="search-input"
       (input)="filterUsers()"
     />
-    <button class="btn-newuser" (click)="openUserFormDialog()">New User</button>
+    <button class="btn-newuser" (click)="openUserFormDialog()">
+      New user
+    </button>
   </div>
 
   <div class="user-container">
@@ -19,12 +22,12 @@
           <span class="user-name">{{ user.name }}</span>
           <span class="user-role">{{ user.role }}</span>
           <span class="user-overview">
-            Projects: {{ getProjectCount(user) }} | Tasks:
+            Projekt: {{ getProjectCount(user) }} | Tasks:
             {{ getTaskCount(user) }}
           </span>
 
           <div class="task-progress">
-            <!-- Low -->
+            <!-- Låg prioritet -->
             <ng-container *ngIf="getTaskPercentage(user, 'Low') > 0">
               <div
                 class="progress-bar low"
@@ -34,7 +37,7 @@
               </div>
             </ng-container>
 
-            <!-- Medium -->
+            <!-- Medel prioritet -->
             <ng-container *ngIf="getTaskPercentage(user, 'Medium') > 0">
               <div
                 class="progress-bar medium"
@@ -44,7 +47,7 @@
               </div>
             </ng-container>
 
-            <!-- High -->
+            <!-- Hög prioritet -->
             <ng-container *ngIf="getTaskPercentage(user, 'High') > 0">
               <div
                 class="progress-bar high"
@@ -69,13 +72,13 @@
 
         <div class="user-actions">
           <button class="btn btn-view" (click)="selectUser(user)">
-            <img src="view-icon.png" alt="View" class="btn-icon" />
+            <img src="view-icon.png" alt="Visa" class="btn-icon" />
           </button>
           <button class="btn btn-edit" (click)="openUserDetailDialog(user)">
-            <img src="edit-icon.png" alt="Edit" class="btn-icon" />
+            <img src="edit-icon.png" alt="Redigera" class="btn-icon" />
           </button>
           <button class="btn btn-delete" (click)="deleteUser(user)">
-            <img src="delete-icon.png" alt="Delete" class="btn-icon" />
+            <img src="delete-icon.png" alt="Ta bort" class="btn-icon" />
           </button>
         </div>
       </div>

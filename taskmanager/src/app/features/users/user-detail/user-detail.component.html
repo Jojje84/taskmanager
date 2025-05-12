@@ -1,3 +1,4 @@
+<!-- Komponent för att visa och redigera användare samt tillhörande projekt och tasks -->
 <div class="UserEdit">
   <div *ngIf="user">
     <div class="dialog-header">
@@ -5,7 +6,6 @@
       <button class="close-btn" (click)="close()">&#10005;</button>
     </div>
 
-    
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="form-container">
       <div class="form-group">
         <label>Name:</label>
@@ -21,10 +21,14 @@
     </form>
   </div>
 
-  <!-- Sektion för Alla Projekt -->
+  <!-- Section för alla Projekts -->
   <section class="dashboard-section" *ngIf="projects.length > 0">
     <h3>All Projects</h3>
-    <input type="text" [(ngModel)]="searchQuery" placeholder="Sök projekt..." />
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Search project..."
+    />
     <table class="table">
       <thead>
         <tr>
@@ -55,17 +59,16 @@
   </section>
 
   <ng-template #noProjects>
-    <p>Denna användare har inga projekt ännu.</p>
+    <p>This user has no projects yet.</p>
   </ng-template>
 
   <section *ngIf="projects.length === 0">
-    <p>Denna användare har inga projekt ännu.</p>
+    <p>This user has no projects yet.</p>
   </section>
 
-  <!-- Sektion för Tasks -->
+  <!-- Section för alla Uppgifter -->
   <section class="dashboard-section" *ngIf="tasks.length > 0">
     <h3>All Tasks</h3>
-
     <table class="table">
       <thead>
         <tr>
@@ -101,6 +104,6 @@
   </section>
 
   <section *ngIf="tasks.length === 0">
-    <p>Denna användare har inga tasks ännu.</p>
+    <p>This user has no tasks yet.</p>
   </section>
 </div>

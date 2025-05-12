@@ -18,6 +18,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TaskDetailComponent } from '../task-detail/task-detail.component';
 
+// Komponent för att visa och hantera uppgiftslistan
 @Component({
   selector: 'app-task-list',
   standalone: true,
@@ -43,9 +44,9 @@ export class TaskListComponent implements OnInit {
   completedTasks: Task[] = [];
 
   constructor(private taskService: TaskService, private dialog: MatDialog) {
+    // Effekt som uppdaterar och sorterar uppgifter vid förändring
     effect(() => {
       const allTasks = this.taskService['tasks']();
-
       const tasks = allTasks.filter((t) => t.projectId === this.projectId);
 
       this.localTasks = tasks;
@@ -69,16 +70,18 @@ export class TaskListComponent implements OnInit {
     });
   }
 
+  // Initierar och hämtar tasks vid start
   ngOnInit(): void {
     this.taskService.fetchTasks();
   }
 
   ngOnChanges(): void {
     if (this.projectId) {
-      // No log
+      // Ingen loggning
     }
   }
 
+  // Öppnar dialog för att skapa eller redigera uppgift
   openTaskFormDialog(task?: Task): void {
     if (!this.projectId) return;
 
@@ -98,6 +101,7 @@ export class TaskListComponent implements OnInit {
     });
   }
 
+  // Tar bort uppgift
   deleteTask(taskId: number): void {
     this.dialog
       .open(ConfirmDialogComponent, {
@@ -114,11 +118,13 @@ export class TaskListComponent implements OnInit {
       });
   }
 
+  // Sätter sökterm och filtrerar uppgifter
   onSearch(term: string): void {
     this.searchTerm.set(term);
     this.filterTasks();
   }
 
+  // Filtrerar uppgifter baserat på sökterm
   filterTasks(): void {
     const query = this.searchTerm().toLowerCase();
     this.filteredTasksList = this.localTasks.filter(
@@ -129,6 +135,7 @@ export class TaskListComponent implements OnInit {
     );
   }
 
+  // Laddar tasks för användare och projekt
   loadTasks(userId: number): void {
     this.loading = true;
     this.taskService.fetchTasks();
@@ -161,6 +168,7 @@ export class TaskListComponent implements OnInit {
     this.loading = false;
   }
 
+  // Öppnar dialog för att redigera uppgift
   editTask(task: Task): void {
     this.dialog.open(TaskDetailComponent, {
       data: { task },
@@ -168,10 +176,12 @@ export class TaskListComponent implements OnInit {
     });
   }
 
+  // Filtrerar tasks efter prioritet
   filteredTasksByPriority(priority: string) {
     return this.filteredTasksList.filter((task) => task.priority === priority);
   }
 
+  // Uppdaterar en uppgift
   updateTask(task: Task): void {
     if (task.id !== undefined) {
       this.taskService.updateTask(task.id, task);
@@ -179,6 +189,7 @@ export class TaskListComponent implements OnInit {
     this.loadTasks(this.userId);
   }
 
+  // Hanterar drag and drop mellan kolumner
   onTaskDrop(event: any): void {
     const previousIndex = event.previousIndex;
     const currentIndex = event.currentIndex;

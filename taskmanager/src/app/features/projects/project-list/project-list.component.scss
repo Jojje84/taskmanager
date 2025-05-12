@@ -63,8 +63,8 @@
   border: solid 1px #d4d3d3;
 }
 .project-name {
-  max-width: 180px;  /* Justera bredden efter behov */
-  max-height: 50px; /* Justera höjden efter behov */
+  max-width: 180px; 
+  max-height: 50px; 
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -74,9 +74,9 @@
   margin: 10px;
   text-align: center;
   text-transform: capitalize;
-  padding: 0 10px; /* Lägger till padding för att ge lite utrymme */
-  text-decoration: none; /* Ta bort understrykning */
-  transition: color 0.3s ease; /* Lägg till övergång för färgändring */
+  padding: 0 10px; 
+  text-decoration: none; 
+  transition: color 0.3s ease; 
 }
 
 .description {
@@ -85,9 +85,9 @@
   font-size: 0.9rem;
   margin-bottom: 10px;  
   text-align: center;
-  padding: 010px 10px; /* Lägger till padding för att ge lite utrymme */
-  text-decoration: none; /* Ta bort understrykning */
-  transition: color 0.3s ease; /* Lägg till övergång för färgändring */
+  padding: 010px 10px;
+  text-decoration: none; 
+  transition: color 0.3s ease; 
 }
 
 .shared-text {
@@ -95,9 +95,9 @@
   font-weight: bold;
   margin-top: 5px;
   text-align: center;
-  padding: 10px 10px; /* Lägger till padding för att ge lite utrymme */
-  text-decoration: none; /* Ta bort understrykning */
-  transition: color 0.3s ease; /* Lägg till övergång för färgändring */
+  padding: 10px 10px; 
+  text-decoration: none; 
+  transition: color 0.3s ease; 
   text-transform: capitalize;
 }
 
@@ -138,15 +138,15 @@ ul {
 .project-actions {
   display: flex;
   justify-content: center;
-  gap: 10px; /* Mellanrum mellan knapparna */
+  gap: 10px; 
   margin-top: auto;
 }
 
 .btn {
   display: flex;
-  align-items: center; /* Centrera text och bild vertikalt */
+  align-items: center;
   justify-content: center;
-  gap: 8px; /* Mellanrum mellan bild och text */
+  gap: 8px; 
   padding: 10px 20px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -157,9 +157,9 @@ ul {
 }
 
 .btn:hover {
-  background-color: #007bff; /* Blå bakgrund vid hover */
-  color: white; /* Vit text vid hover */
-  transform: translateY(-2px); /* Lyft knappen något vid hover */
+  background-color: #007bff; 
+  color: white; 
+  transform: translateY(-2px); 
 }
 .editproject-detail-dialog {
   max-width: 100%;

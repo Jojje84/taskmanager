@@ -3,11 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Project } from '../../models/project.model';
 import { Observable, tap } from 'rxjs';
 
+// Service för hantering av projektdata mot API och signal
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   private baseUrl = 'http://localhost:3000/projects';
-
-  // Signal för att hålla alla projekt
   private projects: WritableSignal<Project[]> = signal([]);
 
   constructor(private http: HttpClient) {}
@@ -15,11 +14,11 @@ export class ProjectService {
   // Hämtar alla projekt från API och uppdaterar signalen
   fetchProjects(): void {
     this.http.get<Project[]>(this.baseUrl).subscribe((data) => {
-      this.projects.set(data); // Uppdaterar signalen med de hämtade projekten
+      this.projects.set(data);
     });
   }
 
-  // ✅ Fortsatt stöd för äldre komponenter
+  // Returnerar alla projekt som Observable (för äldre komponenter)
   getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(this.baseUrl);
   }
@@ -30,15 +29,16 @@ export class ProjectService {
       .get<Project[]>(`${this.baseUrl}?userId=${userId}`)
       .subscribe((data) => {
         const filtered = data.filter((p) => p.userIds?.includes(userId));
-        this.projects.set(filtered); // Uppdatera signalen med filtrerade projekt
+        this.projects.set(filtered);
       });
   }
 
+  // Hämtar ett projekt baserat på id
   getProjectById(id: number): Observable<Project> {
     return this.http.get<Project>(`${this.baseUrl}/${id}`);
   }
 
-  // Skapa ett nytt projekt och uppdatera signalen
+  // Skapar ett nytt projekt och uppdaterar signalen
   createProject(project: Project): Observable<Project> {
     return this.http.post<Project>(this.baseUrl, project).pipe(
       tap((createdProject) => {
@@ -48,10 +48,10 @@ export class ProjectService {
     );
   }
 
-  // Lägg till ett projekt och uppdatera signalen
+  // Lägger till ett projekt och uppdaterar signalen
   addProject(project: Project): void {
     const newProject: Project = {
-      id: 0, // Låt backend generera id om det inte sätts här
+      id: 0,
       name: project.name,
       description: project.description,
       creatorId: project.creatorId,
@@ -68,7 +68,7 @@ export class ProjectService {
       });
   }
 
-  // Ta bort ett projekt och uppdatera signalen
+  // Tar bort ett projekt och uppdaterar signalen
   deleteProject(id: number): void {
     this.http.delete<void>(`${this.baseUrl}/${id}`).subscribe(() => {
       const updatedProjects = this.projects().filter((p) => p.id !== id);
@@ -76,7 +76,7 @@ export class ProjectService {
     });
   }
 
-  // Uppdatera ett projekt och uppdatera signalen
+  // Uppdaterar ett projekt och uppdaterar signalen
   updateProject(project: Project): Observable<Project> {
     return this.http
       .put<Project>(`${this.baseUrl}/${project.id}`, project)
@@ -97,7 +97,7 @@ export class ProjectService {
       );
   }
 
-  // Exponera signalens värde
+  // Returnerar aktuellt värde av projekt-signal
   getProjectsSignal(): Project[] {
     return this.projects();
   }

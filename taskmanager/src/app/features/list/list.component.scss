@@ -16,21 +16,17 @@
   max-width: 900px;
 }
 
-h2,
-h3 {
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
 table {
   width: 100%;
-  border-collapse: collapse; // Ändra här!
+  border-collapse: collapse; 
   margin-bottom: 2rem;
+  border: solid 1px #d4d3d3;
 
   th,
   td {
     padding: 0.75rem 1rem;
     text-align: left;
+    border: solid 1px #d4d3d3;
   }
 
   th {
@@ -71,7 +67,7 @@ table {
   border-radius: 12px;
   font-size: 0.7rem;
   font-weight: 500;
-  width: 60px; // Lägg till denna rad!
+  width: 60px;
   padding: 0.2em 0.8em;
   margin-right: 0.2em;
 }

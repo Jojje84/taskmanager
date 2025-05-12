@@ -8,8 +8,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../../../core/services/user.service';
-import { User } from '../../../models/user.model';
 
+
+// Komponent för formulär att lägga till ny användare
 @Component({
   selector: 'app-user-form',
   standalone: true,
@@ -32,6 +33,7 @@ export class UserFormComponent {
     });
   }
 
+  // Skickar in formuläret och lägger till användare
   onSubmit(): void {
     if (this.userForm.valid) {
       const { id, ...newUserData } = this.userForm.value;
@@ -41,10 +43,12 @@ export class UserFormComponent {
     }
   }
 
+  // Avbryter och stänger dialogen utan att spara
   onCancel(): void {
     this.dialogRef.close();
   }
 
+  // Stänger dialogen
   close() {
     this.dialogRef.close();
   }

@@ -37,20 +37,19 @@ export class DashboardComponent {
 
   constructor(private taskService: TaskService) {}
 
+  // Hanterar när en användare väljs
   onUserSelected(user: User): void {
     this.selectedUser = user;
     this.selectedProjectId = null;
     this.selectedProjectTasks = [];
   }
 
+  // Hanterar när ett projekt klickas och hämtar tasks för projektet
   onProjectClick(projectData: { id: number; name: string }): void {
     this.selectedProjectId = projectData.id;
     this.selectedProjectName = projectData.name;
-
-    // Hämta tasks och använd signalen direkt
-    this.taskService.fetchTasks(); // Uppdaterar signalen i TaskService
-
-    const allTasks = this.taskService['tasks'](); // Använd signalen
+    this.taskService.fetchTasks();
+    const allTasks = this.taskService['tasks']();
     this.selectedProjectTasks = allTasks.filter((t: Task) => {
       return (
         t.projectId === projectData.id &&
@@ -59,16 +58,12 @@ export class DashboardComponent {
     });
   }
 
+  // Hanterar när ett projekt tas bort
   onProjectDeleted(projectId: number): void {
-    console.log(
-      'onProjectDeleted received in DashboardComponent with ID:',
-      projectId
-    );
     if (this.selectedProjectId === projectId) {
       this.selectedProjectId = null;
       this.selectedProjectName = 'No Project Selected';
       this.selectedProjectTasks = [];
-      console.log('Cleared selected project!');
     }
     this.userProjects = this.userProjects.filter((p) => p.id !== projectId);
   }

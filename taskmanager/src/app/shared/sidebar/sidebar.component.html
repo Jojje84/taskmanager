@@ -1,7 +1,8 @@
+<!-- Sidomeny för navigering i applikationen -->
 <div class="sidebar" [class.open]="isOpen">
   <button class="toggle-btn" (click)="toggleSidebar()">
     <span *ngIf="isOpen">Meny</span>
-    <img *ngIf="isOpen" src="left.png" alt="Open Arrow" class="arrow"/>
+    <img *ngIf="isOpen" src="left.png" alt="Open Arrow" class="arrow" />
     <img *ngIf="!isOpen" src="right.png" alt="Closed Arrow" class="arrow" />
   </button>
   <nav>
@@ -17,7 +18,7 @@
       <img src="list.png" alt="List Icon" class="icon" />
       <span *ngIf="isOpen">List</span>
     </a>
-    <hr class="sidebar-divider">
+    <hr class="sidebar-divider" />
     <a routerLink="/download">
       <img src="download.png" alt="Download Icon" class="icon" />
       <span *ngIf="isOpen">Download</span>

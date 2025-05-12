@@ -10,5 +10,5 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
   imports: [RouterModule, SidebarComponent],
 })
 export class AppComponent {
-  isSidebarOpen = true; // Standardvärde för sidomenyn
+  isSidebarOpen = true; 
 }
