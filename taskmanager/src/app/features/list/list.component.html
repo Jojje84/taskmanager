@@ -3,7 +3,7 @@
   <div class="list-wrapper">
     <div class="user-select">
       <label for="userDropdown">Select user:</label>
-      <select id="userDropdown" [(ngModel)]="selectedUserModel">
+      <select id="userDropdown" [(ngModel)]="selectedUserModel" multiple>
         <option [ngValue]="null">All users</option>
         <option *ngFor="let user of users()" [ngValue]="user.id">
           {{ user.name }}
@@ -31,10 +31,10 @@
                 (click)="toggleUserData(user.id)"
                 class="action-btn"
                 [ngClass]="
-                  expandedUserId === user.id ? 'close-btn' : 'open-btn'
+                  selectedUserModel.includes(user.id) ? 'close-btn' : 'open-btn'
                 "
               >
-                {{ expandedUserId === user.id ? "Close" : "Open" }}
+                {{ selectedUserModel.includes(user.id) ? "Close" : "Open" }}
               </button>
             </td>
             <td>{{ user.name }}</td>

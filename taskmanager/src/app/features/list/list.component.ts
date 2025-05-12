@@ -17,7 +17,7 @@ export class ListComponent implements OnInit {
   users = signal<any[]>([]);
   projects = signal<any[]>([]);
   tasks = signal<any[]>([]);
-  selectedUser = signal<number | null>(null);
+  selectedUser = signal<(number | null)[]>([]);
   selectedUserProjects = signal<any[]>([]);
   selectedUserTasks = signal<any[]>([]);
   expandedUserId: number | null = null;
@@ -46,19 +46,24 @@ export class ListComponent implements OnInit {
 
       this.tasks.set(enriched);
 
-      const selectedUserId = this.selectedUser();
-      if (selectedUserId === null) {
+      const selectedUserIds = this.selectedUser();
+      if (
+        !selectedUserIds ||
+        selectedUserIds.length === 0 ||
+        selectedUserIds.includes(null)
+      ) {
         this.selectedUserProjects.set(projects);
         this.selectedUserTasks.set(enriched);
       } else {
         const filteredProjects = projects.filter(
           (project) =>
-            project.userIds && project.userIds.includes(selectedUserId)
+            project.userIds &&
+            project.userIds.some((id: number) => selectedUserIds.includes(id))
         );
         const userProjectIds = filteredProjects.map((p) => p.id);
         const filteredTasks = enriched.filter(
           (task) =>
-            task.creatorId === selectedUserId ||
+            selectedUserIds.includes(task.creatorId) ||
             userProjectIds.includes(task.projectId)
         );
         this.selectedUserProjects.set(filteredProjects);
@@ -78,32 +83,34 @@ export class ListComponent implements OnInit {
 
   // Uppdaterar filtrerade projekt och tasks när användare ändras
   onUserChange(): void {
-    const selectedUserId = this.selectedUser();
-    if (selectedUserId === null) {
+    const selected = this.selectedUserModel;
+    if (!selected || selected.length === 0 || selected.includes(null)) {
       this.selectedUserProjects.set(this.projects());
       this.selectedUserTasks.set(this.tasks());
     } else {
       const filteredProjects = this.projects().filter(
-        (project) => project.userId === selectedUserId
+        (project) =>
+          project.userIds &&
+          project.userIds.some((id: number) => selected.includes(id))
       );
-      const filteredTasks = this.tasks().filter((task) => {
-        const project = this.projects().find((p) => p.id === task.projectId);
-        return (
-          task.userId === selectedUserId && project?.userId === selectedUserId
-        );
-      });
+      const userProjectIds = filteredProjects.map((p) => p.id);
+      const filteredTasks = this.tasks().filter(
+        (task) =>
+          selected.includes(task.creatorId) ||
+          userProjectIds.includes(task.projectId)
+      );
       this.selectedUserProjects.set(filteredProjects);
       this.selectedUserTasks.set(filteredTasks);
     }
   }
 
   // Getter och setter för vald användare i dropdown
-  get selectedUserModel() {
-    return this.selectedUser();
+  get selectedUserModel(): (number | null)[] {
+    return this.selectedUser() ?? [];
   }
 
-  set selectedUserModel(value: number | null) {
-    this.selectedUser.set(value);
+  set selectedUserModel(value: (number | null)[]) {
+    this.selectedUser.set(value ?? []);
     this.onUserChange();
   }
 
@@ -122,16 +129,20 @@ export class ListComponent implements OnInit {
       : 'Own';
   }
   toggleUserData(userId: number): void {
-    // Om samma användare klickas igen, stäng sektionen och visa "All Users"
-    if (this.expandedUserId === userId) {
+    let selected = [...this.selectedUserModel];
+    const idx = selected.indexOf(userId);
+    if (idx > -1) {
+      selected.splice(idx, 1);
+    } else {
+      selected.push(userId);
+    }
+    // Om inga valda användare, visa "All Users"
+    if (selected.length === 0) {
       this.expandedUserId = null;
-      this.selectedUserModel = null; // Återställ till "All Users"
-      this.onUserChange(); // Uppdatera projekt och uppgifter
     } else {
       this.expandedUserId = userId;
-      this.selectedUserModel = userId; // Uppdatera den valda användaren
-      this.onUserChange(); // Uppdatera projekt och uppgifter
     }
+    this.selectedUserModel = selected;
   }
 
   toggleProjectDetails(projectId: number): void {
