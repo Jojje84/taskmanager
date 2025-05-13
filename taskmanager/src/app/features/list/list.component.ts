@@ -181,6 +181,10 @@ export class ListComponent implements OnInit {
     const high = tasks.filter(
       (t) => t.priority?.toLowerCase() === 'high'
     ).length;
-    return { active, completed, high };
+    const medium = tasks.filter(
+      (t) => t.priority?.toLowerCase() === 'medium'
+    ).length;
+    const low = tasks.filter((t) => t.priority?.toLowerCase() === 'low').length;
+    return { active, completed, high, medium, low };
   }
 }
