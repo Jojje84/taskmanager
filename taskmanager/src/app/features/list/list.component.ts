@@ -1,17 +1,24 @@
 import { Component, OnInit, signal, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../core/services/user.service';
 import { ProjectService } from '../../core/services/project.service';
 import { TaskService } from '../../core/services/task.service';
+import { NgSelectModule, NgSelectComponent } from '@ng-select/ng-select';
+import { Observable } from 'rxjs';
 
-// Komponent för att visa lista över användare, projekt och uppgifter
 @Component({
   selector: 'app-list',
   standalone: true,
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgSelectModule,
+    NgSelectComponent,
+    AsyncPipe,
+  ],
 })
 export class ListComponent implements OnInit {
   users = signal<any[]>([]);
@@ -21,14 +28,15 @@ export class ListComponent implements OnInit {
   selectedUserProjects = signal<any[]>([]);
   selectedUserTasks = signal<any[]>([]);
   expandedUserId: number | null = null;
-  expandedProjectId: number | null = null; // Håller reda på vilket projekt som är expanderat
+  expandedProjectId: number | null = null;
+  users$!: Observable<any[]>;
 
   constructor(
     private userService: UserService,
     private projectService: ProjectService,
     private taskService: TaskService
   ) {
-    // Effekt som körs när users, projects eller tasks ändras och uppdaterar filtrerade listor
+    // Uppdatera tasks och filtrerade listor när data ändras
     effect(() => {
       const users = this.users();
       const projects = this.projects();
@@ -72,16 +80,17 @@ export class ListComponent implements OnInit {
     });
   }
 
-  // Initierar och hämtar data vid komponentstart
+  // Hämta data vid initiering
   ngOnInit(): void {
     this.userService.getUsers().subscribe((data) => this.users.set(data));
     this.projectService
       .getProjects()
       .subscribe((data) => this.projects.set(data));
     this.taskService.fetchTasks();
+    this.users$ = this.userService.getUsers();
   }
 
-  // Uppdaterar filtrerade projekt och tasks när användare ändras
+  // Filtrera projekt och tasks när användarval ändras
   onUserChange(): void {
     const selected = this.selectedUserModel;
     if (!selected || selected.length === 0 || selected.includes(null)) {
@@ -104,7 +113,7 @@ export class ListComponent implements OnInit {
     }
   }
 
-  // Getter och setter för vald användare i dropdown
+  // Getter/setter för användarval i dropdown
   get selectedUserModel(): (number | null)[] {
     return this.selectedUser() ?? [];
   }
@@ -114,20 +123,22 @@ export class ListComponent implements OnInit {
     this.onUserChange();
   }
 
-  // Hämtar användarnamn baserat på id
+  // Hämta användarnamn från id
   getUserName(userId: number | null): string {
     if (userId === null) return 'Unknown';
     const user = this.users().find((u) => u.id === userId);
     return user ? user.name : 'Unknown';
   }
 
-  // Returnerar typ av projekt (Shared/Eget)
+  // Returnera projekt-typ (Shared/Eget)
   getProjectType(projectId: number): string {
     const project = this.projects().find((p) => p.id === projectId);
     return project && project.userIds && project.userIds.length > 1
       ? 'Shared'
       : 'Own';
   }
+
+  // Expandera/stäng användardata
   toggleUserData(userId: number): void {
     let selected = [...this.selectedUserModel];
     const idx = selected.indexOf(userId);
@@ -136,7 +147,6 @@ export class ListComponent implements OnInit {
     } else {
       selected.push(userId);
     }
-    // Om inga valda användare, visa "All Users"
     if (selected.length === 0) {
       this.expandedUserId = null;
     } else {
@@ -145,19 +155,21 @@ export class ListComponent implements OnInit {
     this.selectedUserModel = selected;
   }
 
+  // Expandera/stäng projektinformation
   toggleProjectDetails(projectId: number): void {
     if (this.expandedProjectId === projectId) {
-      this.expandedProjectId = null; // Stäng om samma projekt klickas igen
+      this.expandedProjectId = null;
     } else {
-      this.expandedProjectId = projectId; // Expandera det valda projektet
+      this.expandedProjectId = projectId;
     }
   }
 
-  // Hämtar tasks för ett specifikt projekt
+  // Hämta tasks för ett projekt
   getTasksForProject(projectId: number): any[] {
     return this.tasks().filter((task) => task.projectId === projectId);
   }
 
+  // Summera antal tasks per projekt
   getProjectSummary(projectId: number) {
     const tasks = this.getTasksForProject(projectId);
     const active = tasks.filter(

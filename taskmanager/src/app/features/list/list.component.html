@@ -3,15 +3,25 @@
   <div class="list-wrapper">
     <div class="user-select">
       <label for="userDropdown">Select user:</label>
-      <select id="userDropdown" [(ngModel)]="selectedUserModel" multiple>
-        <option [ngValue]="null">All users</option>
-        <option *ngFor="let user of users()" [ngValue]="user.id">
-          {{ user.name }}
-        </option>
-      </select>
+      <ng-select
+        [items]="users$ | async"
+        bindLabel="name"
+        bindValue="id"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        [hideSelected]="true"
+        placeholder="Choose user(s)"
+        [(ngModel)]="selectedUserModel"
+        [searchable]="true"
+        [clearable]="true"
+        [virtualScroll]="true"
+        id="userDropdown"
+      >
+        <ng-option [value]="null">All users</ng-option>
+      </ng-select>
     </div>
 
-    <!-- All Users -->
+    <!-- Alla användare -->
     <section class="data-table-section">
       <h3>All Users</h3>
       <table>
@@ -44,7 +54,7 @@
       </table>
     </section>
 
-    <!-- All Projects -->
+    <!-- Alla Projekter -->
     <section
       class="data-table-section"
       *ngIf="selectedUserProjects().length > 0"
@@ -142,8 +152,12 @@
                       >
                         <td class="center-col">{{ j + 1 }}</td>
                         <td>{{ task.title }}</td>
-                        <td>{{ task.priority }}</td>
-                        <td>{{ task.status }}</td>
+                        <td>
+                          <span class="drop-priority">{{ task.priority }}</span>
+                        </td>
+                        <td>
+                          <span class="drop-status"> {{ task.status }}</span>
+                        </td>
                         <td>{{ task.deadline || "No deadline" }}</td>
                       </tr>
                     </tbody>
@@ -156,7 +170,7 @@
       </table>
     </section>
 
-    <!-- All Tasks -->
+    <!-- Alla Uppgifter -->
     <section class="data-table-section" *ngIf="selectedUserTasks().length > 0">
       <h3>All tasks</h3>
       <table>
