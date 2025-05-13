@@ -2,7 +2,7 @@
 <div class="sidebar" [class.open]="isOpen">
   <button class="toggle-btn" (click)="toggleSidebar()">
     <span *ngIf="isOpen">Meny</span>
-    <img *ngIf="isOpen" src="left.png" alt="Open Arrow" class="arrow" />
+    <img *ngIf="isOpen" src="left.png" alt="Open Arrow" class="arrow-left" />
     <img *ngIf="!isOpen" src="right.png" alt="Closed Arrow" class="arrow" />
   </button>
   <nav>
